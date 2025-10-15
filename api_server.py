@@ -12,6 +12,7 @@ from pathlib import Path
 sys.path.insert(0, os.path.dirname(__file__))
 
 from services.image_ai_service import image_ai_service
+from services.face_swap_gateway import face_swap_gateway, FaceSwapMediaType
 
 HUGGINGFACE_TOKEN = os.getenv('HUGGINGFACE_TOKEN')
 PORT = 5000
@@ -62,6 +63,10 @@ class HuggingfaceProxyHandler(SimpleHTTPRequestHandler):
                 self.handle_cartoonify()
             elif self.path == '/api/ai/face-swap':
                 self.handle_face_swap()
+            elif self.path == '/api/ai/face-swap-v2':
+                self.handle_face_swap_v2()
+            elif self.path == '/api/ai/video-face-swap':
+                self.handle_video_face_swap()
             else:
                 self._set_headers(404)
                 self.wfile.write(json.dumps({'error': 'Endpoint not found'}).encode())
@@ -302,6 +307,88 @@ class HuggingfaceProxyHandler(SimpleHTTPRequestHandler):
             self._set_headers(500)
             self.wfile.write(json.dumps({'error': f'Server error: {str(e)}'}).encode())
 
+    def handle_face_swap_v2(self):
+        """Face Swap V2 using Multi-Provider Gateway"""
+        try:
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length)
+            data = json.loads(post_data.decode('utf-8'))
+            
+            target_image = data.get('target_image', '')
+            source_face = data.get('source_face', '')
+            
+            if not target_image or not source_face:
+                self._set_headers(400)
+                self.wfile.write(json.dumps({'error': 'Both target_image and source_face required'}).encode())
+                return
+            
+            # Run async function in sync context
+            result = asyncio.run(face_swap_gateway.swap_face(
+                target=target_image,
+                source=source_face,
+                media_type=FaceSwapMediaType.IMAGE
+            ))
+            
+            if result.get('success'):
+                self._set_headers(200)
+                self.wfile.write(json.dumps(result).encode())
+            else:
+                self._set_headers(500)
+                self.wfile.write(json.dumps(result).encode())
+                
+        except json.JSONDecodeError as e:
+            print(f"❌ JSON decode error in face_swap_v2: {e}")
+            self._set_headers(400)
+            self.wfile.write(json.dumps({'error': f'Invalid JSON: {str(e)}'}).encode())
+        except Exception as e:
+            print(f"❌ Unexpected error in face_swap_v2 handler: {type(e).__name__}: {e}")
+            import traceback
+            traceback.print_exc()
+            self._set_headers(500)
+            self.wfile.write(json.dumps({'error': f'Server error: {str(e)}'}).encode())
+
+    def handle_video_face_swap(self):
+        """Video Face Swap using PiAPI"""
+        try:
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length)
+            data = json.loads(post_data.decode('utf-8'))
+            
+            target_video = data.get('target_video', '')
+            source_face = data.get('source_face', '')
+            webhook_url = data.get('webhook_url')
+            
+            if not target_video or not source_face:
+                self._set_headers(400)
+                self.wfile.write(json.dumps({'error': 'Both target_video and source_face required'}).encode())
+                return
+            
+            # Run async function in sync context
+            result = asyncio.run(face_swap_gateway.swap_face(
+                target=target_video,
+                source=source_face,
+                media_type=FaceSwapMediaType.VIDEO,
+                webhook_url=webhook_url
+            ))
+            
+            if result.get('success'):
+                self._set_headers(200)
+                self.wfile.write(json.dumps(result).encode())
+            else:
+                self._set_headers(500)
+                self.wfile.write(json.dumps(result).encode())
+                
+        except json.JSONDecodeError as e:
+            print(f"❌ JSON decode error in video_face_swap: {e}")
+            self._set_headers(400)
+            self.wfile.write(json.dumps({'error': f'Invalid JSON: {str(e)}'}).encode())
+        except Exception as e:
+            print(f"❌ Unexpected error in video_face_swap handler: {type(e).__name__}: {e}")
+            import traceback
+            traceback.print_exc()
+            self._set_headers(500)
+            self.wfile.write(json.dumps({'error': f'Server error: {str(e)}'}).encode())
+
     def log_message(self, format, *args):
         print(f"[API] {format % args}")
 
@@ -315,7 +402,9 @@ def run_server():
     print(f'   - POST /api/ai/hd-image (Real-ESRGAN)')
     print(f'   - POST /api/ai/fix-old-photo (GFPGAN)')
     print(f'   - POST /api/ai/cartoonify (VToonify)')
-    print(f'   - POST /api/ai/face-swap (Face Swap)')
+    print(f'   - POST /api/ai/face-swap (Face Swap - Legacy)')
+    print(f'   - POST /api/ai/face-swap-v2 (Face Swap - Multi-Provider Gateway)')
+    print(f'   - POST /api/ai/video-face-swap (Video Face Swap - PiAPI)')
     print(f'🌐 Serving Flutter web from: {WEB_DIR}')
     httpd.serve_forever()
 
