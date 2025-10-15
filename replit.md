@@ -17,7 +17,7 @@ Built with Flutter 3.32.0 (Dart 3.8.0), Viso AI integrates with a Python Flask b
 ### Feature Specifications
 - **AI Headshot & Avatar Generation**: Studio-grade AI headshots and stylized avatars.
 - **Photo Enhancement**: Includes HD Image Enhancement with a 3-tier fallback system (Huggingface Inference API, Replicate Real-ESRGAN, Huggingface Space), and Old Photo Restoration using GFPGAN via Replicate.
-- **Face Swapping**: AI-powered face replacement with a multi-provider fallback strategy, gallery permission handling, and rewarded ad integration.
+- **Face Swapping**: AI-powered face replacement with multi-provider fallback strategy (PiAPI primary with 99.9% SLA, Replicate fallback), gallery permission handling, and rewarded ad integration. Supports both image and video face swap.
 - **AI Style Templates**: Provides diverse templates for aesthetic transformations, such as cartoonification and various avatar styles.
 - **Monetization**:
     - **Advertising**: Supports Google Mobile Ads (AdMob) for web, and a dual-network system (AdMob primary, AppLovin MAX fallback) for mobile banner, app open, and rewarded ads. Firebase Remote Config enables dynamic ad control and A/B testing.
@@ -36,5 +36,6 @@ Supabase is used for backend services, covering authentication, database managem
 - **AppLovin MAX**: Secondary ad network for mobile (iOS/Android) for rewarded, interstitial, and banner ads.
 - **RevenueCat**: In-app purchase management for premium subscriptions.
 - **Huggingface API**: AI models for text/image generation, image enhancement, photo restoration, and style transfer.
-- **Replicate API**: Production-grade AI services for photo restoration and face-swapping.
+- **PiAPI**: Primary face swap provider with 99.9% uptime SLA for enterprise-grade image and video face swapping.
+- **Replicate API**: Fallback AI services for photo restoration and face-swapping.
 - **Flutter Core Dependencies**: `supabase_flutter`, `cached_network_image`, `go_router`, `google_fonts`, `flutter_animate`, `http`, `permission_handler`, `path_provider`, `applovin_max`, `share_plus`, `url_launcher`, `firebase_core`, `firebase_remote_config`, `purchases_flutter`, `gal`.
