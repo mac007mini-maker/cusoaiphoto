@@ -158,11 +158,13 @@ class RevenueCatService {
   }
 
   /// Purchase a package
-  Future<PurchaseResult> purchasePackage(Package package) async {
+  Future<PurchaseResponse> purchasePackage(Package package) async {
     try {
       debugPrint('🛒 Attempting to purchase: ${package.storeProduct.identifier}');
       
-      final customerInfo = await Purchases.purchasePackage(package);
+      // SDK 9.8.0+: purchasePackage returns PurchaseResult with customerInfo property
+      final result = await Purchases.purchasePackage(package);
+      final customerInfo = result.customerInfo;
       
       // Check if user has pro entitlement
       final isPro = customerInfo.entitlements.all['pro']?.isActive ?? false;
@@ -173,14 +175,14 @@ class RevenueCatService {
         // Update UserService
         await UserService().setPremiumStatus(true);
         
-        return PurchaseResult(
+        return PurchaseResponse(
           success: true,
           isPremium: true,
           customerInfo: customerInfo,
         );
       } else {
         debugPrint('⚠️ Purchase completed but no active entitlement');
-        return PurchaseResult(
+        return PurchaseResponse(
           success: false,
           isPremium: false,
           error: 'No active entitlement found',
@@ -192,7 +194,7 @@ class RevenueCatService {
       
       // User cancelled
       if (errorCode == PurchasesErrorCode.purchaseCancelledError) {
-        return PurchaseResult(
+        return PurchaseResponse(
           success: false,
           isPremium: false,
           error: 'Purchase cancelled',
@@ -200,14 +202,14 @@ class RevenueCatService {
         );
       }
       
-      return PurchaseResult(
+      return PurchaseResponse(
         success: false,
         isPremium: false,
         error: e.message ?? 'Purchase failed',
       );
     } catch (e) {
       debugPrint('❌ Unexpected purchase error: $e');
-      return PurchaseResult(
+      return PurchaseResponse(
         success: false,
         isPremium: false,
         error: e.toString(),
@@ -216,7 +218,7 @@ class RevenueCatService {
   }
 
   /// Restore previous purchases
-  Future<PurchaseResult> restorePurchases() async {
+  Future<PurchaseResponse> restorePurchases() async {
     try {
       debugPrint('🔄 Restoring purchases...');
       
@@ -230,7 +232,7 @@ class RevenueCatService {
         // Update UserService
         await UserService().setPremiumStatus(true);
         
-        return PurchaseResult(
+        return PurchaseResponse(
           success: true,
           isPremium: true,
           customerInfo: customerInfo,
@@ -242,7 +244,7 @@ class RevenueCatService {
         // Update UserService
         await UserService().setPremiumStatus(false);
         
-        return PurchaseResult(
+        return PurchaseResponse(
           success: false,
           isPremium: false,
           message: 'No active purchases found',
@@ -250,7 +252,7 @@ class RevenueCatService {
       }
     } catch (e) {
       debugPrint('❌ Restore purchases error: $e');
-      return PurchaseResult(
+      return PurchaseResponse(
         success: false,
         isPremium: false,
         error: 'Failed to restore purchases: $e',
@@ -301,8 +303,8 @@ class RevenueCatService {
   bool get isInitialized => _isInitialized;
 }
 
-/// Purchase result model
-class PurchaseResult {
+/// Purchase response model (renamed from PurchaseResult to avoid SDK conflict)
+class PurchaseResponse {
   final bool success;
   final bool isPremium;
   final CustomerInfo? customerInfo;
@@ -310,7 +312,7 @@ class PurchaseResult {
   final String? message;
   final bool userCancelled;
 
-  PurchaseResult({
+  PurchaseResponse({
     required this.success,
     required this.isPremium,
     this.customerInfo,
