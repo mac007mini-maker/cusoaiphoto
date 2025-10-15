@@ -86,11 +86,19 @@ class ImageAIService:
         else:
             format_ext = 'png'  # Default format
         
+        # Clean base64 string: remove whitespace, newlines
+        base64_str = base64_str.strip().replace('\n', '').replace('\r', '').replace(' ', '')
+        
+        # Add padding if needed (base64 strings must be multiple of 4)
+        padding_needed = len(base64_str) % 4
+        if padding_needed:
+            base64_str += '=' * (4 - padding_needed)
+        
         try:
             image_bytes = base64.b64decode(base64_str)
             return image_bytes, format_ext
         except Exception as e:
-            raise ValueError(f"Invalid base64 string: {e}")
+            raise ValueError(f"Invalid base64 string (len={len(base64_str)}): {e}")
     
     def _save_temp_image(self, base64_str):
         """

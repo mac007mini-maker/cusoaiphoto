@@ -49,21 +49,32 @@ class HuggingfaceProxyHandler(SimpleHTTPRequestHandler):
         self._set_headers()
 
     def do_POST(self):
-        if self.path == '/api/huggingface/text-generation':
-            self.handle_text_generation()
-        elif self.path == '/api/huggingface/text-to-image':
-            self.handle_text_to_image()
-        elif self.path == '/api/ai/hd-image':
-            self.handle_hd_image()
-        elif self.path == '/api/ai/fix-old-photo':
-            self.handle_fix_old_photo()
-        elif self.path == '/api/ai/cartoonify':
-            self.handle_cartoonify()
-        elif self.path == '/api/ai/face-swap':
-            self.handle_face_swap()
-        else:
-            self._set_headers(404)
-            self.wfile.write(json.dumps({'error': 'Endpoint not found'}).encode())
+        try:
+            if self.path == '/api/huggingface/text-generation':
+                self.handle_text_generation()
+            elif self.path == '/api/huggingface/text-to-image':
+                self.handle_text_to_image()
+            elif self.path == '/api/ai/hd-image':
+                self.handle_hd_image()
+            elif self.path == '/api/ai/fix-old-photo':
+                self.handle_fix_old_photo()
+            elif self.path == '/api/ai/cartoonify':
+                self.handle_cartoonify()
+            elif self.path == '/api/ai/face-swap':
+                self.handle_face_swap()
+            else:
+                self._set_headers(404)
+                self.wfile.write(json.dumps({'error': 'Endpoint not found'}).encode())
+        except Exception as e:
+            # Global error handler - always return JSON
+            print(f"❌ GLOBAL ERROR in do_POST: {type(e).__name__}: {e}")
+            import traceback
+            traceback.print_exc()
+            try:
+                self._set_headers(500)
+                self.wfile.write(json.dumps({'error': f'Server error: {str(e)}'}).encode())
+            except:
+                pass  # If we can't even send error response, give up gracefully
 
     def handle_text_generation(self):
         try:
