@@ -4,11 +4,11 @@
 Viso AI is a Flutter-based application designed for creating studio-grade AI headshots and avatars. It offers advanced photo enhancement, face swapping, and various AI-driven transformations to produce high-quality, stylized digital images. The project addresses the growing market demand for personalized digital content and AI-powered image manipulation.
 
 ## Recent Changes
+- **2025-10-15**: Added comprehensive debug logging and output type handling for Replicate models (list/FileOutput/string)
+- **2025-10-15**: Enhanced download validation - accept CDN octet-stream responses and detect HTML error pages
 - **2025-10-15**: Fixed HTML error root cause - added HTTP status and Content-Type validation to prevent downloading HTML error pages as images
 - **2025-10-15**: Switched provider priority - Replicate PRIMARY (budget-friendly) → PiAPI FALLBACK (99.9% SLA) to save credits
 - **2025-10-15**: Fixed face swap response format mismatch - server now downloads images and converts to base64 for Flutter compatibility
-- **2025-10-15**: Fixed PiAPI authentication (correct X-API-Key header capitalization)
-- **2025-10-15**: Updated Replicate models - replaced deprecated cdingram/face-swap with omniedgeio/face-swap
 
 ## User Preferences
 None documented yet.
