@@ -14,8 +14,8 @@ if [ ! -f "build/web/index.html" ]; then
     echo "📦 Flutter web build not found. Building now..."
     echo "⚠️  This may take 5-10 minutes on first run..."
     
-    # Build Flutter web with HTML renderer (required for Replit)
-    flutter build web --web-renderer html --release 2>&1 | tail -20 &
+    # Build Flutter web (HTML renderer will be configured in build output)
+    flutter build web --release 2>&1 | tail -20 &
     BUILD_PID=$!
     
     # Wait for build to complete or timeout after 8 minutes
