@@ -365,17 +365,21 @@ class FaceSwapGateway:
         
         print(f"🔌 Face Swap Gateway initialized with {len(self.providers)} provider(s)")
     
-    def _validate_input(self, data: str) -> Tuple[bool, Optional[str]]:
+    def _validate_input(self, data: str, media_type: FaceSwapMediaType = FaceSwapMediaType.IMAGE) -> Tuple[bool, Optional[str]]:
         """
-        Validate input (URL or base64)
+        Validate input (URL or base64) based on media type
         Returns: (is_valid, error_message)
         """
         # Check if URL
         if data.startswith('http://') or data.startswith('https://'):
             return True, None
         
-        # Check if base64 (with or without data URI)
-        data_uri_pattern = r'^data:image/(jpeg|jpg|png|gif|webp|bmp);base64,'
+        # Check if data URI (image or video)
+        if media_type == FaceSwapMediaType.VIDEO:
+            data_uri_pattern = r'^data:(image|video)/(jpeg|jpg|png|gif|webp|bmp|mp4|avi|mov|webm);base64,'
+        else:
+            data_uri_pattern = r'^data:image/(jpeg|jpg|png|gif|webp|bmp);base64,'
+        
         if re.match(data_uri_pattern, data, re.IGNORECASE):
             return True, None
         
@@ -384,17 +388,23 @@ class FaceSwapGateway:
             base64.b64decode(data)
             return True, None
         except:
-            return False, "Invalid input: must be URL or base64 encoded image"
+            media_name = "video" if media_type == FaceSwapMediaType.VIDEO else "image"
+            return False, f"Invalid input: must be URL or base64 encoded {media_name}"
     
     def _normalize_base64(self, data: str) -> str:
-        """Normalize base64 string to data URI format"""
-        # Already data URI
-        data_uri_pattern = r'^data:image/(jpeg|jpg|png|gif|webp|bmp);base64,'
-        if re.match(data_uri_pattern, data, re.IGNORECASE):
+        """
+        Normalize input to appropriate format
+        - URLs: preserve as-is (PiAPI needs URLs)
+        - Data URIs: preserve as-is
+        - Plain base64: convert to data URI
+        """
+        # URL, return as-is (important for PiAPI!)
+        if data.startswith('http://') or data.startswith('https://'):
             return data
         
-        # URL, return as-is
-        if data.startswith('http://') or data.startswith('https://'):
+        # Already data URI (image or video)
+        data_uri_pattern = r'^data:(image|video)/(jpeg|jpg|png|gif|webp|bmp|mp4|avi|mov);base64,'
+        if re.match(data_uri_pattern, data, re.IGNORECASE):
             return data
         
         # Plain base64, add data URI prefix
@@ -436,12 +446,13 @@ class FaceSwapGateway:
             **kwargs: Provider-specific parameters
         """
         
-        # Validate inputs
-        target_valid, target_error = self._validate_input(target)
+        # Validate inputs based on media type
+        target_valid, target_error = self._validate_input(target, media_type)
         if not target_valid:
             return {"success": False, "error": target_error}
         
-        source_valid, source_error = self._validate_input(source)
+        # Source is always an image (face)
+        source_valid, source_error = self._validate_input(source, FaceSwapMediaType.IMAGE)
         if not source_valid:
             return {"success": False, "error": source_error}
         
