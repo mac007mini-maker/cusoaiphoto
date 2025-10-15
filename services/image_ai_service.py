@@ -472,10 +472,10 @@ class ImageAIService:
                 
                 def _run_replicate():
                     return replicate.run(
-                        "codeplugtech/face-swap:278a81e7ebb22db98bcba54de985d22cc1abeead2754eb1f2af717247be69b34",
+                        "easel/advanced-face-swap",
                         input={
-                            "input_image": target_uri,  # Template image
-                            "swap_image": source_uri    # User's face
+                            "target_image": target_uri,  # Template/background image
+                            "swap_image": source_uri      # User's face to swap in
                         }
                     )
                 
@@ -500,6 +500,13 @@ class ImageAIService:
                         "image": f"data:image/png;base64,{result_base64}",
                         "message": "Face swapped successfully",
                         "source": "replicate"
+                    }
+                else:
+                    print(f"⚠️ Replicate Face Swap returned no output")
+                    return {
+                        "success": False,
+                        "error": "Face swap failed: No output from AI service",
+                        "error_code": "NO_OUTPUT"
                     }
             
             except Exception as e:
