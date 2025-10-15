@@ -294,9 +294,41 @@ class HuggingfaceProxyHandler(SimpleHTTPRequestHandler):
             print(f"📤 [FACE_SWAP] Result: success={result.get('success')}")
             
             if result.get('success'):
-                self._set_headers(200)
-                self.wfile.write(json.dumps(result).encode())
-                print("✅ [FACE_SWAP] Response sent successfully")
+                # Download image from result_url and convert to base64 for Flutter
+                result_url = result.get('result_url')
+                if result_url:
+                    try:
+                        print(f"⬇️  [FACE_SWAP] Downloading result from: {result_url[:80]}...")
+                        import base64
+                        from urllib.request import urlopen
+                        
+                        with urlopen(result_url, timeout=30) as img_response:
+                            image_data = img_response.read()
+                            base64_image = base64.b64encode(image_data).decode('utf-8')
+                            
+                        # Return format Flutter expects
+                        flutter_response = {
+                            'success': True,
+                            'image': f'data:image/jpeg;base64,{base64_image}'
+                        }
+                        
+                        self._set_headers(200)
+                        self.wfile.write(json.dumps(flutter_response).encode())
+                        print("✅ [FACE_SWAP] Response sent successfully (base64)")
+                    except Exception as download_error:
+                        print(f"❌ [FACE_SWAP] Failed to download result: {download_error}")
+                        self._set_headers(500)
+                        self.wfile.write(json.dumps({
+                            'success': False,
+                            'error': f'Failed to download result: {str(download_error)}'
+                        }).encode())
+                else:
+                    # No result_url, return error
+                    self._set_headers(500)
+                    self.wfile.write(json.dumps({
+                        'success': False,
+                        'error': 'No result_url in response'
+                    }).encode())
             else:
                 self._set_headers(500)
                 self.wfile.write(json.dumps(result).encode())
