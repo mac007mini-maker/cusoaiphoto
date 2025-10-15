@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "987545828793",
+    "project_id": "viso-ai-photo-avatar",
+    "storage_bucket": "viso-ai-photo-avatar.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:987545828793:android:7c1fbb39b74255a4bb4a68",
+        "android_client_info": {
+          "package_name": "com.visoai.photoheadshot"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCbqiWSgg7FqVt3luFUerAibXk97lnxYaE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

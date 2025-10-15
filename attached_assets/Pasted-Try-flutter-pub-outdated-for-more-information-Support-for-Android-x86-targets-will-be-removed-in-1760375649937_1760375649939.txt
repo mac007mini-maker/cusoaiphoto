@@ -1,0 +1,77 @@
+Try `flutter pub outdated` for more information.
+Support for Android x86 targets will be removed in the next stable release after 3.27. See
+https://github.com/flutter/flutter/issues/157543 for details.
+Upgrading build.gradle
+lib/services/admob_app_open_service.dart:86:30: Error: Member not found: 'orientationPortrait'.
+      orientation: AppOpenAd.orientationPortrait,
+                             ^^^^^^^^^^^^^^^^^^^
+lib/services/admob_app_open_service.dart:86:7: Error: No named parameter with the name 'orientation'.
+      orientation: AppOpenAd.orientationPortrait,
+      ^^^^^^^^^^^
+/C:/Users/DELL/AppData/Local/Pub/Cache/hosted/pub.dev/google_mobile_ads-6.0.0/lib/src/ad_containers.dart:1420:23: Context: Found this candidate, but the arguments don't match.
+  static Future<void> load({
+                      ^^^^
+lib/components/bottom_navigation_with_ad.dart:66:28: Error: The getter 'currentPage' isn't defined for the class '_BottomNavigationWithAdState'.
+ - '_BottomNavigationWithAdState' is from 'package:viso_a_i_photo_avatar_headshot/components/bottom_navigation_with_ad.dart' ('lib/components/bottom_navigation_with_ad.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'currentPage'.        
+                    onTap: currentPage != 'homepage'
+                           ^^^^^^^^^^^
+lib/components/bottom_navigation_with_ad.dart:76:34: Error: The getter 'currentPage' isn't defined for the class '_BottomNavigationWithAdState'.
+ - '_BottomNavigationWithAdState' is from 'package:viso_a_i_photo_avatar_headshot/components/bottom_navigation_with_ad.dart' ('lib/components/bottom_navigation_with_ad.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'currentPage'.
+                          color: currentPage == 'homepage'
+                                 ^^^^^^^^^^^
+lib/components/bottom_navigation_with_ad.dart:85:40: Error: The getter 'currentPage' isn't defined for the class '_BottomNavigationWithAdState'.
+ - '_BottomNavigationWithAdState' is from 'package:viso_a_i_photo_avatar_headshot/components/bottom_navigation_with_ad.dart' ('lib/components/bottom_navigation_with_ad.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'currentPage'.        
+                                color: currentPage == 'homepage'
+                                       ^^^^^^^^^^^
+lib/components/bottom_navigation_with_ad.dart:100:28: Error: The getter 'currentPage' isn't defined for the class '_BottomNavigationWithAdState'.
+ - '_BottomNavigationWithAdState' is from 'package:viso_a_i_photo_avatar_headshot/components/bottom_navigation_with_ad.dart' ('lib/components/bottom_navigation_with_ad.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'currentPage'.        
+                    onTap: currentPage != 'aitools'
+                           ^^^^^^^^^^^
+lib/components/bottom_navigation_with_ad.dart:110:34: Error: The getter 'currentPage' isn't defined for the class '_BottomNavigationWithAdState'.
+ - '_BottomNavigationWithAdState' is from 'package:viso_a_i_photo_avatar_headshot/components/bottom_navigation_with_ad.dart' ('lib/components/bottom_navigation_with_ad.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'currentPage'.        
+                          color: currentPage == 'aitools'
+                                 ^^^^^^^^^^^
+lib/components/bottom_navigation_with_ad.dart:119:40: Error: The getter 'currentPage' isn't defined for the class '_BottomNavigationWithAdState'.
+ - '_BottomNavigationWithAdState' is from 'package:viso_a_i_photo_avatar_headshot/components/bottom_navigation_with_ad.dart' ('lib/components/bottom_navigation_with_ad.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'currentPage'.        
+                                color: currentPage == 'aitools'
+                                       ^^^^^^^^^^^
+lib/components/bottom_navigation_with_ad.dart:134:28: Error: The getter 'currentPage' isn't defined for the class '_BottomNavigationWithAdState'.
+ - '_BottomNavigationWithAdState' is from 'package:viso_a_i_photo_avatar_headshot/components/bottom_navigation_with_ad.dart' ('lib/components/bottom_navigation_with_ad.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'currentPage'.        
+                    onTap: currentPage != 'mine'
+                           ^^^^^^^^^^^
+lib/components/bottom_navigation_with_ad.dart:144:34: Error: The getter 'currentPage' isn't defined for the class '_BottomNavigationWithAdState'.
+ - '_BottomNavigationWithAdState' is from 'package:viso_a_i_photo_avatar_headshot/components/bottom_navigation_with_ad.dart' ('lib/components/bottom_navigation_with_ad.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'currentPage'.        
+                          color: currentPage == 'mine'
+                                 ^^^^^^^^^^^
+lib/components/bottom_navigation_with_ad.dart:153:40: Error: The getter 'currentPage' isn't defined for the class '_BottomNavigationWithAdState'.
+ - '_BottomNavigationWithAdState' is from 'package:viso_a_i_photo_avatar_headshot/components/bottom_navigation_with_ad.dart' ('lib/components/bottom_navigation_with_ad.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'currentPage'.        
+                                color: currentPage == 'mine'
+                                       ^^^^^^^^^^^
+Target kernel_snapshot_program failed: Exception
+
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileFlutterBuildDebug'.
+> Process 'command 'C:\msdk\flutter\bin\flutter.bat'' finished with non-zero exit value 1
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 2m 52s
+Running Gradle task 'assembleDebug'...                            172.6s
+Gradle task assembleDebug failed with exit code 1
+PS C:\7code\visoaiflow-backupvip1\visoaiflow-backup> 

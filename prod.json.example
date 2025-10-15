@@ -1,0 +1,17 @@
+{
+  "_comment": "Production configuration template - Copy to prod.json and fill in real values",
+  
+  "SUPABASE_URL": "https://your-project.supabase.co",
+  "SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.your_key_here",
+  
+  "HUGGINGFACE_TOKEN": "hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "REPLICATE_API_TOKEN": "r8_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  
+  "ADMOB_APP_ID_ANDROID": "ca-app-pub-XXXXXXXXXXXXXXXX~XXXXXXXXXX",
+  "ADMOB_APP_ID_IOS": "ca-app-pub-XXXXXXXXXXXXXXXX~XXXXXXXXXX",
+  "ADMOB_REWARDED_AD_UNIT_ID": "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX",
+  
+  "APPLOVIN_SDK_KEY": "your_applovin_sdk_key_here",
+  
+  "SUPPORT_EMAIL": "support@yourdomain.com"
+}

@@ -1,0 +1,3080 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+const _kLocaleStorageKey = '__locale_key__';
+
+class FFLocalizations {
+  FFLocalizations(this.locale);
+
+  final Locale locale;
+
+  static FFLocalizations of(BuildContext context) =>
+      Localizations.of<FFLocalizations>(context, FFLocalizations)!;
+
+  static List<String> languages() => [
+        'en',      // English
+        'es-419',  // Español (LatAm)
+        'pt-BR',   // Português (Brasil)
+        'fr',      // Français
+        'de',      // Deutsch
+        'it',      // Italiano
+        'ru',      // Русский
+        'tr',      // Türkçe
+        'ar',      // العربية
+        'fa',      // فارسی
+        'hi',      // हिन्दी
+        'id',      // Indonesia
+        'vi',      // Tiếng Việt
+        'th',      // ไทย
+        'ko',      // 한국어
+        'ja',      // 日本語
+        'zh-CN',   // 简体中文（中国）
+        'zh-TW',   // 繁體中文（臺灣/香港）
+        'pl',      // Polski
+        'nl',      // Nederlands
+      ];
+  
+  static Map<String, String> languageNames() => {
+        'en': 'English',
+        'es-419': 'Español (LatAm)',
+        'pt-BR': 'Português (Brasil)',
+        'fr': 'Français',
+        'de': 'Deutsch',
+        'it': 'Italiano',
+        'ru': 'Русский',
+        'tr': 'Türkçe',
+        'ar': 'العربية',
+        'fa': 'فارسی',
+        'hi': 'हिन्दी',
+        'id': 'Indonesia',
+        'vi': 'Tiếng Việt',
+        'th': 'ไทย',
+        'ko': '한국어',
+        'ja': '日本語',
+        'zh-CN': '简体中文（中国）',
+        'zh-TW': '繁體中文（臺灣/香港）',
+        'pl': 'Polski',
+        'nl': 'Nederlands',
+      };
+
+  static late SharedPreferences _prefs;
+  static Future initialize() async =>
+      _prefs = await SharedPreferences.getInstance();
+  static Future storeLocale(String locale) =>
+      _prefs.setString(_kLocaleStorageKey, locale);
+  static Locale? getStoredLocale() {
+    final locale = _prefs.getString(_kLocaleStorageKey);
+    return locale != null && locale.isNotEmpty ? createLocale(locale) : null;
+  }
+
+  String get languageCode => _normalizeLocaleCode(locale);
+  String? get languageShortCode =>
+      _languagesWithShortCode.contains(locale.toString())
+          ? '${locale.toString()}_short'
+          : null;
+  int get languageIndex => languages().contains(languageCode)
+      ? languages().indexOf(languageCode)
+      : 0;
+
+  String getText(String key) {
+    // Map new language codes to existing translations
+    String getTranslationKey(String code) {
+      // Map new locales to existing translation keys
+      if (code == 'es-419') return 'es';
+      if (code == 'pt-BR') return 'pt';
+      if (code == 'zh-CN') return 'zh_Hans';
+      if (code == 'zh-TW') return 'zh_Hant';
+      if (code == 'fr' || code == 'en') return code;
+      // All other languages fallback to English
+      return 'en';
+    }
+    
+    final translationKey = getTranslationKey(languageCode);
+    return (kTranslationsMap[key] ?? {})[translationKey] ?? '';
+  }
+
+  String getVariableText({
+    String? enText = '',
+    String? frText = '',
+    String? esText = '',
+    String? ptText = '',
+    String? zh_HansText = '',
+    String? zh_HantText = '',
+  }) {
+    // Map current language to available variable texts
+    switch (languageCode) {
+      case 'en':
+        return enText ?? '';
+      case 'fr':
+        return frText ?? enText ?? '';
+      case 'es-419':
+        return esText ?? enText ?? '';
+      case 'pt-BR':
+        return ptText ?? enText ?? '';
+      case 'zh-CN':
+        return zh_HansText ?? enText ?? '';
+      case 'zh-TW':
+        return zh_HantText ?? enText ?? '';
+      default:
+        // All other languages fallback to English
+        return enText ?? '';
+    }
+  }
+
+  static const Set<String> _languagesWithShortCode = {
+    'ar',
+    'az',
+    'ca',
+    'cs',
+    'da',
+    'de',
+    'dv',
+    'en',
+    'es',
+    'et',
+    'fi',
+    'fr',
+    'gr',
+    'he',
+    'hi',
+    'hu',
+    'it',
+    'km',
+    'ku',
+    'mn',
+    'ms',
+    'no',
+    'pt',
+    'ro',
+    'ru',
+    'rw',
+    'sv',
+    'th',
+    'uk',
+    'vi',
+  };
+}
+
+/// Used if the locale is not supported by GlobalMaterialLocalizations.
+class FallbackMaterialLocalizationDelegate
+    extends LocalizationsDelegate<MaterialLocalizations> {
+  const FallbackMaterialLocalizationDelegate();
+
+  @override
+  bool isSupported(Locale locale) => _isSupportedLocale(locale);
+
+  @override
+  Future<MaterialLocalizations> load(Locale locale) async =>
+      SynchronousFuture<MaterialLocalizations>(
+        const DefaultMaterialLocalizations(),
+      );
+
+  @override
+  bool shouldReload(FallbackMaterialLocalizationDelegate old) => false;
+}
+
+/// Used if the locale is not supported by GlobalCupertinoLocalizations.
+class FallbackCupertinoLocalizationDelegate
+    extends LocalizationsDelegate<CupertinoLocalizations> {
+  const FallbackCupertinoLocalizationDelegate();
+
+  @override
+  bool isSupported(Locale locale) => _isSupportedLocale(locale);
+
+  @override
+  Future<CupertinoLocalizations> load(Locale locale) =>
+      SynchronousFuture<CupertinoLocalizations>(
+        const DefaultCupertinoLocalizations(),
+      );
+
+  @override
+  bool shouldReload(FallbackCupertinoLocalizationDelegate old) => false;
+}
+
+class FFLocalizationsDelegate extends LocalizationsDelegate<FFLocalizations> {
+  const FFLocalizationsDelegate();
+
+  @override
+  bool isSupported(Locale locale) => _isSupportedLocale(locale);
+
+  @override
+  Future<FFLocalizations> load(Locale locale) =>
+      SynchronousFuture<FFLocalizations>(FFLocalizations(locale));
+
+  @override
+  bool shouldReload(FFLocalizationsDelegate old) => false;
+}
+
+Locale createLocale(String language) {
+  // Handle underscore format (zh_Hans, zh_Hant)
+  if (language.contains('_')) {
+    return Locale.fromSubtags(
+      languageCode: language.split('_').first,
+      scriptCode: language.split('_').last,
+    );
+  }
+  
+  // Handle hyphen format with country code (pt-BR, es-419, zh-CN, zh-TW)
+  if (language.contains('-')) {
+    final parts = language.split('-');
+    return Locale.fromSubtags(
+      languageCode: parts.first,
+      countryCode: parts.last,
+    );
+  }
+  
+  // Simple language code (en, fr, de, etc.)
+  return Locale(language);
+}
+
+/// Normalizes a Locale to a canonical hyphenated language code
+/// Maps bare language codes and script/regional variants to canonical forms
+String _normalizeLocaleCode(Locale locale) {
+  String localeStr = locale.toString();
+  
+  // Convert underscore to hyphen format first (e.g., pt_BR → pt-BR, zh_Hans → zh-Hans)
+  if (localeStr.contains('_')) {
+    final parts = localeStr.split('_');
+    if (parts.length == 2) {
+      localeStr = '${parts[0]}-${parts[1]}';
+    }
+  }
+  
+  // Map script-based Chinese locales
+  if (localeStr == 'zh-Hans') return 'zh-CN';
+  if (localeStr == 'zh-Hant') return 'zh-TW';
+  
+  // Special handling for locales with specific country codes
+  if (localeStr == 'es-419' || localeStr == 'pt-BR' || localeStr == 'zh-CN' || localeStr == 'zh-TW') {
+    return localeStr;  // Already canonical
+  }
+  
+  // Extract language code from regional variants
+  final languageCode = localeStr.split('-').first;
+  
+  // Map to canonical form based on language code
+  switch (languageCode) {
+    case 'en': return 'en';
+    case 'es': return 'es-419';  // All Spanish → Latin America
+    case 'pt': return 'pt-BR';   // All Portuguese → Brazil
+    case 'fr': return 'fr';
+    case 'de': return 'de';
+    case 'it': return 'it';
+    case 'ru': return 'ru';
+    case 'tr': return 'tr';
+    case 'ar': return 'ar';
+    case 'fa': return 'fa';
+    case 'hi': return 'hi';
+    case 'id': return 'id';
+    case 'vi': return 'vi';
+    case 'th': return 'th';
+    case 'ko': return 'ko';
+    case 'ja': return 'ja';
+    case 'zh': return 'zh-CN';   // Chinese → Simplified
+    case 'pl': return 'pl';
+    case 'nl': return 'nl';
+    default: return localeStr;   // Keep as-is if not in our 20 languages
+  }
+}
+
+bool _isSupportedLocale(Locale locale) {
+  final normalizedCode = _normalizeLocaleCode(locale);
+  return FFLocalizations.languages().contains(normalizedCode);
+}
+
+final kTranslationsMap = <Map<String, Map<String, String>>>[
+  // xPage
+  {
+    's76o46at': {
+      'en': 'Page Title',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '4fyb5wcw': {
+      'en': 'Home',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+  },
+  // intro1
+  {
+    '5vr6qb6h': {
+      'en': 'Skip',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'dku52jl8': {
+      'en': 'Time-Lapse Your Aging',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'yo5kjs7a': {
+      'en':
+          'Discover how you\'ll look through the years with our sophisticated aging simulation technology. Watch time unfold before your eyes.',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+  },
+  // intro2
+  {
+    'dkopdbx4': {
+      'en': '12:12',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'mgtuko3s': {
+      'en': 'Skip',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'vn3ajkqg': {
+      'en': 'Turn Photos into Art',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'dhja5uhp': {
+      'en':
+          'Transform ordinary photos into stunning artistic masterpieces. Choose from various art styles and watch your memories become works of art.',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+  },
+  // intro3
+  {
+    'si86lzn9': {
+      'en': '12:12',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'pevrmkld': {
+      'en': 'Skip',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '29cx66fh': {
+      'en': 'Retake for the Perfect Shot',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'qg2x7d4p': {
+      'en':
+          'Perfect your photos with multiple takes and AI-powered shot suggestions. Get the ideal angle, lighting, and composition every time.',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+  },
+  // iap
+  {
+    'h2ebdirp': {
+      'en': '✓',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'z6chkrg5': {
+      'en': 'Unlock to All Features',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'jkhdietn': {
+      'en': '✓',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'iwok46k8': {
+      'en': '200% Faster Processing',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'seppmb3n': {
+      'en': '✓',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'ux5f895l': {
+      'en': 'Unlimited Creations',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '3vmjbbm4': {
+      'en': '✓',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'dcso1d7r': {
+      'en': 'Priority Access to New Content',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '1r09deni': {
+      'en': '✓',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'drb7onff': {
+      'en': 'No Ads, No Watermarks',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '430pkjrq': {
+      'en': 'SAVE 89%',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'c681ywu9': {
+      'en': 'BEST VALUE',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'vi4oe15x': {
+      'en': 'Lifetime',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'l9jcat8m': {
+      'en': '1 purchase',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '2155qw6i': {
+      'en': '₫2,050,000',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '3jewgfk8': {
+      'en': 'SAVE 89%',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'c0klwosa': {
+      'en': '1 Year',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '840kt9z0': {
+      'en': '₫18153.85 / Week',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'emgjva9o': {
+      'en': '₫944,000',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'iwqo5nrt': {
+      'en': 'MOST POPULAR',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'avwlvojo': {
+      'en': '1 Week',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'jrs19x45': {
+      'en': '₫165,000',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '9hod8yyr': {
+      'en': 'Continue',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'h5lc2eux': {
+      'en': 'Auto-renewable. Cancel anytime.',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '3qvzpaio': {
+      'en': 'User Agreement',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'l4y3g6cw': {
+      'en': 'Privacy Policy',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '82jnj9ex': {
+      'en': 'Restore',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+  },
+  // homepage
+  {
+    'nyqsi9pt': {
+      'en': '11:31',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'qbbq2lyv': {
+      'en': '📶',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'ujtkc3vl': {
+      'en': '📶',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '8y55sw1u': {
+      'en': '90',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'o39yvtf1': {
+      'en': '🤖',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '4xthsfn2': {
+      'en': '👑 PRO',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'bnefgjdb': {
+      'en': 'Story',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'lfjh4b4p': {
+      'en': 'of Life',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'bi06aytv': {
+      'en': '5 y/o',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '2x5pig8q': {
+      'en': '65 y/o',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'b4c3bmg6': {
+      'en': 'AI Photo',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '678lyc24': {
+      'en': 'HD',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'mjhkp064': {
+      'en': 'HD Image',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'c4ceg4ap': {
+      'en': 'Fix Old Photo',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'cht4e1re': {
+      'en': 'Trending',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'ebqkn4hu': {
+      'en': '🔥',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '28hcxscj': {
+      'en': 'See All',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'xtpo88oo': {
+      'en': 'Ghostface',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '4vmwaeez': {
+      'en': 'Figurine',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '5rxsu4di': {
+      'en': 'Face Emoji',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'prqpj9vg': {
+      'en': 'Split',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'jpxelulr': {
+      'en': 'For You',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'i5x5z8md': {
+      'en': 'See All',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '79rfysak': {
+      'en': 'Cartoonify Yourself',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'z26pdxdm': {
+      'en': 'AI Muscle',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'sts19dig': {
+      'en': 'Oil Painting',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'g6oqstlx': {
+      'en': 'Sketch',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'wmch28pr': {
+      'en': 'Headshots',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'f5ny7u9a': {
+      'en': 'See All',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '3nwk716q': {
+      'en': 'LinkedIn Profile',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '3o0dpk3u': {
+      'en': 'Business',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    's6lqlfeo': {
+      'en': 'AI Portrait',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '0q56h1t1': {
+      'en': 'Top Hits',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'ht2ckdn5': {
+      'en': 'See All',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'f5s91fqr': {
+      'en': 'AI Hugs',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'n2ljtr1d': {
+      'en': 'Aging Video',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '8myd17kw': {
+      'en': 'Future Baby',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'pegvrdke': {
+      'en': 'Explore',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'jcqiwsyu': {
+      'en': 'See All',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'czf0z29a': {
+      'en': 'Change Hairstyle',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'tlwcxkzo': {
+      'en': 'AI Couples',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'f9eu9xu0': {
+      'en': 'Create Dating Pictures',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'vihzxsb7': {
+      'en': 'Do you want more styles?',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'pn45zj7w': {
+      'en': 'Tell us ✨',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'zcwewsfe': {
+      'en': 'Home',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'ak149osq': {
+      'en': 'AI Tools',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'urg50omo': {
+      'en': 'Mine',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'kbeiy4lk': {
+      'en': 'G',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '38qea1qb': {
+      'en': 'Grab (VN)',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'prkiu097': {
+      'en': 'Giao hàng & Di chuyển',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'a0jguut6': {
+      'en': 'Tải',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+  },
+  // aitools
+  {
+    'l5t05jco': {
+      'en': 'Improve Photo Quality',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'q81n29tl': {
+      'en': 'Generate dozens of styles with AI',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'wfnt6k9t': {
+      'en': 'Restore Old Photo',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'xg11uq4m': {
+      'en': 'Generate Your Photos with AI',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'fc4cbrjg': {
+      'en': 'Be Anyone with Face Swap',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '8ojph626': {
+      'en': 'AI Baby Generator',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'mdb00ohn': {
+      'en': '→',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'p4la9knw': {
+      'en': '5 y/o',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    's6mnanc6': {
+      'en': '65 y/o',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'h4itf4bu': {
+      'en': 'The Story of Life',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '9x927ud2': {
+      'en': 'Retake your photos for brighter, wide-open eyes!',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'wiojofhm': {
+      'en': '🤖',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'tzrm6d3s': {
+      'en': '👑 PRO',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'w2ee1kru': {
+      'en': 'Home',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'y2sjkcbb': {
+      'en': 'AI Tools',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '5mexffad': {
+      'en': 'Mine',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'jzfbn82h': {
+      'en': 'G',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '3g0odmfb': {
+      'en': 'Grab (VN)',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '3qz0512m': {
+      'en': 'Giao hàng & Di chuyển',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'kd6qi7j6': {
+      'en': 'Tải',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+  },
+  // mine
+  {
+    'fpk41qyu': {
+      'en': '11:43',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '4i6asvh4': {
+      'en': '🔇',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '8ptk1gge': {
+      'en': '📶',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'ndmli8iy': {
+      'en': '📱',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'qp3gl8e6': {
+      'en': '88',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'kqexsvj5': {
+      'en': '🤖',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'ttsna0qv': {
+      'en': '👑',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'r5zcgc05': {
+      'en': 'PRO',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'l3u231to': {
+      'en': 'Start Creating Now',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'hek6nvld': {
+      'en': 'Start experiencing the features to embark on your AI journey...',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'bvzx1lem': {
+      'en': 'Start Creating',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'm0kzj4q3': {
+      'en': 'Home',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'x8jjsyf5': {
+      'en': 'AI Tools',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '9z7xag22': {
+      'en': 'Mine',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'z0lv0v8x': {
+      'en': 'G',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '05kne4ab': {
+      'en': 'Grab (VN)',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    's90vxi00': {
+      'en': 'Giao hàng & Di chuyển',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'rqdhcc6u': {
+      'en': 'Tải',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+  },
+  // pro
+  {
+    '7r9o2y0a': {
+      'en': '10:21',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'hc0hjrzg': {
+      'en': '🔇',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'z12huouq': {
+      'en': '📶',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'jl478nzn': {
+      'en': '📶',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'r7mb00h4': {
+      'en': '📶',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'hwuxnbw3': {
+      'en': '82',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '8de8u8eh': {
+      'en': 'Restore',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'iw4hphiu': {
+      'en': 'Unlock to All Features',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'fed9cxw8': {
+      'en': '200% Faster Processing',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'mpvf33qt': {
+      'en': 'Unlimited Creations',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'f3xxwid4': {
+      'en': 'Priority Access to New Content',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'ojg5yxpr': {
+      'en': 'No Ads, No Watermarks',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'nt7yxkpn': {
+      'en': 'BEST VALUE',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'sqragmjw': {
+      'en': '∞',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'w1pj5yw8': {
+      'en': 'Lifetime\n1 purchase',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'b1j0s4jo': {
+      'en': '₫2,050,000',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'htaql7gf': {
+      'en': 'SAVE 89%',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'so51sj55': {
+      'en': '1',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'c9qw33rr': {
+      'en': 'Year\n₫18153.85 / Week',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'hsgsqr0o': {
+      'en': '₫944,000',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '4np2d21z': {
+      'en': 'MOST POPULAR',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'c4qzxubr': {
+      'en': '1',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '51y1t3k1': {
+      'en': 'Week',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'uxqsw0x2': {
+      'en': '₫165,000',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '6qgq3qxc': {
+      'en': 'Continue',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'zfpt22au': {
+      'en': 'Auto-renewable. Cancel anytime.',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'e6ng97k2': {
+      'en': 'User Agreement',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '7anzgjg8': {
+      'en': 'Privacy Policy',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'ppxep7o9': {
+      'en': 'G',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '2h44a1sv': {
+      'en': 'Grab (VN)',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'pbnkorxb': {
+      'en': 'Giao hàng & Di chuyển',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'nzcewqgi': {
+      'en': 'Tải',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+  },
+  // settings
+  {
+    'zyn1ia3y': {
+      'en': 'Unlimited Artwork Styles',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '4xq2h1kh': {
+      'en': 'Try Pro Now',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'x7q50ysa': {
+      'en': '👑',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'h1v7pqwe': {
+      'en': 'Share',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'mvzdzzj2': {
+      'en': 'Feedback',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'yrhjm7a5': {
+      'en': 'Language',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'bygomt0g': {
+      'en': 'About',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'te3zrkvj': {
+      'en': 'User Agreement',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'u64axgle': {
+      'en': 'Privacy Policy',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'txw2u4xk': {
+      'en': 'Community Guidelines',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'ozqjz4x2': {
+      'en': 'G',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'cd1yxosb': {
+      'en': 'Grab (VN)',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'o6gjj9in': {
+      'en': 'Giao hàng & Di chuyển',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '7ar5opex': {
+      'en': 'Tải',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'yaccc83t': {
+      'en': 'Settings',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+  },
+  // aiphoto
+  {
+    '6yfdm573': {
+      'en': 'Pick Your Gender',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'paeyjx5d': {
+      'en': 'We need this data to achieve better results',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '4g6sibri': {
+      'en': 'Female',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '0mqpvtoa': {
+      'en': 'Male',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'c3qh77pl': {
+      'en': 'Other',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'wjanzx72': {
+      'en': 'G',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'qe26t6bd': {
+      'en': 'Grab (VN)',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'ws7v8zgw': {
+      'en': 'Giao hàng & Di chuyển',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'c5vzyh53': {
+      'en': 'Tải',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+  },
+  // female
+  {
+    'w1hogxsb': {
+      'en': 'LinkedIn',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '97twp29f': {
+      'en': 'Suit',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '3tq6b0vv': {
+      'en': 'Office',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'y4in50vq': {
+      'en': 'Business',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '67u5bzb3': {
+      'en': 'Profile',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'glpql5p3': {
+      'en': 'Aesthetic',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'dxunp5bq': {
+      'en': 'G',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '3n6b5t52': {
+      'en': 'Grab (VN)',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'xx5rk0ly': {
+      'en': 'Giao hàng & Di chuyển',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'gk6arxxp': {
+      'en': 'Tải',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+  },
+  // male
+  {
+    'nwgu4s46': {
+      'en': 'LinkedIn',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'l3hhukk8': {
+      'en': 'Suit',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'm0c4gco1': {
+      'en': 'Office',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'dxqia2qv': {
+      'en': 'Business',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'zdatuo7c': {
+      'en': 'Profile',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '7u2x504x': {
+      'en': 'Aesthetic',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '5a6thgwc': {
+      'en': 'G',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'pgcy3ntk': {
+      'en': 'Grab (VN)',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'zu6fuozl': {
+      'en': 'Giao hàng & Di chuyển',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'sr35wnmy': {
+      'en': 'Tải',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+  },
+  // others
+  {
+    's2qt7f7e': {
+      'en': 'LinkedIn',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '17rs3p5c': {
+      'en': 'Suit',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'zic7jtsu': {
+      'en': 'Office',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'oy07yo7g': {
+      'en': 'Business',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '1rr3jku0': {
+      'en': 'Profile',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'bcmrwfy4': {
+      'en': 'Aesthetic',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '257s6rpn': {
+      'en': 'G',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'nm947b3j': {
+      'en': 'Grab (VN)',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'ftkeu2t3': {
+      'en': 'Giao hàng & Di chuyển',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '60l8k2ka': {
+      'en': 'Tải',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+  },
+  // fixoldphoto
+  {
+    'x56fi9fi': {
+      'en': 'Add Your Photo',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '5p1t8vtr': {
+      'en': 'Photos',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '0den3z0s': {
+      'en': 'Camera',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '1ehzgdj5': {
+      'en': 'Demo',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '2g2xyyzt': {
+      'en': 'Demo',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '7kz89dta': {
+      'en': 'G',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'r1o3gja7': {
+      'en': 'Grab (VN)',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'wsqd93ek': {
+      'en': 'Giao hàng & Di chuyển',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'py3my2xg': {
+      'en': 'Tải',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'iij9vkll': {
+      'en': 'Fix Old Photo',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+  },
+  // trending
+  {
+    'nj90yk7g': {
+      'en': 'Ghostface',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '620445iq': {
+      'en': 'Figurine',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'xbw110p8': {
+      'en': 'Face Emoji',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'ej8s9xdh': {
+      'en': 'Spirited Wind',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'mcb1ail7': {
+      'en': 'Baroque',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '1dfvjd6r': {
+      'en': 'Watercolor',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'tipfe2p5': {
+      'en': 'G',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'q8ijx9vn': {
+      'en': 'Grab (VN)',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '9ud37u5y': {
+      'en': 'Giao hàng & Di chuyển',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '66hv3eo6': {
+      'en': 'Tải',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '2goeex4g': {
+      'en': 'Renaissance',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'x0cf1lia': {
+      'en': 'Disney',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'x55qw6am': {
+      'en': 'Manga',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'vetbf1wu': {
+      'en': 'Trending🔥',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+  },
+  // hdphoto
+  {
+    '1nj6ysnn': {
+      'en': 'Add Your Photo',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '10bemckc': {
+      'en': 'Photos',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'qm3acxx2': {
+      'en': 'Camera',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '4bknjww4': {
+      'en': 'Demo',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'orx32wbb': {
+      'en': 'Demo',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'b1rt1d6i': {
+      'en': 'G',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'a6291tr5': {
+      'en': 'Grab (VN)',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'i7dhz0v9': {
+      'en': 'Giao hàng & Di chuyển',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '5dsv7tb7': {
+      'en': 'Tải',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'rv5au20w': {
+      'en': 'HD Image',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+  },
+  // foryou
+  {
+    '8gnh8uoh': {
+      'en': 'Cartoonify Yourself',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'pelctchy': {
+      'en': 'AI Muscle',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'u91lgj03': {
+      'en': 'Oil Painting',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'vq9a48xa': {
+      'en': 'Sketch',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '32t8fzb0': {
+      'en': 'Bikini',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'vpo3n1ge': {
+      'en': 'Comics',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '3xlfdcan': {
+      'en': 'Anime Maker',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '6do76rvc': {
+      'en': 'Manga',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'izybjec9': {
+      'en': 'Fantasy',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '8nbp9ghp': {
+      'en': 'Cyberpunk',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '2hmy4lrl': {
+      'en': 'Watercolor',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'qrub1mr2': {
+      'en': 'Vintage',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '7umpfe1j': {
+      'en': 'G',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'wt325zyu': {
+      'en': 'Grab (VN)',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'icyxv4s4': {
+      'en': 'Giao hàng & Di chuyển',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '6v5tvqk4': {
+      'en': 'Tải',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'cc79zlf0': {
+      'en': 'For You',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+  },
+  // headshots
+  {
+    'cycgr31w': {
+      'en': 'Headshots',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'tl8d6y8z': {
+      'en': 'LinkedIn Profile',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'vg016lf9': {
+      'en': 'Business',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'b6uzl8tr': {
+      'en': 'AI Portrait',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '6uz1m1xl': {
+      'en': 'G',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'ffwyy56l': {
+      'en': 'Grab (VN)',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'z0g0sm7q': {
+      'en': 'Giao hàng & Di chuyển',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '0v7uskok': {
+      'en': 'Tải',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'niiyokk6': {
+      'en': 'Headshots',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+  },
+  // tophits
+  {
+    '1as4x5k0': {
+      'en': 'AI Hugs',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'f1kw0sih': {
+      'en': 'Aging Video',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'y8wg15ll': {
+      'en': '+',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'c5eatk6g': {
+      'en': 'Future Baby',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '5uvqxoiz': {
+      'en': 'Friends',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'golnlf65': {
+      'en': 'Animate Photos',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'vbvf20fu': {
+      'en': 'MiniMe',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '9273g6ns': {
+      'en': 'Animal Toon',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'c36m2m1r': {
+      'en': '🏔️',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '627w5l9r': {
+      'en': 'MEX',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'bnymeyx1': {
+      'en': 'Sự kiến tiết kiếm PI',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '8es4dklu': {
+      'en': 'Đang hoạt động ở 668+ TG khu UT',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'egch5t1l': {
+      'en': 'Tham gia ngay',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'z4cb64ge': {
+      'en': 'G',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '7gypu0jd': {
+      'en': 'Grab (VN)',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'e0y1nt4t': {
+      'en': 'Giao hàng & Di chuyển',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'ej43zzjk': {
+      'en': 'Tải',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'c7hie7ul': {
+      'en': 'Top Hits',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+  },
+  // explore
+  {
+    'xecamt0n': {
+      'en': 'Change Hairstyle',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'rqkemwax': {
+      'en': 'AI Couples',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'b14n9p7o': {
+      'en': '💗',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '2s9bsy3r': {
+      'en': '💗',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'z5yjmgua': {
+      'en': 'Create Dating Pictures',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '435z9pxw': {
+      'en': 'Gender Swap',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'bqo30h8u': {
+      'en': 'Summer Vibes',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'q84q2ozp': {
+      'en': 'G',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'dfo4xu1h': {
+      'en': 'Grab (VN)',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '8g23uwcs': {
+      'en': 'Giao hàng & Di chuyển',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '2s9jx8b7': {
+      'en': 'Tải',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'iq6nhjt3': {
+      'en': 'Explore',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+  },
+  // swapface
+  {
+    '976q038j': {
+      'en': 'Add Your Photo',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '4um7gewp': {
+      'en': 'Photos',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'hs99l7v0': {
+      'en': 'Camera',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'roo897ka': {
+      'en': 'Demo',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '6dmilx6v': {
+      'en': 'Demo',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '4fx54lx6': {
+      'en': 'G',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'qa2yfhed': {
+      'en': 'Grab (VN)',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'aholz81p': {
+      'en': 'Giao hàng & Di chuyển',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'v2e1ngbk': {
+      'en': 'Tải',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'k7r6xlj9': {
+      'en': 'Ghostface',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+  },
+  // Miscellaneous
+  {
+    'rczv6mn9': {
+      'en': '',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'x7sn3fdn': {
+      'en': '',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'b879n0ro': {
+      'en': '',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'xxupmcif': {
+      'en': '',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'kh75xnbs': {
+      'en': '',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '8zwuppja': {
+      'en': '',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    's627org0': {
+      'en': '',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    't4oz9kue': {
+      'en': '',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'y6ocfxfu': {
+      'en': '',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'd7df8e17': {
+      'en': '',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'v52laq0x': {
+      'en': '',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '1cqscgcc': {
+      'en': '',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'tkwkvijq': {
+      'en': '',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '83p53z7t': {
+      'en': '',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'nm28h7og': {
+      'en': '',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'hh063z00': {
+      'en': '',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'rw9v7o5h': {
+      'en': '',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'zwz4cs7x': {
+      'en': '',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '15ibya3l': {
+      'en': '',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'njqrmjn4': {
+      'en': '',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'iurwd2t8': {
+      'en': '',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'fn3zvbv4': {
+      'en': '',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    'rk5wwwja': {
+      'en': '',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '9r57ky8g': {
+      'en': '',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+    '5fiaxff4': {
+      'en': '',
+      'es': '',
+      'fr': '',
+      'pt': '',
+      'zh_Hans': '',
+      'zh_Hant': '',
+    },
+  },
+].reduce((a, b) => a..addAll(b));
