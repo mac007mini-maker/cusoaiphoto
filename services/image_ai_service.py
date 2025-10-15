@@ -640,9 +640,9 @@ class ImageAIService:
                     async def _cleanup_result():
                         try:
                             result_path = await executor_future
-                            if result_path and os.path.exists(result_path):
+                            if result_path and isinstance(result_path, str) and os.path.exists(result_path):
                                 os.remove(result_path)
-                        except:
+                        except Exception:
                             pass
                     
                     # Fire and forget cleanup task
