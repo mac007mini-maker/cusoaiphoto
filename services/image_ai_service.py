@@ -487,21 +487,12 @@ class ImageAIService:
         result_path = None
         
         # Replicate Models (try in order with timeout)
+        # Only using verified working models as of Oct 2025
         replicate_models = [
-            {
-                "name": "yan-ops/face_swap",
-                "params": {"target_image": None, "source_image": None},
-                "timeout": 60
-            },
             {
                 "name": "easel/advanced-face-swap",
                 "params": {"target_image": None, "swap_image": None, "hair_source": "target"},
-                "timeout": 60
-            },
-            {
-                "name": "codeplugtech/face-swap",
-                "params": {"target_image": None, "source_image": None},
-                "timeout": 45
+                "timeout": 90
             }
         ]
         
@@ -517,7 +508,7 @@ class ImageAIService:
                 try:
                     model_name = model_config["name"]
                     timeout = model_config["timeout"]
-                    print(f"🚀 [REPLICATE {i}/3] Trying {model_name} (timeout={timeout}s)...")
+                    print(f"🚀 [REPLICATE {i}/{len(replicate_models)}] Trying {model_name} (timeout={timeout}s)...")
                     
                     # Map params for each model (different models use different param names)
                     params = model_config["params"].copy()
