@@ -481,17 +481,17 @@ class ImageAIService:
         # Replicate Models (try in order with timeout)
         replicate_models = [
             {
-                "name": "easel/advanced-face-swap",
-                "params": {"target_image": None, "swap_image": None},
+                "name": "yan-ops/face_swap",
+                "params": {"target_image": None, "source_image": None},
                 "timeout": 60
             },
             {
-                "name": "cdingram/face-swap", 
-                "params": {"input_image": None, "swap_image": None},
-                "timeout": 45
+                "name": "easel/advanced-face-swap",
+                "params": {"target_image": None, "swap_image": None, "hair_source": "target"},
+                "timeout": 60
             },
             {
-                "name": "omniedgeio/face-swap",
+                "name": "codeplugtech/face-swap",
                 "params": {"target_image": None, "source_image": None},
                 "timeout": 45
             }

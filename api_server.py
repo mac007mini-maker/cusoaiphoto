@@ -266,16 +266,30 @@ class HuggingfaceProxyHandler(SimpleHTTPRequestHandler):
             # Run async function in sync context
             result = asyncio.run(image_ai_service.face_swap(target_image, source_face))
             
-            if result and result.get('success'):
+            # Ensure result is a dict with proper structure
+            if not result or not isinstance(result, dict):
+                result = {
+                    'success': False,
+                    'error': 'Invalid response from face swap service'
+                }
+            
+            if result.get('success'):
                 self._set_headers(200)
                 self.wfile.write(json.dumps(result).encode())
             else:
                 self._set_headers(500)
                 self.wfile.write(json.dumps(result).encode())
                 
+        except json.JSONDecodeError as e:
+            print(f"❌ JSON decode error in face_swap: {e}")
+            self._set_headers(400)
+            self.wfile.write(json.dumps({'error': f'Invalid JSON: {str(e)}'}).encode())
         except Exception as e:
+            print(f"❌ Unexpected error in face_swap handler: {type(e).__name__}: {e}")
+            import traceback
+            traceback.print_exc()
             self._set_headers(500)
-            self.wfile.write(json.dumps({'error': str(e)}).encode())
+            self.wfile.write(json.dumps({'error': f'Server error: {str(e)}'}).encode())
 
     def log_message(self, format, *args):
         print(f"[API] {format % args}")
