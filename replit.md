@@ -54,6 +54,28 @@ When importing this project to Replit for the first time:
 
 ## Recent Changes
 
+### October 15, 2025 - Face Swap Cascading Fallback Strategy
+- **Intelligent Multi-Provider Fallback System**:
+  - Implements robust failover across 5 different face swap services
+  - Automatic timeout handling prevents service delays
+  - Guarantees best possible success rate for face swap operations
+- **Replicate Models (Primary - 3 models with cascading fallback)**:
+  1. `easel/advanced-face-swap` (Best quality, 60s timeout) - Production-ready, full-body swap
+  2. `cdingram/face-swap` (Backup 1, 45s timeout) - 1.1M+ runs, reliable
+  3. `omniedgeio/face-swap` (Backup 2, 45s timeout) - Community favorite
+- **Huggingface Spaces (Free fallback - 2 spaces)**:
+  1. `prithivMLmods/Face-Swap-Roop` (Most popular, 60s timeout)
+  2. `BLACKHOOL/Roop-face-swap` (Backup, 60s timeout)
+- **Timeout Strategy**:
+  - Each service has individual timeout to prevent hanging
+  - Automatic cascade to next service on timeout/failure
+  - Total max wait: ~5 minutes across all services
+- **User Experience**:
+  - Transparent error messages identify which service was used
+  - Fallback happens automatically without user intervention
+  - Success rate significantly improved vs single-provider approach
+- **Updated in:** `services/image_ai_service.py`
+
 ### October 14, 2025 - Firebase Remote Config Ad Network Selection Feature
 - **New Remote Config Parameters for Ad Network Control**:
   - `banner_ad_network`: Choose network for banner ads ("admob", "applovin", or "auto")

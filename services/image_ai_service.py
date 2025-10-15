@@ -55,10 +55,19 @@ class ImageAIService:
         """Initialize Face Swap Huggingface Space (backup)"""
         if not self.face_swap_client:
             try:
-                self.face_swap_client = Client("felixrosberg/face-swap")
+                # Using popular Roop-based Face Swap Space
+                self.face_swap_client = Client("prithivMLmods/Face-Swap-Roop")
             except Exception as e:
                 print(f"Failed to init Face Swap backup: {e}")
         return self.face_swap_client
+    
+    def _init_face_swap_backup2(self):
+        """Initialize Face Swap Huggingface Space backup 2"""
+        try:
+            return Client("BLACKHOOL/Roop-face-swap")
+        except Exception as e:
+            print(f"Failed to init Face Swap backup 2: {e}")
+            return None
     
     def _decode_base64_image(self, base64_str):
         """
@@ -452,93 +461,227 @@ class ImageAIService:
     async def face_swap(self, target_image_base64, source_face_base64):
         """
         Face Swap: Swap face from source onto target image
-        Primary: Replicate codeplugtech/face-swap (Only method)
+        CASCADING FALLBACK STRATEGY:
+        1. Replicate Models (with timeout):
+           - easel/advanced-face-swap (best quality, stable)
+           - cdingram/face-swap (backup 1, 1.1M+ runs)
+           - omniedgeio/face-swap (backup 2)
+        2. Huggingface Spaces (free fallback):
+           - prithivMLmods/Face-Swap-Roop (most popular)
+           - BLACKHOOL/Roop-face-swap (backup)
         
         Args:
             target_image_base64: Template/background image (base64)
             source_face_base64: User's face image to swap in (base64)
         """
-        # Try Replicate Face Swap (PRIMARY - ONLY METHOD)
+        temp_target = None
+        temp_source = None
+        result_path = None
+        
+        # Replicate Models (try in order with timeout)
+        replicate_models = [
+            {
+                "name": "easel/advanced-face-swap",
+                "params": {"target_image": None, "swap_image": None},
+                "timeout": 60
+            },
+            {
+                "name": "cdingram/face-swap", 
+                "params": {"input_image": None, "swap_image": None},
+                "timeout": 45
+            },
+            {
+                "name": "omniedgeio/face-swap",
+                "params": {"target_image": None, "source_image": None},
+                "timeout": 45
+            }
+        ]
+        
+        # Prepare data URIs once
+        target_bytes, target_ext = self._decode_base64_image(target_image_base64)
+        source_bytes, source_ext = self._decode_base64_image(source_face_base64)
+        target_uri = f"data:image/{target_ext};base64,{base64.b64encode(target_bytes).decode()}"
+        source_uri = f"data:image/{source_ext};base64,{base64.b64encode(source_bytes).decode()}"
+        
+        # Try Replicate Models (PRIMARY - CASCADE THROUGH MODELS)
         if self.replicate_token:
+            for i, model_config in enumerate(replicate_models, 1):
+                try:
+                    model_name = model_config["name"]
+                    timeout = model_config["timeout"]
+                    print(f"🚀 [REPLICATE {i}/3] Trying {model_name} (timeout={timeout}s)...")
+                    
+                    # Map params for each model (different models use different param names)
+                    params = model_config["params"].copy()
+                    if "target_image" in params:
+                        params["target_image"] = target_uri
+                    if "input_image" in params:
+                        params["input_image"] = target_uri
+                    if "swap_image" in params:
+                        params["swap_image"] = source_uri
+                    if "source_image" in params:
+                        params["source_image"] = source_uri
+                    
+                    def _run_replicate():
+                        return replicate.run(model_name, input=params)
+                    
+                    loop = asyncio.get_event_loop()
+                    
+                    # Try with timeout
+                    try:
+                        output = await asyncio.wait_for(
+                            loop.run_in_executor(None, _run_replicate),
+                            timeout=timeout
+                        )
+                        
+                        if output:
+                            print(f"📥 Downloading result from {model_name}...")
+                            
+                            def _download():
+                                response = requests.get(str(output), timeout=30)
+                                response.raise_for_status()
+                                return response.content
+                            
+                            content = await loop.run_in_executor(None, _download)
+                            result_base64 = base64.b64encode(content).decode()
+                            
+                            print(f"✅ Face Swap SUCCESS via {model_name}")
+                            return {
+                                "success": True,
+                                "image": f"data:image/png;base64,{result_base64}",
+                                "message": f"Face swapped successfully via {model_name}",
+                                "source": f"replicate:{model_name}"
+                            }
+                        else:
+                            print(f"⚠️ {model_name} returned no output, trying next model...")
+                            continue
+                    
+                    except asyncio.TimeoutError:
+                        print(f"⏱️ {model_name} timeout ({timeout}s), trying next model...")
+                        continue
+                
+                except Exception as e:
+                    print(f"⚠️ {model_config['name']} failed: {type(e).__name__}: {e}")
+                    print(f"🔄 Trying next model...")
+                    continue
+            
+            print(f"⚠️ All Replicate models failed or timed out, falling back to Huggingface...")
+        else:
+            print(f"⚠️ REPLICATE_API_TOKEN not configured, trying Huggingface backup...")
+        
+        # Fallback to Huggingface Spaces (BACKUP - CASCADE THROUGH SPACES)
+        huggingface_spaces = [
+            ("prithivMLmods/Face-Swap-Roop", self._init_face_swap_backup),
+            ("BLACKHOOL/Roop-face-swap", self._init_face_swap_backup2)
+        ]
+        
+        for i, (space_name, init_func) in enumerate(huggingface_spaces, 1):
+            temp_target_hf = None
+            temp_source_hf = None
+            executor_future = None
+            
             try:
-                print(f"🚀 [PRIMARY] Trying Replicate Face Swap...")
+                print(f"🔄 [HUGGINGFACE {i}/2] Trying {space_name}...")
                 
-                # Prepare data URIs
-                target_bytes, target_ext = self._decode_base64_image(target_image_base64)
-                source_bytes, source_ext = self._decode_base64_image(source_face_base64)
+                client = init_func()
+                if not client:
+                    print(f"⚠️ Failed to init {space_name}, trying next...")
+                    continue
                 
-                target_uri = f"data:image/{target_ext};base64,{base64.b64encode(target_bytes).decode()}"
-                source_uri = f"data:image/{source_ext};base64,{base64.b64encode(source_bytes).decode()}"
+                temp_target_hf = self._save_temp_image(target_image_base64)
+                temp_source_hf = self._save_temp_image(source_face_base64)
                 
-                def _run_replicate():
-                    return replicate.run(
-                        "easel/advanced-face-swap",
-                        input={
-                            "target_image": target_uri,  # Template/background image
-                            "swap_image": source_uri      # User's face to swap in
-                        }
+                def _predict():
+                    # Roop spaces: source_image (face), target_image (destination)
+                    return client.predict(
+                        temp_source_hf,  # Source face
+                        temp_target_hf,  # Target image
+                        api_name="/predict"
                     )
                 
                 loop = asyncio.get_event_loop()
-                output = await loop.run_in_executor(None, _run_replicate)
                 
-                if output:
-                    print(f"📥 Downloading face swap result from Replicate...")
+                # Submit to executor and track future
+                executor_future = loop.run_in_executor(None, _predict)
+                
+                # Try with 60s timeout
+                try:
+                    result_path_hf = await asyncio.wait_for(executor_future, timeout=60.0)
                     
-                    def _download():
-                        response = requests.get(str(output), timeout=60)
-                        response.raise_for_status()
-                        return response.content
+                    with open(result_path_hf, 'rb') as f:
+                        result_base64 = base64.b64encode(f.read()).decode()
                     
-                    content = await loop.run_in_executor(None, _download)
+                    print(f"✅ Face Swap SUCCESS via {space_name}")
                     
-                    result_base64 = base64.b64encode(content).decode()
-                    print(f"✅ Face Swap success via Replicate")
+                    # Cleanup before returning
+                    if temp_target_hf and os.path.exists(temp_target_hf):
+                        os.remove(temp_target_hf)
+                    if temp_source_hf and os.path.exists(temp_source_hf):
+                        os.remove(temp_source_hf)
+                    if result_path_hf and os.path.exists(result_path_hf):
+                        os.remove(result_path_hf)
                     
                     return {
                         "success": True,
                         "image": f"data:image/png;base64,{result_base64}",
-                        "message": "Face swapped successfully",
-                        "source": "replicate"
+                        "message": f"Face swapped successfully via {space_name}",
+                        "source": f"huggingface:{space_name}"
                     }
-                else:
-                    print(f"⚠️ Replicate Face Swap returned no output")
-                    return {
-                        "success": False,
-                        "error": "Face swap failed: No output from AI service",
-                        "error_code": "NO_OUTPUT"
-                    }
+                
+                except asyncio.TimeoutError:
+                    print(f"⏱️ {space_name} timeout (60s), trying next...")
+                    # Cleanup input temps immediately
+                    if temp_target_hf and os.path.exists(temp_target_hf):
+                        os.remove(temp_target_hf)
+                    if temp_source_hf and os.path.exists(temp_source_hf):
+                        os.remove(temp_source_hf)
+                    
+                    # Schedule cleanup of result file when executor finishes
+                    async def _cleanup_result():
+                        try:
+                            result_path = await executor_future
+                            if result_path and os.path.exists(result_path):
+                                os.remove(result_path)
+                        except:
+                            pass
+                    
+                    # Fire and forget cleanup task
+                    asyncio.create_task(_cleanup_result())
+                    continue
             
             except Exception as e:
-                error_msg = str(e)
-                print(f"⚠️ Replicate Face Swap failed: {type(e).__name__}: {e}")
-                
-                # User-friendly error messages
-                if "502" in error_msg or "Bad Gateway" in error_msg:
-                    return {
-                        "success": False,
-                        "error": "Face swap service temporarily unavailable. Please try again in a few moments.",
-                        "error_code": "SERVICE_UNAVAILABLE"
-                    }
-                elif "429" in error_msg or "rate limit" in error_msg.lower():
-                    return {
-                        "success": False,
-                        "error": "Too many requests. Please wait a moment and try again.",
-                        "error_code": "RATE_LIMIT"
-                    }
-                else:
-                    return {
-                        "success": False,
-                        "error": f"Face swap failed: {error_msg}",
-                        "error_code": "REPLICATE_ERROR"
-                    }
-        else:
-            print(f"⚠️ REPLICATE_API_TOKEN not configured")
-            return {
-                "success": False,
-                "error": "Face swap service not configured. Please contact support.",
-                "error_code": "NOT_CONFIGURED"
-            }
+                print(f"⚠️ {space_name} failed: {type(e).__name__}: {e}")
+                print(f"🔄 Trying next space...")
+                # Cleanup before continue
+                if temp_target_hf and os.path.exists(temp_target_hf):
+                    try:
+                        os.remove(temp_target_hf)
+                    except:
+                        pass
+                if temp_source_hf and os.path.exists(temp_source_hf):
+                    try:
+                        os.remove(temp_source_hf)
+                    except:
+                        pass
+                continue
+        
+        # All services failed - cleanup and return error
+        if temp_target and os.path.exists(temp_target):
+            try:
+                os.remove(temp_target)
+            except:
+                pass
+        if temp_source and os.path.exists(temp_source):
+            try:
+                os.remove(temp_source)
+            except:
+                pass
+        
+        return {
+            "success": False,
+            "error": "All face swap services (Replicate + Huggingface) failed or timed out. Please try again later.",
+            "error_code": "ALL_SERVICES_FAILED"
+        }
 
 # Global service instance
 image_ai_service = ImageAIService()
