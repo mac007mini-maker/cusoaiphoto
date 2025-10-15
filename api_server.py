@@ -265,7 +265,7 @@ class HuggingfaceProxyHandler(SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps({'error': str(e)}).encode())
     
     def handle_face_swap(self):
-        """Face Swap using Replicate/Huggingface"""
+        """Face Swap using Multi-Provider Gateway (PiAPI → Replicate)"""
         try:
             content_length = int(self.headers['Content-Length'])
             post_data = self.rfile.read(content_length)
@@ -279,15 +279,12 @@ class HuggingfaceProxyHandler(SimpleHTTPRequestHandler):
                 self.wfile.write(json.dumps({'error': 'Both target_image and source_face required'}).encode())
                 return
             
-            # Run async function in sync context
-            result = asyncio.run(image_ai_service.face_swap(target_image, source_face))
-            
-            # Ensure result is a dict with proper structure
-            if not result or not isinstance(result, dict):
-                result = {
-                    'success': False,
-                    'error': 'Invalid response from face swap service'
-                }
+            # Use new multi-provider gateway (PiAPI primary, Replicate fallback)
+            result = asyncio.run(face_swap_gateway.swap_face(
+                target=target_image,
+                source=source_face,
+                media_type=FaceSwapMediaType.IMAGE
+            ))
             
             if result.get('success'):
                 self._set_headers(200)
