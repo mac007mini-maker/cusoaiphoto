@@ -354,16 +354,22 @@ class FaceSwapGateway:
         self.replicate_token = os.environ.get('REPLICATE_API_TOKEN')
         self.piapi_key = os.environ.get('PIAPI_API_KEY')
         
-        # Initialize providers
+        # Initialize providers (PiAPI first for production stability)
         self.providers: List[FaceSwapProvider] = []
         
-        if self.replicate_token:
-            self.providers.append(ReplicateProvider(self.replicate_token))
-        
+        # PiAPI PRIMARY (99.9% SLA, enterprise-grade)
         if self.piapi_key:
             self.providers.append(PiAPIProvider(self.piapi_key))
+            print("✅ PiAPI provider enabled (PRIMARY - 99.9% uptime SLA)")
+        
+        # Replicate FALLBACK (cheaper but less stable)
+        if self.replicate_token:
+            self.providers.append(ReplicateProvider(self.replicate_token))
+            print("✅ Replicate provider enabled (FALLBACK - budget option)")
         
         print(f"🔌 Face Swap Gateway initialized with {len(self.providers)} provider(s)")
+        if len(self.providers) > 1:
+            print(f"📊 Provider priority: {' → '.join([p.get_name() for p in self.providers])}")
     
     def _validate_input(self, data: str, media_type: FaceSwapMediaType = FaceSwapMediaType.IMAGE) -> Tuple[bool, Optional[str]]:
         """
