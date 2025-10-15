@@ -1,5 +1,6 @@
 name: viso_a_i_photo_avatar_headshot
 description: Create studio-grade AI headshots & avatars in minutes. 60+ styles
+version: 1.0.0+1
 
 environment:
   sdk: '>=3.8.0 <4.0.0'
