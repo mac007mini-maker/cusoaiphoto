@@ -6,6 +6,52 @@ Viso AI is a Flutter-based application for creating studio-grade AI headshots an
 ## User Preferences
 None documented yet.
 
+## Replit Setup Instructions
+
+### Fresh Import Setup (First Time)
+
+When importing this project to Replit for the first time:
+
+1. **Install System Dependencies:**
+   - The project will automatically install `unzip` via Replit packages
+   
+2. **Install Flutter SDK:**
+   ```bash
+   bash setup_flutter.sh
+   ```
+   This script automatically:
+   - Clones Flutter stable from GitHub
+   - Initializes the Flutter toolchain
+   - Sets up the correct PATH
+
+3. **Install Python Dependencies:**
+   Python dependencies are managed via `uv` and will auto-install:
+   - gradio_client
+   - Pillow
+   - replicate
+   - requests
+
+4. **Configure Secrets:**
+   Add these API keys via Replit Secrets tool:
+   - `SUPABASE_URL`: Your Supabase project URL
+   - `SUPABASE_ANON_KEY`: Your Supabase anonymous key
+   - `HUGGINGFACE_TOKEN`: Your Huggingface API token
+   - `REPLICATE_API_TOKEN`: Your Replicate API token
+
+5. **Start the Application:**
+   The workflow is configured to run `bash start_server.sh` which:
+   - Checks for Flutter SDK (runs setup if needed)
+   - Builds Flutter web app (first run takes 5-10 minutes)
+   - Starts Python backend on port 5000
+   - Serves the complete application
+
+### Deployment Configuration
+
+- **Deployment Type:** VM (always-on server)
+- **Port:** 5000 (frontend + backend combined)
+- **Run Command:** `bash start_server.sh`
+- **Output:** Webview (displays the Flutter web app)
+
 ## Recent Changes
 
 ### October 14, 2025 - Firebase Remote Config Ad Network Selection Feature

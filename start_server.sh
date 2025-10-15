@@ -3,11 +3,35 @@
 # Start script for Viso AI - Photo Avatar Headshot App
 # This script handles Flutter web build and starts the Python backend server
 
+# Exit on critical errors
 set -e
 
-export PATH="/home/runner/flutter/bin:$PATH"
+# Setup Flutter SDK
+FLUTTER_DIR="/home/runner/flutter"
+if [ ! -x "$FLUTTER_DIR/bin/flutter" ]; then
+    echo "⚠️  Flutter SDK not found. Running setup..."
+    if ! bash setup_flutter.sh; then
+        echo "❌ Flutter SDK setup failed. Cannot continue."
+        echo "📝 Please check the logs and run: bash setup_flutter.sh"
+        exit 1
+    fi
+fi
+
+# Verify Flutter is now available
+if [ ! -x "$FLUTTER_DIR/bin/flutter" ]; then
+    echo "❌ Flutter SDK still not available after setup. Aborting."
+    exit 1
+fi
+
+export PATH="$FLUTTER_DIR/bin:$PATH"
+
+# Don't exit on non-critical errors after this point (for Flutter build timeout handling)
+set +e
 
 echo "🚀 Starting Viso AI Setup..."
+
+# Ensure build directory exists
+mkdir -p build/web
 
 # Check if Flutter web build exists
 if [ ! -f "build/web/index.html" ]; then
