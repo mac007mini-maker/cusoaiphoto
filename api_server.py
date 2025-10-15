@@ -267,6 +267,7 @@ class HuggingfaceProxyHandler(SimpleHTTPRequestHandler):
     def handle_face_swap(self):
         """Face Swap using Multi-Provider Gateway (PiAPI → Replicate)"""
         try:
+            print("📥 [FACE_SWAP] Received request")
             content_length = int(self.headers['Content-Length'])
             post_data = self.rfile.read(content_length)
             data = json.loads(post_data.decode('utf-8'))
@@ -274,24 +275,32 @@ class HuggingfaceProxyHandler(SimpleHTTPRequestHandler):
             target_image = data.get('target_image', '')  # Template image
             source_face = data.get('source_face', '')    # User's face
             
+            print(f"🖼️  [FACE_SWAP] Target: {target_image[:50]}...")
+            print(f"👤 [FACE_SWAP] Source: {source_face[:50]}...")
+            
             if not target_image or not source_face:
                 self._set_headers(400)
                 self.wfile.write(json.dumps({'error': 'Both target_image and source_face required'}).encode())
                 return
             
             # Use new multi-provider gateway (PiAPI primary, Replicate fallback)
+            print("🚀 [FACE_SWAP] Calling gateway...")
             result = asyncio.run(face_swap_gateway.swap_face(
                 target=target_image,
                 source=source_face,
                 media_type=FaceSwapMediaType.IMAGE
             ))
             
+            print(f"📤 [FACE_SWAP] Result: success={result.get('success')}")
+            
             if result.get('success'):
                 self._set_headers(200)
                 self.wfile.write(json.dumps(result).encode())
+                print("✅ [FACE_SWAP] Response sent successfully")
             else:
                 self._set_headers(500)
                 self.wfile.write(json.dumps(result).encode())
+                print(f"⚠️  [FACE_SWAP] Error response sent: {result.get('error', 'Unknown')[:100]}")
                 
         except json.JSONDecodeError as e:
             print(f"❌ JSON decode error in face_swap: {e}")
