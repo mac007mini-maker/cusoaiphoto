@@ -71,11 +71,11 @@ class FaceSwapProvider(ABC):
 class ReplicateProvider(FaceSwapProvider):
     """Replicate face swap provider with version pinning"""
     
-    # Version-pinned models for stability
+    # Version-pinned models for stability (updated 2025-10-15)
     MODELS = {
         "easel": {
             "name": "easel/advanced-face-swap",
-            "version": None,  # Use latest
+            "version": None,  # Use latest (April 2025)
             "params": {
                 "target_image": None,
                 "swap_image": None,
@@ -84,11 +84,12 @@ class ReplicateProvider(FaceSwapProvider):
             "timeout": 90,
             "priority": 1
         },
-        "cdingram": {
-            "name": "cdingram/face-swap",
-            "version": None,  # Use latest
+        "omniedge": {
+            "name": "omniedgeio/face-swap",
+            "version": None,  # Active alternative
             "params": {
                 "input_image": None,
+                "target_image": None,
                 "swap_image": None
             },
             "timeout": 60,
@@ -253,8 +254,9 @@ class PiAPIProvider(FaceSwapProvider):
                 }
             
             headers = {
-                "x-api-key": self.api_key,
-                "Content-Type": "application/json"
+                "X-API-Key": self.api_key,
+                "Content-Type": "application/json",
+                "Accept": "application/json"
             }
             
             def _create_task():
