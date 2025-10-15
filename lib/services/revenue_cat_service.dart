@@ -115,10 +115,24 @@ class RevenueCatService {
     
     if (offerings?.current == null) {
       debugPrint('⚠️ No offerings available');
+      debugPrint('💡 TIP: To fix this on iOS:');
+      debugPrint('   1. Open Xcode → Product → Scheme → Edit Scheme');
+      debugPrint('   2. Run → Options → StoreKit Configuration → Select Configuration.storekit');
+      debugPrint('   3. Clean build and re-run');
+      debugPrint('💡 TIP: To fix this on Android:');
+      debugPrint('   1. Setup products in Google Play Console');
+      debugPrint('   2. Link RevenueCat to Google Play');
+      debugPrint('   3. Add product IDs to RevenueCat dashboard');
       return [];
     }
 
     final packages = offerings!.current!.availablePackages;
+    
+    // Debug: Print all packages
+    debugPrint('📦 Available packages (${packages.length}):');
+    for (var pkg in packages) {
+      debugPrint('   - ${pkg.identifier}: ${pkg.storeProduct.priceString} (${pkg.packageType})');
+    }
     
     // Sort packages: Lifetime → Yearly → Weekly
     packages.sort((a, b) {
