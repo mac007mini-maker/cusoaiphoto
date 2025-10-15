@@ -637,16 +637,16 @@ class ImageAIService:
                         os.remove(temp_source_hf)
                     
                     # Schedule cleanup of result file when executor finishes
-                    async def _cleanup_result():
+                    async def _cleanup_result(future):
                         try:
-                            result_path = await executor_future
+                            result_path = await future
                             if result_path and isinstance(result_path, str) and os.path.exists(result_path):
                                 os.remove(result_path)
                         except Exception:
                             pass
                     
                     # Fire and forget cleanup task
-                    asyncio.create_task(_cleanup_result())
+                    asyncio.create_task(_cleanup_result(executor_future))
                     continue
             
             except Exception as e:
