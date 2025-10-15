@@ -160,11 +160,31 @@ class ReplicateProvider(FaceSwapProvider):
                     timeout=last_timeout
                 )
                 
+                # Debug: Print output type and content
+                print(f"🔍 [REPLICATE] Output type: {type(output).__name__}")
+                print(f"🔍 [REPLICATE] Output content: {output}")
+                
                 if output:
-                    print(f"✅ [REPLICATE] Success via {last_model_name}")
+                    # Handle different output types
+                    result_url = None
+                    
+                    # If output is a list, get first item
+                    if isinstance(output, list) and len(output) > 0:
+                        result_url = str(output[0])
+                        print(f"📋 [REPLICATE] List output, using first item: {result_url}")
+                    # If output is a FileOutput object, get url attribute
+                    elif hasattr(output, 'url'):
+                        result_url = str(output.url)  # type: ignore
+                        print(f"📎 [REPLICATE] FileOutput, using .url: {result_url}")
+                    # Otherwise convert to string
+                    else:
+                        result_url = str(output)
+                        print(f"📝 [REPLICATE] Direct string conversion: {result_url}")
+                    
+                    print(f"✅ [REPLICATE] Success via {last_model_name}, URL: {result_url[:100]}...")
                     return {
                         "success": True,
-                        "result_url": str(output),
+                        "result_url": result_url,
                         "message": f"Face swap completed via {last_model_name}",
                         "provider": self.get_name(),
                         "model": last_model_name

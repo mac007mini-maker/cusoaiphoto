@@ -307,20 +307,32 @@ class HuggingfaceProxyHandler(SimpleHTTPRequestHandler):
                         with urlopen(req, timeout=30) as img_response:
                             # Check HTTP status
                             status_code = img_response.getcode()
-                            content_type = img_response.headers.get('Content-Type', '')
+                            content_type = img_response.headers.get('Content-Type', '').lower()
+                            content_length = img_response.headers.get('Content-Length', 'unknown')
                             
-                            print(f"📊 [FACE_SWAP] Response: {status_code}, Content-Type: {content_type}")
+                            print(f"📊 [FACE_SWAP] HTTP {status_code}, Type: {content_type}, Size: {content_length}")
                             
                             # Validate response is actually an image
                             if status_code != 200:
                                 raise Exception(f"HTTP {status_code} from result URL")
                             
-                            if not content_type.startswith('image/'):
-                                raise Exception(f"Invalid content type: {content_type} (expected image/*)")
+                            # Check content type (some CDNs return application/octet-stream for images)
+                            valid_types = ['image/', 'application/octet-stream', 'binary/octet-stream']
+                            is_valid_type = any(content_type.startswith(t) for t in valid_types)
                             
-                            # Download and encode
-                            image_data = img_response.read()
+                            if not is_valid_type and content_type:
+                                # Try to read a bit to see if it's HTML
+                                sample = img_response.read(1000)
+                                if sample.startswith(b'<!DOCTYPE') or sample.startswith(b'<html'):
+                                    raise Exception(f"Got HTML page instead of image (Content-Type: {content_type})")
+                                # Read rest and combine
+                                image_data = sample + img_response.read()
+                            else:
+                                # Download full image
+                                image_data = img_response.read()
+                                
                             base64_image = base64.b64encode(image_data).decode('utf-8')
+                            print(f"✅ [FACE_SWAP] Downloaded {len(image_data)} bytes")
                             
                         # Return format Flutter expects
                         flutter_response = {
