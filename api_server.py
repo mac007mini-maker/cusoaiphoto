@@ -266,7 +266,7 @@ class HuggingfaceProxyHandler(SimpleHTTPRequestHandler):
             # Run async function in sync context
             result = asyncio.run(image_ai_service.face_swap(target_image, source_face))
             
-            if result['success']:
+            if result and result.get('success'):
                 self._set_headers(200)
                 self.wfile.write(json.dumps(result).encode())
             else:
