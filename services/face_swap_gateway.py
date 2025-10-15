@@ -356,18 +356,18 @@ class FaceSwapGateway:
         self.replicate_token = os.environ.get('REPLICATE_API_TOKEN')
         self.piapi_key = os.environ.get('PIAPI_API_KEY')
         
-        # Initialize providers (PiAPI first for production stability)
+        # Initialize providers (Replicate first to save credits)
         self.providers: List[FaceSwapProvider] = []
         
-        # PiAPI PRIMARY (99.9% SLA, enterprise-grade)
-        if self.piapi_key:
-            self.providers.append(PiAPIProvider(self.piapi_key))
-            print("✅ PiAPI provider enabled (PRIMARY - 99.9% uptime SLA)")
-        
-        # Replicate FALLBACK (cheaper but less stable)
+        # Replicate PRIMARY (cheaper, stable models)
         if self.replicate_token:
             self.providers.append(ReplicateProvider(self.replicate_token))
-            print("✅ Replicate provider enabled (FALLBACK - budget option)")
+            print("✅ Replicate provider enabled (PRIMARY - budget-friendly)")
+        
+        # PiAPI FALLBACK (99.9% SLA, enterprise-grade)
+        if self.piapi_key:
+            self.providers.append(PiAPIProvider(self.piapi_key))
+            print("✅ PiAPI provider enabled (FALLBACK - 99.9% uptime SLA)")
         
         print(f"🔌 Face Swap Gateway initialized with {len(self.providers)} provider(s)")
         if len(self.providers) > 1:

@@ -300,9 +300,25 @@ class HuggingfaceProxyHandler(SimpleHTTPRequestHandler):
                     try:
                         print(f"⬇️  [FACE_SWAP] Downloading result from: {result_url[:80]}...")
                         import base64
-                        from urllib.request import urlopen
+                        from urllib.request import urlopen, Request
                         
-                        with urlopen(result_url, timeout=30) as img_response:
+                        # Use Request to get response info
+                        req = Request(result_url)
+                        with urlopen(req, timeout=30) as img_response:
+                            # Check HTTP status
+                            status_code = img_response.getcode()
+                            content_type = img_response.headers.get('Content-Type', '')
+                            
+                            print(f"📊 [FACE_SWAP] Response: {status_code}, Content-Type: {content_type}")
+                            
+                            # Validate response is actually an image
+                            if status_code != 200:
+                                raise Exception(f"HTTP {status_code} from result URL")
+                            
+                            if not content_type.startswith('image/'):
+                                raise Exception(f"Invalid content type: {content_type} (expected image/*)")
+                            
+                            # Download and encode
                             image_data = img_response.read()
                             base64_image = base64.b64encode(image_data).decode('utf-8')
                             
