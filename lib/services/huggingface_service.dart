@@ -5,9 +5,8 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 class HuggingfaceService {
   // API base URL from environment variable or fallback to Railway production domain
-  // TODO: After deploying to Railway, replace this with your actual Railway domain
-  // Format: your-project-name-production.up.railway.app
-  static const String _defaultApiDomain = '8bf1f206-1bbf-468e-94c3-c805a85c0cc0-00-3pryuqwgngpev.sisko.replit.dev';  // Temporary: using Replit until Railway deployed
+  // Railway domain: web-production-a7698.up.railway.app (STABLE - never changes!)
+  static const String _defaultApiDomain = 'web-production-a7698.up.railway.app';
   static const String _apiDomain = String.fromEnvironment('API_DOMAIN', defaultValue: _defaultApiDomain);
   
   static String get baseUrl {
