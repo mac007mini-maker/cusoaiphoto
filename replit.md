@@ -4,6 +4,8 @@
 Viso AI is a Flutter-based application designed for creating studio-grade AI headshots and avatars. It offers advanced photo enhancement, face swapping, and various AI-driven transformations to produce high-quality, stylized digital images. The project addresses the growing market demand for personalized digital content and AI-powered image manipulation.
 
 ## Recent Changes
+- **2025-10-16**: ✅ **Production Backend: Railway Only**: User migrated from Vercel → Railway Hobby ($5/mo) for stable 300s timeout. Local Replit backend (`api_server.py`) deprecated - Railway (`api/index.py`) is SOLE production backend.
+- **2025-10-16**: 🔧 **Fixed Face Swap Response Format**: Changed response field from `'result'` → `'image'` (base64) in `api/index.py` for Flutter compatibility. Local `api_server.py` not updated (deprecated).
 - **2025-10-16**: ✅ **Railway Production Deployed!**: Backend live at `web-production-a7698.up.railway.app` with 300s timeout. Flutter app updated to use Railway domain. Simplified config (removed nixpacks.toml, auto-detection works perfectly).
 - **2025-10-16**: 🚂 **Railway Deployment Ready**: Created Railway config files (Procfile, railway.toml, railway_app.py) and complete setup guide (RAILWAY_SETUP.md). Railway Hobby ($5/mo) provides 300s timeout - perfect for face swap (30-120s).
 - **2025-10-16**: Added gunicorn to requirements.txt for production WSGI server
@@ -46,7 +48,9 @@ Built with Flutter 3.32.0 (Dart 3.8.0), Viso AI integrates with a Python Flask b
 Supabase is used for backend services, covering authentication, database management, and storage. AI functionalities are primarily powered by Huggingface Spaces and Replicate APIs, accessed via a Python Flask proxy server. Face swap templates are dynamically loaded from Supabase Storage, facilitating automated discovery and management.
 
 **Production Deployment Strategy:**
-- **Backend**: ✅ **Railway Hobby ($5/mo)** - LIVE at `web-production-a7698.up.railway.app` with 300s timeout, perfect for AI operations. Container 24/7, no cold start, stable domain.
+- **Backend**: ✅ **Railway Hobby ($5/mo) ONLY** - LIVE at `web-production-a7698.up.railway.app` with 300s timeout, perfect for AI operations. Container 24/7, no cold start, stable domain.
+  - Production: `api/index.py` → `railway_app.py` (Flask + Gunicorn)
+  - Local Dev: `api_server.py` (DEPRECATED - not maintained, Railway is sole production backend)
 - **Database/Auth/Storage**: Supabase (as current)
 - **Mobile**: Flutter APK with `--split-per-abi` optimization (reduces from 200MB to 40-60MB per APK)
 - **Web**: Flutter web served from Replit (development) or static hosting (production)
@@ -55,6 +59,18 @@ Supabase is used for backend services, covering authentication, database managem
 - Railway: 300s timeout, container 24/7, $5/mo - ✅ **DEPLOYED & WORKING**
 - Vercel Free: 10s timeout (insufficient for face swap 30-120s)
 - Vercel Pro Max: 300s timeout, $40/mo (8x more expensive than Railway)
+
+**Backend Architecture (Production):**
+```
+Users → Railway (web-production-a7698.up.railway.app)
+         ├─ api/index.py (Flask endpoints) ✅
+         ├─ railway_app.py (WSGI entry) ✅
+         ├─ services/face_swap_gateway.py (Multi-provider)
+         └─ Gunicorn (Production WSGI server)
+         
+[Local Replit - DEPRECATED, NOT USED]
+         └─ api_server.py (dev only, not maintained)
+```
 
 ## External Dependencies
 
