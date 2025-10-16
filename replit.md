@@ -4,10 +4,11 @@
 Viso AI is a Flutter-based application designed for creating studio-grade AI headshots and avatars. It offers advanced photo enhancement, face swapping, and various AI-driven transformations to produce high-quality, stylized digital images. The project addresses the growing market demand for personalized digital content and AI-powered image manipulation.
 
 ## Recent Changes
-- **2025-10-16**: ⚠️ **Reverted to Replit Backend**: Vercel free tier has 10s timeout limit, insufficient for face swap (requires 30-120s). Using Replit for development/testing due to no timeout restrictions.
+- **2025-10-16**: 🚂 **Railway Deployment Ready**: Created Railway config files (Procfile, railway.toml, railway_app.py) and complete setup guide (RAILWAY_SETUP.md). Railway Hobby ($5/mo) provides 300s timeout - perfect for face swap (30-120s).
+- **2025-10-16**: Added gunicorn to requirements.txt for production WSGI server
 - **2025-10-16**: Fixed null handling in faceSwap API response to prevent type errors
-- **2025-10-16**: Attempted Vercel deployment but discovered serverless timeout limitations for long-running AI operations
-- **2025-10-16**: Fixed replicate package version to 1.0.7 in requirements.txt for Vercel compatibility
+- **2025-10-16**: Attempted Vercel deployment but discovered serverless timeout limitations (10s free tier, insufficient for face swap)
+- **2025-10-16**: Fixed replicate package version to 1.0.7 in requirements.txt
 - **2025-10-16**: Prepared Vercel deployment files for stable production backend (api/index.py, vercel.json, requirements.txt)
 - **2025-10-16**: Created comprehensive deployment guides (VERCEL_SETUP_GUIDE.md, APK_SIZE_OPTIMIZATION.md)
 - **2025-10-16**: Implemented configurable API domain for mobile builds using `--dart-define=API_DOMAIN` to prevent hardcoded URL issues when Replit domain changes
@@ -44,10 +45,15 @@ Built with Flutter 3.32.0 (Dart 3.8.0), Viso AI integrates with a Python Flask b
 Supabase is used for backend services, covering authentication, database management, and storage. AI functionalities are primarily powered by Huggingface Spaces and Replicate APIs, accessed via a Python Flask proxy server. Face swap templates are dynamically loaded from Supabase Storage, facilitating automated discovery and management.
 
 **Production Deployment Strategy:**
-- **Backend**: Vercel serverless (Flask Python) for stable API endpoint with fixed URL
+- **Backend**: Railway Hobby ($5/mo) - Container-based deployment with 300s timeout, perfect for AI operations. See RAILWAY_SETUP.md for deployment guide.
 - **Database/Auth/Storage**: Supabase (as current)
 - **Mobile**: Flutter APK with `--split-per-abi` optimization (reduces from 200MB to 40-60MB per APK)
 - **Web**: Flutter web served from Replit (development) or static hosting (production)
+
+**Why Railway over Vercel:**
+- Railway: 300s timeout, container 24/7, $5/mo
+- Vercel Free: 10s timeout (insufficient for face swap 30-120s)
+- Vercel Pro Max: 300s timeout, $40/mo (8x more expensive than Railway)
 
 ## External Dependencies
 
