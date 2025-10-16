@@ -2,6 +2,7 @@
 """
 Railway deployment entry point
 Imports Flask app from api/index.py
+Version: 1.0.1 - With API keys configured
 """
 import os
 import sys
