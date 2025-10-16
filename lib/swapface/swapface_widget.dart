@@ -124,6 +124,21 @@ class _SwapfaceWidgetState extends State<SwapfaceWidget> {
     }
   }
 
+  Future<void> _pickPhotoFromCamera() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? photo = await picker.pickImage(
+      source: ImageSource.camera,
+      imageQuality: 85,
+    );
+
+    if (photo != null) {
+      final bytes = await photo.readAsBytes();
+      setState(() {
+        _model.selectedUserPhoto = bytes;
+      });
+    }
+  }
+
   Future<void> _showAdAndSwapFace() async {
     if (_model.selectedTemplate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -412,7 +427,7 @@ class _SwapfaceWidgetState extends State<SwapfaceWidget> {
           },
         ),
         title: Text(
-          'Ghostface',
+          'Swapface',
           style: FlutterFlowTheme.of(context).headlineMedium.override(
                 font: GoogleFonts.inter(),
                 letterSpacing: 0.0,
@@ -605,36 +620,63 @@ class _SwapfaceWidgetState extends State<SwapfaceWidget> {
                       ),
                       SizedBox(height: 12),
                       
-                      // Photo Picker Button
-                      GestureDetector(
-                        onTap: _pickUserPhoto,
-                        child: Container(
-                          width: 80,
-                          height: 80,
-                          decoration: BoxDecoration(
-                            color: _model.selectedUserPhoto != null
-                                ? Colors.transparent
-                                : Color(0xFF7C4DFF).withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: Color(0xFF7C4DFF),
-                              width: 2,
+                      // Photo Picker Buttons (Gallery + Camera)
+                      Row(
+                        children: [
+                          // Gallery Button
+                          GestureDetector(
+                            onTap: _pickUserPhoto,
+                            child: Container(
+                              width: 80,
+                              height: 80,
+                              decoration: BoxDecoration(
+                                color: _model.selectedUserPhoto != null
+                                    ? Colors.transparent
+                                    : Color(0xFF7C4DFF).withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                  color: Color(0xFF7C4DFF),
+                                  width: 2,
+                                ),
+                              ),
+                              child: _model.selectedUserPhoto != null
+                                  ? ClipRRect(
+                                      borderRadius: BorderRadius.circular(14),
+                                      child: Image.memory(
+                                        _model.selectedUserPhoto!,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    )
+                                  : Icon(
+                                      Icons.add,
+                                      size: 40,
+                                      color: Color(0xFF7C4DFF),
+                                    ),
                             ),
                           ),
-                          child: _model.selectedUserPhoto != null
-                              ? ClipRRect(
-                                  borderRadius: BorderRadius.circular(14),
-                                  child: Image.memory(
-                                    _model.selectedUserPhoto!,
-                                    fit: BoxFit.cover,
-                                  ),
-                                )
-                              : Icon(
-                                  Icons.add,
-                                  size: 40,
+                          SizedBox(width: 12),
+                          // Camera Button
+                          GestureDetector(
+                            onTap: _pickPhotoFromCamera,
+                            child: Container(
+                              width: 80,
+                              height: 80,
+                              decoration: BoxDecoration(
+                                color: Color(0xFF7C4DFF).withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
                                   color: Color(0xFF7C4DFF),
+                                  width: 2,
                                 ),
-                        ),
+                              ),
+                              child: Icon(
+                                Icons.camera_alt,
+                                size: 40,
+                                color: Color(0xFF7C4DFF),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       SizedBox(height: 20),
                       

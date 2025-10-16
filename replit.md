@@ -4,6 +4,7 @@
 Viso AI is a Flutter-based application designed for creating studio-grade AI headshots and avatars. It offers advanced photo enhancement, face swapping, and various AI-driven transformations to produce high-quality, stylized digital images. The project addresses the growing market demand for personalized digital content and AI-powered image manipulation.
 
 ## Recent Changes
+- **2025-10-16**: 📸 **Swapface UI Improvements**: Changed page title "Ghostface" → "Swapface", added camera button alongside gallery picker for direct photo capture using image_picker package.
 - **2025-10-16**: ✅ **Production Backend: Railway Only**: User migrated from Vercel → Railway Hobby ($5/mo) for stable 300s timeout. Local Replit backend (`api_server.py`) deprecated - Railway (`api/index.py`) is SOLE production backend.
 - **2025-10-16**: 🔧 **Fixed Face Swap Response Format**: Changed response field from `'result'` → `'image'` (base64) in `api/index.py` for Flutter compatibility. Local `api_server.py` not updated (deprecated).
 - **2025-10-16**: ✅ **Railway Production Deployed!**: Backend live at `web-production-a7698.up.railway.app` with 300s timeout. Flutter app updated to use Railway domain. Simplified config (removed nixpacks.toml, auto-detection works perfectly).
