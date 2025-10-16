@@ -47,25 +47,35 @@ class AppLovinService {
         debugPrint('🔐 Using AppLovin SDK Key from Remote Config');
       }
       
-      _rewardedAdUnitId = remoteConfig.applovinRewardedId.isNotEmpty 
-          ? remoteConfig.applovinRewardedId 
-          : const String.fromEnvironment('APPLOVIN_REWARDED_AD_UNIT_ID');
+      _rewardedAdUnitId = _getAdUnitId(
+        remoteConfig.applovinRewardedId, 
+        const String.fromEnvironment('APPLOVIN_REWARDED_AD_UNIT_ID'),
+        'REWARDED'
+      );
           
-      _bannerAdUnitId = remoteConfig.applovinBannerId.isNotEmpty 
-          ? remoteConfig.applovinBannerId 
-          : const String.fromEnvironment('APPLOVIN_BANNER_AD_UNIT_ID');
+      _bannerAdUnitId = _getAdUnitId(
+        remoteConfig.applovinBannerId, 
+        const String.fromEnvironment('APPLOVIN_BANNER_AD_UNIT_ID'),
+        'BANNER'
+      );
           
-      _interstitialAdUnitId = remoteConfig.applovinInterstitialId.isNotEmpty 
-          ? remoteConfig.applovinInterstitialId 
-          : const String.fromEnvironment('APPLOVIN_INTERSTITIAL_AD_UNIT_ID');
+      _interstitialAdUnitId = _getAdUnitId(
+        remoteConfig.applovinInterstitialId, 
+        const String.fromEnvironment('APPLOVIN_INTERSTITIAL_AD_UNIT_ID'),
+        'INTERSTITIAL'
+      );
           
-      _appOpenAdUnitId = remoteConfig.applovinAppOpenId.isNotEmpty 
-          ? remoteConfig.applovinAppOpenId 
-          : const String.fromEnvironment('APPLOVIN_APP_OPEN_AD_UNIT_ID');
+      _appOpenAdUnitId = _getAdUnitId(
+        remoteConfig.applovinAppOpenId, 
+        const String.fromEnvironment('APPLOVIN_APP_OPEN_AD_UNIT_ID'),
+        'APP_OPEN'
+      );
           
-      _nativeAdUnitId = remoteConfig.applovinNativeId.isNotEmpty 
-          ? remoteConfig.applovinNativeId 
-          : const String.fromEnvironment('APPLOVIN_NATIVE_AD_UNIT_ID');
+      _nativeAdUnitId = _getAdUnitId(
+        remoteConfig.applovinNativeId, 
+        const String.fromEnvironment('APPLOVIN_NATIVE_AD_UNIT_ID'),
+        'NATIVE'
+      );
 
       debugPrint('🔍 AppLovin Configuration Check:');
       debugPrint('  SDK Key: ${sdkKey.isEmpty ? "❌ MISSING" : "✅ Found"}');
@@ -336,6 +346,23 @@ class AppLovinService {
       debugPrint('⚠️ App Open ad not ready yet');
       onComplete?.call();
     }
+  }
+
+  static String _getAdUnitId(String remoteId, String envId, String adType) {
+    if (remoteId.isNotEmpty) {
+      debugPrint('🔐 Using AppLovin $adType ID from Remote Config');
+      return remoteId;
+    }
+    
+    if (envId.isNotEmpty) {
+      debugPrint('⚙️ Using AppLovin $adType ID from Environment');
+      return envId;
+    }
+    
+    debugPrint('⚠️ AppLovin $adType ID not configured (Remote Config + Env both empty)');
+    debugPrint('💡 AppLovin requires SDK setup - no public test IDs like AdMob');
+    debugPrint('   Add IDs to Firebase Remote Config for production use');
+    return '';
   }
 
   static String? get bannerAdUnitId => _bannerAdUnitId;

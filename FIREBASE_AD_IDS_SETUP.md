@@ -241,10 +241,21 @@ Expected: ⚙️ Use Environment IDs
 ```
 
 #### ✅ Scenario 3: Test Mode (Development)
+
+**AdMob:**
 ```
 Remote Config: ❌ Empty/Failed
 Environment Vars: ❌ None
-Expected: 🧪 Use Test IDs (safe for dev)
+Expected: 🧪 Use Google Test IDs (safe for dev)
+```
+
+**AppLovin:**
+```
+Remote Config: ❌ Empty/Failed
+Environment Vars: ❌ None
+Expected: ⚠️ Ads disabled (AppLovin has no public test IDs)
+Note: AppLovin requires SDK Key + Ad Unit setup in dashboard
+      Use test device IDs for testing: AppLovinMAX.setTestDeviceAdvertisingIds()
 ```
 
 ### Verify Ad Display:
