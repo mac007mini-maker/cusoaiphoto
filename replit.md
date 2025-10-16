@@ -4,6 +4,7 @@
 Viso AI is a Flutter-based application designed for creating studio-grade AI headshots and avatars. It offers advanced photo enhancement, face swapping, and various AI-driven transformations to produce high-quality, stylized digital images. The project addresses the growing market demand for personalized digital content and AI-powered image manipulation.
 
 ## Recent Changes
+- **2025-10-16**: Implemented configurable API domain for mobile builds using `--dart-define=API_DOMAIN` to prevent hardcoded URL issues when Replit domain changes
 - **2025-10-16**: Fixed critical validation bug - was reading partial data (1000 bytes) causing corrupt images; now reads full response and validates image signatures (JPEG/PNG/GIF/WEBP/BMP magic bytes)
 - **2025-10-15**: Added comprehensive debug logging and output type handling for Replicate models (list/FileOutput/string)
 - **2025-10-15**: Enhanced download validation - accept CDN octet-stream responses and detect HTML error pages
