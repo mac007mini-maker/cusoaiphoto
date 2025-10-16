@@ -1,0 +1,23 @@
+# Flutter - Railway không cần build Flutter!
+lib/
+android/
+ios/
+web/
+build/
+test/
+.dart_tool/
+pubspec.yaml
+pubspec.lock
+analysis_options.yaml
+
+# Documentation
+*.md
+!RAILWAY_SETUP.md
+
+# Development files
+api_server.py
+start_server.sh
+build*.sh
+backup_to_github.sh
+*.html
+*.storekit

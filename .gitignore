@@ -79,3 +79,6 @@ secrets.env
 
 # UV lock file (optional - có thể push hoặc ignore)
 # uv.lock
+
+# Railway ignore file (cần push lên GitHub)
+# .railwayignore
