@@ -233,6 +233,20 @@ class PiAPIProvider(FaceSwapProvider):
     def get_timeout(self) -> int:
         return 120
     
+    def _strip_data_uri(self, data: str) -> str:
+        """Strip data URI prefix for PiAPI compatibility
+        
+        PiAPI rejects data URIs (data:image/...;base64,xxx)
+        Accepts: raw base64 or plain URLs only
+        """
+        if data.startswith('data:'):
+            # Extract base64 part after comma
+            parts = data.split(',', 1)
+            if len(parts) == 2:
+                print(f"🔧 [PIAPI] Stripped data URI prefix, using raw base64")
+                return parts[1]
+        return data
+    
     async def swap_face(
         self, 
         target: str, 
@@ -254,13 +268,17 @@ class PiAPIProvider(FaceSwapProvider):
         try:
             print(f"🚀 [PIAPI] Starting {media_type.value} face swap...")
             
+            # Strip data URI prefixes (PiAPI requires raw base64 or URLs)
+            target_cleaned = self._strip_data_uri(target)
+            source_cleaned = self._strip_data_uri(source)
+            
             # Create task
             payload = {
                 "model": model_config["model"],
                 "task_type": model_config["task_type"],
                 "input": {
-                    "target_image" if media_type == FaceSwapMediaType.IMAGE else "target_video": target,
-                    "swap_image": source
+                    "target_image" if media_type == FaceSwapMediaType.IMAGE else "target_video": target_cleaned,
+                    "swap_image": source_cleaned
                 }
             }
             
@@ -285,6 +303,9 @@ class PiAPIProvider(FaceSwapProvider):
                     headers=headers,
                     timeout=30
                 )
+                # Log full error response for debugging
+                if resp.status_code != 200:
+                    print(f"❌ [PIAPI] HTTP {resp.status_code} error response: {resp.text[:500]}")
                 resp.raise_for_status()
                 return resp.json()
             
