@@ -11,12 +11,5 @@
       "src": "/(.*)",
       "dest": "api/index.py"
     }
-  ],
-  "env": {
-    "HUGGINGFACE_TOKEN": "@huggingface_token",
-    "REPLICATE_API_TOKEN": "@replicate_token",
-    "PIAPI_API_KEY": "@piapi_key",
-    "SUPABASE_URL": "@supabase_url",
-    "SUPABASE_ANON_KEY": "@supabase_anon_key"
-  }
+  ]
 }
