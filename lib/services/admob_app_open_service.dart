@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import '/services/remote_config_service.dart';
 
 class AdMobAppOpenService {
   static AppOpenAd? _appOpenAd;
@@ -87,15 +88,37 @@ class AdMobAppOpenService {
   }
 
   static String _getAdUnitId() {
-    const appOpenAdUnitId = String.fromEnvironment('ADMOB_APP_OPEN_AD_UNIT_ID');
+    final remoteConfig = RemoteConfigService();
     
-    if (appOpenAdUnitId.isNotEmpty) {
-      return appOpenAdUnitId;
-    }
-
     if (Platform.isAndroid) {
+      final remoteId = remoteConfig.admobAppOpenAndroidId;
+      if (remoteId.isNotEmpty) {
+        debugPrint('🔐 Using AdMob App Open ID from Remote Config (Android)');
+        return remoteId;
+      }
+      
+      const envId = String.fromEnvironment('ADMOB_APP_OPEN_AD_UNIT_ID');
+      if (envId.isNotEmpty) {
+        debugPrint('⚙️ Using AdMob App Open ID from Environment (Android)');
+        return envId;
+      }
+      
+      debugPrint('🧪 Using AdMob App Open Test ID (Android)');
       return 'ca-app-pub-3940256099942544/9257395921';
     } else if (Platform.isIOS) {
+      final remoteId = remoteConfig.admobAppOpenIosId;
+      if (remoteId.isNotEmpty) {
+        debugPrint('🔐 Using AdMob App Open ID from Remote Config (iOS)');
+        return remoteId;
+      }
+      
+      const envId = String.fromEnvironment('ADMOB_APP_OPEN_AD_UNIT_ID');
+      if (envId.isNotEmpty) {
+        debugPrint('⚙️ Using AdMob App Open ID from Environment (iOS)');
+        return envId;
+      }
+      
+      debugPrint('🧪 Using AdMob App Open Test ID (iOS)');
       return 'ca-app-pub-3940256099942544/5575463023';
     }
     

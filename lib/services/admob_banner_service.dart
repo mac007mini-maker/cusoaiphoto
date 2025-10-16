@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import '/services/remote_config_service.dart';
 
 class AdMobBannerService {
   static bool _isInitialized = false;
@@ -28,15 +29,37 @@ class AdMobBannerService {
   }
 
   static String getBannerAdUnitId() {
-    const bannerAdUnitId = String.fromEnvironment('ADMOB_BANNER_AD_UNIT_ID');
+    final remoteConfig = RemoteConfigService();
     
-    if (bannerAdUnitId.isNotEmpty) {
-      return bannerAdUnitId;
-    }
-
     if (Platform.isAndroid) {
+      final remoteId = remoteConfig.admobBannerAndroidId;
+      if (remoteId.isNotEmpty) {
+        debugPrint('🔐 Using AdMob Banner ID from Remote Config (Android)');
+        return remoteId;
+      }
+      
+      const envId = String.fromEnvironment('ADMOB_BANNER_AD_UNIT_ID');
+      if (envId.isNotEmpty) {
+        debugPrint('⚙️ Using AdMob Banner ID from Environment (Android)');
+        return envId;
+      }
+      
+      debugPrint('🧪 Using AdMob Banner Test ID (Android)');
       return 'ca-app-pub-3940256099942544/6300978111';
     } else if (Platform.isIOS) {
+      final remoteId = remoteConfig.admobBannerIosId;
+      if (remoteId.isNotEmpty) {
+        debugPrint('🔐 Using AdMob Banner ID from Remote Config (iOS)');
+        return remoteId;
+      }
+      
+      const envId = String.fromEnvironment('ADMOB_BANNER_AD_UNIT_ID');
+      if (envId.isNotEmpty) {
+        debugPrint('⚙️ Using AdMob Banner ID from Environment (iOS)');
+        return envId;
+      }
+      
+      debugPrint('🧪 Using AdMob Banner Test ID (iOS)');
       return 'ca-app-pub-3940256099942544/2934735716';
     }
     

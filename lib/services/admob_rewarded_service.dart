@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import '/services/remote_config_service.dart';
 
 class AdMobRewardedService {
   static RewardedAd? _rewardedAd;
@@ -84,15 +85,37 @@ class AdMobRewardedService {
   }
 
   static String _getAdUnitId() {
-    const rewardedAdUnitId = String.fromEnvironment('ADMOB_REWARDED_AD_UNIT_ID');
+    final remoteConfig = RemoteConfigService();
     
-    if (rewardedAdUnitId.isNotEmpty) {
-      return rewardedAdUnitId;
-    }
-
     if (Platform.isAndroid) {
+      final remoteId = remoteConfig.admobRewardedAndroidId;
+      if (remoteId.isNotEmpty) {
+        debugPrint('🔐 Using AdMob Rewarded ID from Remote Config (Android)');
+        return remoteId;
+      }
+      
+      const envId = String.fromEnvironment('ADMOB_REWARDED_AD_UNIT_ID');
+      if (envId.isNotEmpty) {
+        debugPrint('⚙️ Using AdMob Rewarded ID from Environment (Android)');
+        return envId;
+      }
+      
+      debugPrint('🧪 Using AdMob Rewarded Test ID (Android)');
       return 'ca-app-pub-3940256099942544/5224354917';
     } else if (Platform.isIOS) {
+      final remoteId = remoteConfig.admobRewardedIosId;
+      if (remoteId.isNotEmpty) {
+        debugPrint('🔐 Using AdMob Rewarded ID from Remote Config (iOS)');
+        return remoteId;
+      }
+      
+      const envId = String.fromEnvironment('ADMOB_REWARDED_AD_UNIT_ID');
+      if (envId.isNotEmpty) {
+        debugPrint('⚙️ Using AdMob Rewarded ID from Environment (iOS)');
+        return envId;
+      }
+      
+      debugPrint('🧪 Using AdMob Rewarded Test ID (iOS)');
       return 'ca-app-pub-3940256099942544/1712485313';
     }
     
