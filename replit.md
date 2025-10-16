@@ -4,6 +4,9 @@
 Viso AI is a Flutter-based application designed for creating studio-grade AI headshots and avatars. It offers advanced photo enhancement, face swapping, and various AI-driven transformations to produce high-quality, stylized digital images. The project addresses the growing market demand for personalized digital content and AI-powered image manipulation.
 
 ## Recent Changes
+- **2025-10-16**: ✅ **PRODUCTION DEPLOYED**: Backend live at https://visoai-pro.vercel.app/ with stable URL
+- **2025-10-16**: Updated Flutter app default API domain to Vercel (visoai-pro.vercel.app) - no more Replit domain dependency
+- **2025-10-16**: Fixed replicate package version to 1.0.7 in requirements.txt for Vercel compatibility
 - **2025-10-16**: Prepared Vercel deployment files for stable production backend (api/index.py, vercel.json, requirements.txt)
 - **2025-10-16**: Created comprehensive deployment guides (VERCEL_SETUP_GUIDE.md, APK_SIZE_OPTIMIZATION.md)
 - **2025-10-16**: Implemented configurable API domain for mobile builds using `--dart-define=API_DOMAIN` to prevent hardcoded URL issues when Replit domain changes

@@ -4,8 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class HuggingfaceService {
-  // API base URL from environment variable or fallback to current Replit domain
-  static const String _defaultApiDomain = '8bf1f206-1bbf-468e-94c3-c805a85c0cc0-00-3pryuqwgngpev.sisko.replit.dev';
+  // API base URL from environment variable or fallback to Vercel production domain
+  static const String _defaultApiDomain = 'visoai-pro.vercel.app';
   static const String _apiDomain = String.fromEnvironment('API_DOMAIN', defaultValue: _defaultApiDomain);
   
   static String get baseUrl {
@@ -14,7 +14,7 @@ class HuggingfaceService {
       return '$origin/api/huggingface';
     } else {
       // For mobile/desktop: Use configurable API domain
-      // Build with: flutter build apk --dart-define=API_DOMAIN=your-domain.replit.dev
+      // Build with: flutter build apk --dart-define=API_DOMAIN=visoai-pro.vercel.app
       return 'https://$_apiDomain/api/huggingface';
     }
   }
@@ -25,7 +25,7 @@ class HuggingfaceService {
       return '$origin/api/ai';
     } else {
       // For mobile/desktop: Use configurable API domain
-      // Build with: flutter build apk --dart-define=API_DOMAIN=your-domain.replit.dev
+      // Build with: flutter build apk --dart-define=API_DOMAIN=visoai-pro.vercel.app
       return 'https://$_apiDomain/api/ai';
     }
   }
