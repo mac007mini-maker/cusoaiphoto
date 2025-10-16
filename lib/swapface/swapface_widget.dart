@@ -423,7 +423,7 @@ class _SwapfaceWidgetState extends State<SwapfaceWidget> {
             padding: EdgeInsets.only(right: 16),
             child: ElevatedButton(
               onPressed: () {
-                // Remove ads functionality
+                context.pushNamed('pro');
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xFF7C4DFF),
