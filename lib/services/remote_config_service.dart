@@ -56,6 +56,20 @@ class RemoteConfigService {
   String get rewardedAdNetwork => _remoteConfig.getString('rewarded_ad_network');
   String get appOpenAdNetwork => _remoteConfig.getString('app_open_ad_network');
 
+  String get admobBannerAndroidId => _remoteConfig.getString('admob_banner_android_id');
+  String get admobBannerIosId => _remoteConfig.getString('admob_banner_ios_id');
+  String get admobAppOpenAndroidId => _remoteConfig.getString('admob_app_open_android_id');
+  String get admobAppOpenIosId => _remoteConfig.getString('admob_app_open_ios_id');
+  String get admobRewardedAndroidId => _remoteConfig.getString('admob_rewarded_android_id');
+  String get admobRewardedIosId => _remoteConfig.getString('admob_rewarded_ios_id');
+  
+  String get applovinSdkKey => _remoteConfig.getString('applovin_sdk_key');
+  String get applovinBannerId => _remoteConfig.getString('applovin_banner_id');
+  String get applovinAppOpenId => _remoteConfig.getString('applovin_app_open_id');
+  String get applovinRewardedId => _remoteConfig.getString('applovin_rewarded_id');
+  String get applovinInterstitialId => _remoteConfig.getString('applovin_interstitial_id');
+  String get applovinNativeId => _remoteConfig.getString('applovin_native_id');
+
   Future<void> initialize() async {
     try {
       await _remoteConfig.setDefaults({
@@ -69,6 +83,18 @@ class RemoteConfigService {
         'banner_ad_network': 'auto',
         'rewarded_ad_network': 'auto',
         'app_open_ad_network': 'auto',
+        'admob_banner_android_id': '',
+        'admob_banner_ios_id': '',
+        'admob_app_open_android_id': '',
+        'admob_app_open_ios_id': '',
+        'admob_rewarded_android_id': '',
+        'admob_rewarded_ios_id': '',
+        'applovin_sdk_key': '',
+        'applovin_banner_id': '',
+        'applovin_app_open_id': '',
+        'applovin_rewarded_id': '',
+        'applovin_interstitial_id': '',
+        'applovin_native_id': '',
       });
 
       await _remoteConfig.setConfigSettings(RemoteConfigSettings(
