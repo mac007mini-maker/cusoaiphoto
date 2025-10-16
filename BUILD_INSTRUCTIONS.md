@@ -12,7 +12,9 @@ If your mobile app is showing errors like `FormatException: Unexpected character
 
 Access your app at: `https://[your-current-replit-domain].replit.dev`
 
-## Permanent Solution: Rebuild Mobile App
+## Temporary Workaround: Rebuild Mobile App
+
+⚠️ **IMPORTANT:** Rebuilding is only a **temporary fix**. The app will break again when Replit restarts with a new domain. For production, see "Production Solution" below.
 
 ### Option 1: Build with Current Domain (Quick Fix)
 The current Replit domain is already set as the default. Simply rebuild:
@@ -25,23 +27,25 @@ flutter build apk --release
 flutter build ios --release
 ```
 
-**Note:** This will break again when Replit restarts with a new domain.
+**Limitation:** This will break again when Replit restarts with a new domain.
 
-### Option 2: Build with Custom Domain (Recommended)
-If you have a custom domain or know the current domain, specify it at build time:
+### Option 2: Build with Custom Domain (If Available)
+If you have a stable custom domain, specify it at build time:
 
 ```bash
 # Get current domain
 env | grep DOMAIN
 
 # Build with custom domain
-flutter build apk --release --dart-define=API_DOMAIN=your-domain.replit.dev
+flutter build apk --release --dart-define=API_DOMAIN=your-stable-domain.com
 
-# Example with current domain
+# Build with current Replit domain (will break on restart)
 flutter build apk --release --dart-define=API_DOMAIN=8bf1f206-1bbf-468e-94c3-c805a85c0cc0-00-3pryuqwgngpev.sisko.replit.dev
 ```
 
-### Option 3: Production Solution (Best for Long-term)
+**Limitation:** dart-define is compile-time only. Already-installed apps cannot be updated without rebuilding and redistributing.
+
+## Production Solution: Runtime Configuration (Required for Stability)
 For production apps, implement runtime configuration using Firebase Remote Config (already included in the project):
 
 1. Store API domain in Firebase Remote Config
