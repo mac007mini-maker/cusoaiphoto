@@ -1,7 +1,3 @@
-[build]
-builder = "nixpacks"
-nixpacksConfigPath = "nixpacks.toml"
-
 [deploy]
 healthcheckPath = "/"
 healthcheckTimeout = 300
