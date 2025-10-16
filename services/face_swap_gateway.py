@@ -274,9 +274,8 @@ class PiAPIProvider(FaceSwapProvider):
                 }
             
             headers = {
-                "X-API-Key": self.api_key,
-                "Content-Type": "application/json",
-                "Accept": "application/json"
+                "x-api-key": self.api_key,  # PiAPI requires lowercase header (2025 API)
+                "Content-Type": "application/json"
             }
             
             def _create_task():
