@@ -316,23 +316,36 @@ class HuggingfaceProxyHandler(SimpleHTTPRequestHandler):
                             if status_code != 200:
                                 raise Exception(f"HTTP {status_code} from result URL")
                             
-                            # Check content type (some CDNs return application/octet-stream for images)
-                            valid_types = ['image/', 'application/octet-stream', 'binary/octet-stream']
-                            is_valid_type = any(content_type.startswith(t) for t in valid_types)
+                            # Read response data first
+                            image_data = img_response.read()
+                            print(f"📦 [FACE_SWAP] Downloaded {len(image_data)} bytes, Content-Type: {content_type}")
                             
-                            if not is_valid_type and content_type:
-                                # Try to read a bit to see if it's HTML
-                                sample = img_response.read(1000)
-                                if sample.startswith(b'<!DOCTYPE') or sample.startswith(b'<html'):
-                                    raise Exception(f"Got HTML page instead of image (Content-Type: {content_type})")
-                                # Read rest and combine
-                                image_data = sample + img_response.read()
-                            else:
-                                # Download full image
-                                image_data = img_response.read()
+                            # Detect HTML error pages by checking first bytes
+                            if image_data.startswith(b'<!DOCTYPE') or image_data.startswith(b'<html') or image_data.startswith(b'<HTML'):
+                                raise Exception(f"Response is HTML page, not image! Content-Type: {content_type}")
+                            
+                            # Additional check: valid image file signatures
+                            valid_signatures = [
+                                b'\xff\xd8\xff',  # JPEG
+                                b'\x89PNG',        # PNG
+                                b'GIF8',           # GIF
+                                b'RIFF',           # WEBP (starts with RIFF)
+                                b'BM',             # BMP
+                            ]
+                            
+                            has_valid_signature = any(image_data.startswith(sig) for sig in valid_signatures)
+                            
+                            # Check content type (accept common CDN types)
+                            valid_content_types = ['image/', 'application/octet-stream', 'binary/octet-stream']
+                            has_valid_content_type = any(content_type.startswith(t) for t in valid_content_types) or not content_type
+                            
+                            if not has_valid_signature:
+                                # Show first 100 bytes for debugging
+                                preview = image_data[:100]
+                                raise Exception(f"Invalid image format! First bytes: {preview[:50]}, Content-Type: {content_type}")
                                 
                             base64_image = base64.b64encode(image_data).decode('utf-8')
-                            print(f"✅ [FACE_SWAP] Downloaded {len(image_data)} bytes")
+                            print(f"✅ [FACE_SWAP] Valid image encoded ({len(image_data)} bytes)")
                             
                         # Return format Flutter expects
                         flutter_response = {
