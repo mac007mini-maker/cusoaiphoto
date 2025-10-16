@@ -250,7 +250,7 @@ def face_swap_v2():
                     
                     return jsonify({
                         'success': True,
-                        'result': result_base64,
+                        'image': result_base64,  # Changed from 'result' to 'image' for Flutter compatibility
                         'provider': result.get('provider', 'unknown')
                     })
                     
