@@ -60,3 +60,22 @@ app.*.map.json
 # Replit
 .replit
 replit.nix
+
+# Python backend
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
+env/
+.venv
+
+# Secrets (QUAN TRỌNG - đừng push API keys!)
+secrets.env
+.env
+*.env.local
+
+# UV lock file (optional - có thể push hoặc ignore)
+# uv.lock
