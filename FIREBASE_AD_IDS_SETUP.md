@@ -158,23 +158,33 @@ Default value: ca-app-pub-1234567890123456/1234567890
 Description: AdMob Banner Ad Unit ID for Android (production)
 ```
 
-#### 2.2. AppLovin Parameters (6 parameters):
+#### 2.2. AppLovin Parameters (11 parameters):
 
 | Parameter Key | Data Type | Default Value | Description |
 |--------------|-----------|---------------|-------------|
-| `applovin_sdk_key` | String | `""` (empty) | AppLovin SDK Key |
-| `applovin_banner_id` | String | `""` (empty) | AppLovin Banner Ad Unit ID |
-| `applovin_app_open_id` | String | `""` (empty) | AppLovin App Open Ad Unit ID |
-| `applovin_rewarded_id` | String | `""` (empty) | AppLovin Rewarded Ad Unit ID |
-| `applovin_interstitial_id` | String | `""` (empty) | AppLovin Interstitial Ad Unit ID |
-| `applovin_native_id` | String | `""` (empty) | AppLovin Native Ad Unit ID |
+| `applovin_sdk_key` | String | `""` (empty) | AppLovin SDK Key (chung cho cả Android & iOS) |
+| `applovin_banner_android_id` | String | `""` (empty) | AppLovin Banner Ad Unit ID cho Android |
+| `applovin_banner_ios_id` | String | `""` (empty) | AppLovin Banner Ad Unit ID cho iOS |
+| `applovin_app_open_android_id` | String | `""` (empty) | AppLovin App Open Ad Unit ID cho Android |
+| `applovin_app_open_ios_id` | String | `""` (empty) | AppLovin App Open Ad Unit ID cho iOS |
+| `applovin_rewarded_android_id` | String | `""` (empty) | AppLovin Rewarded Ad Unit ID cho Android |
+| `applovin_rewarded_ios_id` | String | `""` (empty) | AppLovin Rewarded Ad Unit ID cho iOS |
+| `applovin_interstitial_android_id` | String | `""` (empty) | AppLovin Interstitial Ad Unit ID cho Android |
+| `applovin_interstitial_ios_id` | String | `""` (empty) | AppLovin Interstitial Ad Unit ID cho iOS |
+| `applovin_native_android_id` | String | `""` (empty) | AppLovin Native Ad Unit ID cho Android |
+| `applovin_native_ios_id` | String | `""` (empty) | AppLovin Native Ad Unit ID cho iOS |
 
 **Example:**
 ```
 Parameter key: applovin_sdk_key
 Data type: String
 Default value: abc123def456ghi789jkl...
-Description: AppLovin MAX SDK Key (from dashboard settings)
+Description: AppLovin MAX SDK Key (chung cho cả 2 platform)
+
+Parameter key: applovin_banner_android_id
+Data type: String
+Default value: xxxxxxxxxxxxxxxx
+Description: AppLovin Banner Ad Unit ID for Android
 ```
 
 3. **Click "Publish changes"** để áp dụng!
@@ -201,13 +211,18 @@ AdMob (12 parameters):
   ✅ admob_native_android_id: ca-app-pub-xxxxx/xxxxx
   ✅ admob_native_ios_id: ca-app-pub-xxxxx/xxxxx
 
-AppLovin (6 parameters):
+AppLovin (11 parameters):
   ✅ applovin_sdk_key: abc123...
-  ✅ applovin_banner_id: xxxxx
-  ✅ applovin_app_open_id: xxxxx
-  ✅ applovin_rewarded_id: xxxxx
-  ✅ applovin_interstitial_id: xxxxx
-  ✅ applovin_native_id: xxxxx
+  ✅ applovin_banner_android_id: xxxxx
+  ✅ applovin_banner_ios_id: xxxxx
+  ✅ applovin_app_open_android_id: xxxxx
+  ✅ applovin_app_open_ios_id: xxxxx
+  ✅ applovin_rewarded_android_id: xxxxx
+  ✅ applovin_rewarded_ios_id: xxxxx
+  ✅ applovin_interstitial_android_id: xxxxx
+  ✅ applovin_interstitial_ios_id: xxxxx
+  ✅ applovin_native_android_id: xxxxx
+  ✅ applovin_native_ios_id: xxxxx
 ```
 
 #### 3.2. Build & Test APK:

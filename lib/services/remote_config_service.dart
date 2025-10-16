@@ -70,11 +70,16 @@ class RemoteConfigService {
   String get admobNativeIosId => _remoteConfig.getString('admob_native_ios_id');
   
   String get applovinSdkKey => _remoteConfig.getString('applovin_sdk_key');
-  String get applovinBannerId => _remoteConfig.getString('applovin_banner_id');
-  String get applovinAppOpenId => _remoteConfig.getString('applovin_app_open_id');
-  String get applovinRewardedId => _remoteConfig.getString('applovin_rewarded_id');
-  String get applovinInterstitialId => _remoteConfig.getString('applovin_interstitial_id');
-  String get applovinNativeId => _remoteConfig.getString('applovin_native_id');
+  String get applovinBannerAndroidId => _remoteConfig.getString('applovin_banner_android_id');
+  String get applovinBannerIosId => _remoteConfig.getString('applovin_banner_ios_id');
+  String get applovinAppOpenAndroidId => _remoteConfig.getString('applovin_app_open_android_id');
+  String get applovinAppOpenIosId => _remoteConfig.getString('applovin_app_open_ios_id');
+  String get applovinRewardedAndroidId => _remoteConfig.getString('applovin_rewarded_android_id');
+  String get applovinRewardedIosId => _remoteConfig.getString('applovin_rewarded_ios_id');
+  String get applovinInterstitialAndroidId => _remoteConfig.getString('applovin_interstitial_android_id');
+  String get applovinInterstitialIosId => _remoteConfig.getString('applovin_interstitial_ios_id');
+  String get applovinNativeAndroidId => _remoteConfig.getString('applovin_native_android_id');
+  String get applovinNativeIosId => _remoteConfig.getString('applovin_native_ios_id');
 
   Future<void> initialize() async {
     try {
@@ -102,11 +107,16 @@ class RemoteConfigService {
         'admob_native_android_id': '',
         'admob_native_ios_id': '',
         'applovin_sdk_key': '',
-        'applovin_banner_id': '',
-        'applovin_app_open_id': '',
-        'applovin_rewarded_id': '',
-        'applovin_interstitial_id': '',
-        'applovin_native_id': '',
+        'applovin_banner_android_id': '',
+        'applovin_banner_ios_id': '',
+        'applovin_app_open_android_id': '',
+        'applovin_app_open_ios_id': '',
+        'applovin_rewarded_android_id': '',
+        'applovin_rewarded_ios_id': '',
+        'applovin_interstitial_android_id': '',
+        'applovin_interstitial_ios_id': '',
+        'applovin_native_android_id': '',
+        'applovin_native_ios_id': '',
       });
 
       await _remoteConfig.setConfigSettings(RemoteConfigSettings(

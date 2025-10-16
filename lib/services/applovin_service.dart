@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'dart:io' show Platform;
 import 'dart:math';
 import 'package:applovin_max/applovin_max.dart' if (dart.library.html) 'applovin_stub.dart';
 import '/services/remote_config_service.dart';
@@ -47,32 +48,32 @@ class AppLovinService {
         debugPrint('🔐 Using AppLovin SDK Key from Remote Config');
       }
       
-      _rewardedAdUnitId = _getAdUnitId(
-        remoteConfig.applovinRewardedId, 
+      _rewardedAdUnitId = _getPlatformAdUnitId(
+        Platform.isAndroid ? remoteConfig.applovinRewardedAndroidId : remoteConfig.applovinRewardedIosId,
         const String.fromEnvironment('APPLOVIN_REWARDED_AD_UNIT_ID'),
         'REWARDED'
       );
           
-      _bannerAdUnitId = _getAdUnitId(
-        remoteConfig.applovinBannerId, 
+      _bannerAdUnitId = _getPlatformAdUnitId(
+        Platform.isAndroid ? remoteConfig.applovinBannerAndroidId : remoteConfig.applovinBannerIosId,
         const String.fromEnvironment('APPLOVIN_BANNER_AD_UNIT_ID'),
         'BANNER'
       );
           
-      _interstitialAdUnitId = _getAdUnitId(
-        remoteConfig.applovinInterstitialId, 
+      _interstitialAdUnitId = _getPlatformAdUnitId(
+        Platform.isAndroid ? remoteConfig.applovinInterstitialAndroidId : remoteConfig.applovinInterstitialIosId,
         const String.fromEnvironment('APPLOVIN_INTERSTITIAL_AD_UNIT_ID'),
         'INTERSTITIAL'
       );
           
-      _appOpenAdUnitId = _getAdUnitId(
-        remoteConfig.applovinAppOpenId, 
+      _appOpenAdUnitId = _getPlatformAdUnitId(
+        Platform.isAndroid ? remoteConfig.applovinAppOpenAndroidId : remoteConfig.applovinAppOpenIosId,
         const String.fromEnvironment('APPLOVIN_APP_OPEN_AD_UNIT_ID'),
         'APP_OPEN'
       );
           
-      _nativeAdUnitId = _getAdUnitId(
-        remoteConfig.applovinNativeId, 
+      _nativeAdUnitId = _getPlatformAdUnitId(
+        Platform.isAndroid ? remoteConfig.applovinNativeAndroidId : remoteConfig.applovinNativeIosId,
         const String.fromEnvironment('APPLOVIN_NATIVE_AD_UNIT_ID'),
         'NATIVE'
       );
@@ -348,18 +349,20 @@ class AppLovinService {
     }
   }
 
-  static String _getAdUnitId(String remoteId, String envId, String adType) {
+  static String _getPlatformAdUnitId(String remoteId, String envId, String adType) {
+    final platform = Platform.isAndroid ? 'Android' : 'iOS';
+    
     if (remoteId.isNotEmpty) {
-      debugPrint('🔐 Using AppLovin $adType ID from Remote Config');
+      debugPrint('🔐 Using AppLovin $adType ID ($platform) from Remote Config');
       return remoteId;
     }
     
     if (envId.isNotEmpty) {
-      debugPrint('⚙️ Using AppLovin $adType ID from Environment');
+      debugPrint('⚙️ Using AppLovin $adType ID ($platform) from Environment');
       return envId;
     }
     
-    debugPrint('⚠️ AppLovin $adType ID not configured (Remote Config + Env both empty)');
+    debugPrint('⚠️ AppLovin $adType ID ($platform) not configured (Remote Config + Env both empty)');
     debugPrint('💡 AppLovin requires SDK setup - no public test IDs like AdMob');
     debugPrint('   Add IDs to Firebase Remote Config for production use');
     return '';
