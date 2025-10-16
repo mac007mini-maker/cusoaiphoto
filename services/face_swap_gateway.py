@@ -525,6 +525,7 @@ class FaceSwapGateway:
                         return result
                     
                     print(f"⚠️ Provider {provider.get_name()} failed: {result.get('error')}")
+                    break
                     
                 except Exception as e:
                     print(f"❌ Provider {provider.get_name()} error: {type(e).__name__}: {e}")
