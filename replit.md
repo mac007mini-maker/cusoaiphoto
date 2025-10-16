@@ -4,6 +4,8 @@
 Viso AI is a Flutter-based application designed for creating studio-grade AI headshots and avatars. It offers advanced photo enhancement, face swapping, and various AI-driven transformations to produce high-quality, stylized digital images. The project addresses the growing market demand for personalized digital content and AI-powered image manipulation.
 
 ## Recent Changes
+- **2025-10-16**: Prepared Vercel deployment files for stable production backend (api/index.py, vercel.json, requirements.txt)
+- **2025-10-16**: Created comprehensive deployment guides (VERCEL_SETUP_GUIDE.md, APK_SIZE_OPTIMIZATION.md)
 - **2025-10-16**: Implemented configurable API domain for mobile builds using `--dart-define=API_DOMAIN` to prevent hardcoded URL issues when Replit domain changes
 - **2025-10-16**: Fixed critical validation bug - was reading partial data (1000 bytes) causing corrupt images; now reads full response and validates image signatures (JPEG/PNG/GIF/WEBP/BMP magic bytes)
 - **2025-10-15**: Added comprehensive debug logging and output type handling for Replicate models (list/FileOutput/string)
@@ -35,7 +37,13 @@ Built with Flutter 3.32.0 (Dart 3.8.0), Viso AI integrates with a Python Flask b
 - **Settings**: Includes features for sharing, feedback (email integration), "About" section, User Agreement, Privacy Policy, and Community Guidelines.
 
 ### System Design Choices
-Supabase is used for backend services, covering authentication, database management, and storage. AI functionalities are primarily powered by Huggingface Spaces and Replicate APIs, accessed via a Python proxy server for efficient management. Face swap templates are dynamically loaded from Supabase Storage, facilitating automated discovery and management.
+Supabase is used for backend services, covering authentication, database management, and storage. AI functionalities are primarily powered by Huggingface Spaces and Replicate APIs, accessed via a Python Flask proxy server. Face swap templates are dynamically loaded from Supabase Storage, facilitating automated discovery and management.
+
+**Production Deployment Strategy:**
+- **Backend**: Vercel serverless (Flask Python) for stable API endpoint with fixed URL
+- **Database/Auth/Storage**: Supabase (as current)
+- **Mobile**: Flutter APK with `--split-per-abi` optimization (reduces from 200MB to 40-60MB per APK)
+- **Web**: Flutter web served from Replit (development) or static hosting (production)
 
 ## External Dependencies
 
