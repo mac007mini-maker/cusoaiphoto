@@ -56,12 +56,18 @@ class RemoteConfigService {
   String get rewardedAdNetwork => _remoteConfig.getString('rewarded_ad_network');
   String get appOpenAdNetwork => _remoteConfig.getString('app_open_ad_network');
 
+  String get admobAppAndroidId => _remoteConfig.getString('admob_app_android_id');
+  String get admobAppIosId => _remoteConfig.getString('admob_app_ios_id');
   String get admobBannerAndroidId => _remoteConfig.getString('admob_banner_android_id');
   String get admobBannerIosId => _remoteConfig.getString('admob_banner_ios_id');
   String get admobAppOpenAndroidId => _remoteConfig.getString('admob_app_open_android_id');
   String get admobAppOpenIosId => _remoteConfig.getString('admob_app_open_ios_id');
   String get admobRewardedAndroidId => _remoteConfig.getString('admob_rewarded_android_id');
   String get admobRewardedIosId => _remoteConfig.getString('admob_rewarded_ios_id');
+  String get admobInterstitialAndroidId => _remoteConfig.getString('admob_interstitial_android_id');
+  String get admobInterstitialIosId => _remoteConfig.getString('admob_interstitial_ios_id');
+  String get admobNativeAndroidId => _remoteConfig.getString('admob_native_android_id');
+  String get admobNativeIosId => _remoteConfig.getString('admob_native_ios_id');
   
   String get applovinSdkKey => _remoteConfig.getString('applovin_sdk_key');
   String get applovinBannerId => _remoteConfig.getString('applovin_banner_id');
@@ -83,12 +89,18 @@ class RemoteConfigService {
         'banner_ad_network': 'auto',
         'rewarded_ad_network': 'auto',
         'app_open_ad_network': 'auto',
+        'admob_app_android_id': '',
+        'admob_app_ios_id': '',
         'admob_banner_android_id': '',
         'admob_banner_ios_id': '',
         'admob_app_open_android_id': '',
         'admob_app_open_ios_id': '',
         'admob_rewarded_android_id': '',
         'admob_rewarded_ios_id': '',
+        'admob_interstitial_android_id': '',
+        'admob_interstitial_ios_id': '',
+        'admob_native_android_id': '',
+        'admob_native_ios_id': '',
         'applovin_sdk_key': '',
         'applovin_banner_id': '',
         'applovin_app_open_id': '',

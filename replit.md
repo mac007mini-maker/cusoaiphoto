@@ -4,7 +4,7 @@
 Viso AI is a Flutter-based application designed for creating studio-grade AI headshots and avatars. It offers advanced photo enhancement, face swapping, and various AI-driven transformations to produce high-quality, stylized digital images. The project addresses the growing market demand for personalized digital content and AI-powered image manipulation.
 
 ## Recent Changes
-- **2025-10-16**: 🔐 **Secure Ad IDs with Remote Config**: Migrated AdMob & AppLovin ad unit IDs to Firebase Remote Config for security (3-layer fallback: Remote Config → Env Vars → Test IDs). Created comprehensive setup guide (FIREBASE_AD_IDS_SETUP.md). Prevents APK decompilation risks and enables real-time ad ID updates without app rebuild.
+- **2025-10-16**: 🔐 **Secure Ad IDs with Remote Config**: Migrated AdMob (12 IDs: App ID + 5 ad units × 2 platforms) & AppLovin (6 IDs) to Firebase Remote Config for security. 3-layer fallback: Remote Config → Env Vars → Test IDs. Created comprehensive setup guide (FIREBASE_AD_IDS_SETUP.md). Prevents APK decompilation risks and enables real-time ad ID updates without app rebuild.
 - **2025-10-16**: 🐛 **Fixed PiAPI Input Error**: Keep data URI format (data:image/...;base64,) intact - PiAPI needs format info. Previous strip attempt caused `input:null` errors.
 - **2025-10-16**: 🔧 **Fixed PiAPI Header**: Changed "X-API-Key" → "x-api-key" per PiAPI 2025 API requirements (lowercase header).
 - **2025-10-16**: 📸 **Swapface UI Improvements**: Changed page title "Ghostface" → "Swapface", added camera button alongside gallery picker for direct photo capture using image_picker package.

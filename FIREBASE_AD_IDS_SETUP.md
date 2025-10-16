@@ -85,18 +85,25 @@ Use Remote IDs     Check Env Vars
 #### 1.1. AdMob IDs:
 1. Vào [AdMob Console](https://apps.admob.com/)
 2. **Apps** → Chọn app của bạn
-3. **Ad units** → Copy các IDs:
+3. Copy **App ID** (Settings → App settings)
+4. **Ad units** → Copy các **Ad Unit IDs**:
 
 ```
 📱 Android:
-  Banner: ca-app-pub-XXXXXXXXXXXXXXXX/YYYYYYYYYY
+  App ID: ca-app-pub-XXXXXXXXXXXXXXXX~YYYYYYYYYY (với dấu ~)
+  Banner: ca-app-pub-XXXXXXXXXXXXXXXX/YYYYYYYYYY (với dấu /)
   App Open: ca-app-pub-XXXXXXXXXXXXXXXX/YYYYYYYYYY
   Rewarded: ca-app-pub-XXXXXXXXXXXXXXXX/YYYYYYYYYY
+  Interstitial: ca-app-pub-XXXXXXXXXXXXXXXX/YYYYYYYYYY
+  Native: ca-app-pub-XXXXXXXXXXXXXXXX/YYYYYYYYYY
 
 🍎 iOS:
-  Banner: ca-app-pub-XXXXXXXXXXXXXXXX/ZZZZZZZZZZ
+  App ID: ca-app-pub-XXXXXXXXXXXXXXXX~ZZZZZZZZZZ (với dấu ~)
+  Banner: ca-app-pub-XXXXXXXXXXXXXXXX/ZZZZZZZZZZ (với dấu /)
   App Open: ca-app-pub-XXXXXXXXXXXXXXXX/ZZZZZZZZZZ
   Rewarded: ca-app-pub-XXXXXXXXXXXXXXXX/ZZZZZZZZZZ
+  Interstitial: ca-app-pub-XXXXXXXXXXXXXXXX/ZZZZZZZZZZ
+  Native: ca-app-pub-XXXXXXXXXXXXXXXX/ZZZZZZZZZZ
 ```
 
 #### 1.2. AppLovin IDs:
@@ -126,16 +133,22 @@ Ad Unit IDs:
 
 2. **Click "Add parameter"** cho TỪNG parameter dưới đây:
 
-#### 2.1. AdMob Parameters (6 parameters):
+#### 2.1. AdMob Parameters (12 parameters):
 
 | Parameter Key | Data Type | Default Value | Description |
 |--------------|-----------|---------------|-------------|
-| `admob_banner_android_id` | String | `""` (empty) | AdMob Banner ID cho Android |
-| `admob_banner_ios_id` | String | `""` (empty) | AdMob Banner ID cho iOS |
-| `admob_app_open_android_id` | String | `""` (empty) | AdMob App Open ID cho Android |
-| `admob_app_open_ios_id` | String | `""` (empty) | AdMob App Open ID cho iOS |
-| `admob_rewarded_android_id` | String | `""` (empty) | AdMob Rewarded ID cho Android |
-| `admob_rewarded_ios_id` | String | `""` (empty) | AdMob Rewarded ID cho iOS |
+| `admob_app_android_id` | String | `""` (empty) | AdMob App ID cho Android |
+| `admob_app_ios_id` | String | `""` (empty) | AdMob App ID cho iOS |
+| `admob_banner_android_id` | String | `""` (empty) | AdMob Banner Ad Unit ID cho Android |
+| `admob_banner_ios_id` | String | `""` (empty) | AdMob Banner Ad Unit ID cho iOS |
+| `admob_app_open_android_id` | String | `""` (empty) | AdMob App Open Ad Unit ID cho Android |
+| `admob_app_open_ios_id` | String | `""` (empty) | AdMob App Open Ad Unit ID cho iOS |
+| `admob_rewarded_android_id` | String | `""` (empty) | AdMob Rewarded Ad Unit ID cho Android |
+| `admob_rewarded_ios_id` | String | `""` (empty) | AdMob Rewarded Ad Unit ID cho iOS |
+| `admob_interstitial_android_id` | String | `""` (empty) | AdMob Interstitial Ad Unit ID cho Android |
+| `admob_interstitial_ios_id` | String | `""` (empty) | AdMob Interstitial Ad Unit ID cho iOS |
+| `admob_native_android_id` | String | `""` (empty) | AdMob Native Ad Unit ID cho Android |
+| `admob_native_ios_id` | String | `""` (empty) | AdMob Native Ad Unit ID cho iOS |
 
 **Example:**
 ```
@@ -172,13 +185,23 @@ Description: AppLovin MAX SDK Key (from dashboard settings)
 
 #### 3.1. Check Firebase Console:
 ```
-Remote Config → Parameters
+Remote Config → Parameters (Tất cả là String type)
+
+AdMob (12 parameters):
+  ✅ admob_app_android_id: ca-app-pub-xxxxx~xxxxx
+  ✅ admob_app_ios_id: ca-app-pub-xxxxx~xxxxx
   ✅ admob_banner_android_id: ca-app-pub-xxxxx/xxxxx
   ✅ admob_banner_ios_id: ca-app-pub-xxxxx/xxxxx
   ✅ admob_app_open_android_id: ca-app-pub-xxxxx/xxxxx
   ✅ admob_app_open_ios_id: ca-app-pub-xxxxx/xxxxx
   ✅ admob_rewarded_android_id: ca-app-pub-xxxxx/xxxxx
   ✅ admob_rewarded_ios_id: ca-app-pub-xxxxx/xxxxx
+  ✅ admob_interstitial_android_id: ca-app-pub-xxxxx/xxxxx
+  ✅ admob_interstitial_ios_id: ca-app-pub-xxxxx/xxxxx
+  ✅ admob_native_android_id: ca-app-pub-xxxxx/xxxxx
+  ✅ admob_native_ios_id: ca-app-pub-xxxxx/xxxxx
+
+AppLovin (6 parameters):
   ✅ applovin_sdk_key: abc123...
   ✅ applovin_banner_id: xxxxx
   ✅ applovin_app_open_id: xxxxx
