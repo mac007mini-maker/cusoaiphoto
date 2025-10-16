@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'dart:math';
 import 'package:applovin_max/applovin_max.dart' if (dart.library.html) 'applovin_stub.dart';
+import '/services/remote_config_service.dart';
 
 class AppLovinService {
   static bool _isInitialized = false;
@@ -34,12 +35,37 @@ class AppLovinService {
     }
 
     try {
-      final sdkKey = const String.fromEnvironment('APPLOVIN_SDK_KEY');
-      _rewardedAdUnitId = const String.fromEnvironment('APPLOVIN_REWARDED_AD_UNIT_ID');
-      _bannerAdUnitId = const String.fromEnvironment('APPLOVIN_BANNER_AD_UNIT_ID');
-      _interstitialAdUnitId = const String.fromEnvironment('APPLOVIN_INTERSTITIAL_AD_UNIT_ID');
-      _appOpenAdUnitId = const String.fromEnvironment('APPLOVIN_APP_OPEN_AD_UNIT_ID');
-      _nativeAdUnitId = const String.fromEnvironment('APPLOVIN_NATIVE_AD_UNIT_ID');
+      final remoteConfig = RemoteConfigService();
+      
+      String sdkKey = remoteConfig.applovinSdkKey;
+      if (sdkKey.isEmpty) {
+        sdkKey = const String.fromEnvironment('APPLOVIN_SDK_KEY');
+        if (sdkKey.isNotEmpty) {
+          debugPrint('⚙️ Using AppLovin SDK Key from Environment');
+        }
+      } else {
+        debugPrint('🔐 Using AppLovin SDK Key from Remote Config');
+      }
+      
+      _rewardedAdUnitId = remoteConfig.applovinRewardedId.isNotEmpty 
+          ? remoteConfig.applovinRewardedId 
+          : const String.fromEnvironment('APPLOVIN_REWARDED_AD_UNIT_ID');
+          
+      _bannerAdUnitId = remoteConfig.applovinBannerId.isNotEmpty 
+          ? remoteConfig.applovinBannerId 
+          : const String.fromEnvironment('APPLOVIN_BANNER_AD_UNIT_ID');
+          
+      _interstitialAdUnitId = remoteConfig.applovinInterstitialId.isNotEmpty 
+          ? remoteConfig.applovinInterstitialId 
+          : const String.fromEnvironment('APPLOVIN_INTERSTITIAL_AD_UNIT_ID');
+          
+      _appOpenAdUnitId = remoteConfig.applovinAppOpenId.isNotEmpty 
+          ? remoteConfig.applovinAppOpenId 
+          : const String.fromEnvironment('APPLOVIN_APP_OPEN_AD_UNIT_ID');
+          
+      _nativeAdUnitId = remoteConfig.applovinNativeId.isNotEmpty 
+          ? remoteConfig.applovinNativeId 
+          : const String.fromEnvironment('APPLOVIN_NATIVE_AD_UNIT_ID');
 
       debugPrint('🔍 AppLovin Configuration Check:');
       debugPrint('  SDK Key: ${sdkKey.isEmpty ? "❌ MISSING" : "✅ Found"}');
@@ -48,8 +74,8 @@ class AppLovinService {
       debugPrint('  Interstitial Ad Unit: ${_interstitialAdUnitId?.isEmpty ?? true ? "❌ MISSING" : "✅ Found"}');
 
       if (sdkKey.isEmpty) {
-        debugPrint('❌ AppLovin SDK Key not found in environment variables');
-        debugPrint('💡 Build with: ./build_with_all_ads.sh apk');
+        debugPrint('❌ AppLovin SDK Key not found (checked Remote Config + Environment)');
+        debugPrint('💡 Add to Firebase Remote Config or build with: ./build_with_all_ads.sh apk');
         return;
       }
 
