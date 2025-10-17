@@ -1,0 +1,21 @@
+2025-10-17T12:13:27.000000000Z [inf]  Starting Container
+2025-10-17T12:13:27.535836630Z [err]  [2025-10-17 12:13:27 +0000] [1] [INFO] Starting gunicorn 21.2.0
+2025-10-17T12:13:27.535843515Z [err]  [2025-10-17 12:13:27 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2025-10-17T12:13:27.535850719Z [err]  [2025-10-17 12:13:27 +0000] [1] [INFO] Using worker: sync
+2025-10-17T12:13:27.535859164Z [err]  [2025-10-17 12:13:27 +0000] [2] [INFO] Booting worker with pid: 2
+2025-10-17T12:13:27.588099167Z [err]  [2025-10-17 12:13:27 +0000] [3] [INFO] Booting worker with pid: 3
+2025-10-17T12:13:28.074806277Z [inf]  ✅ Replicate provider enabled (PRIMARY - budget-friendly)
+2025-10-17T12:13:28.074812692Z [inf]  ✅ PiAPI provider enabled (FALLBACK - 99.9% uptime SLA)
+2025-10-17T12:13:28.074819557Z [inf]  🔌 Face Swap Gateway initialized with 2 provider(s)
+2025-10-17T12:13:28.074826077Z [inf]  📊 Provider priority: Replicate → PiAPI
+2025-10-17T12:13:28.156316760Z [inf]  ✅ Replicate provider enabled (PRIMARY - budget-friendly)
+2025-10-17T12:13:28.156324668Z [inf]  ✅ PiAPI provider enabled (FALLBACK - 99.9% uptime SLA)
+2025-10-17T12:13:28.156330250Z [inf]  🔌 Face Swap Gateway initialized with 2 provider(s)
+2025-10-17T12:13:28.156335719Z [inf]  📊 Provider priority: Replicate → PiAPI
+2025-10-17T12:20:48.503767028Z [inf]  🚀 [PRIMARY] Trying Huggingface Inference API (timeout=10s, scale=4)...
+2025-10-17T12:20:48.503775195Z [inf]     Using Stable Diffusion x4 Upscaler
+2025-10-17T12:20:48.503783814Z [inf]  ⚠️ Huggingface Pro failed: 404 Client Error: Not Found for url: https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-x4-upscaler
+2025-10-17T12:20:48.503790674Z [inf]  🔄 Falling back to Replicate...
+2025-10-17T12:20:48.503797209Z [inf]  🔄 [FALLBACK] Trying Replicate Real-ESRGAN (scale=4)...
+2025-10-17T12:21:08.500552490Z [inf]  📥 Downloading result from Replicate...
+2025-10-17T12:21:08.500560248Z [inf]  ✅ Real-ESRGAN success via Replicate (scale=4x)

@@ -4,6 +4,7 @@
 Viso AI is a Flutter-based application designed for creating studio-grade AI headshots and avatars. It offers advanced photo enhancement, face swapping, and various AI-driven transformations to produce high-quality, stylized digital images. The project addresses the growing market demand for personalized digital content and AI-powered image manipulation.
 
 ## Recent Changes
+- **2025-10-17**: ⚡ **HD Image Performance Fix**: Created HD Image Gateway to bypass slow Huggingface API (404 errors, 10s timeout). Now uses Replicate Real-ESRGAN directly as PRIMARY provider. Reduced processing time and eliminated timeout issues. Flutter timeout increased to 180s for slower networks.
 - **2025-10-17**: 📊 **Daily Usage Limits**: Implemented PRO user daily usage tracking (20 swaps/day) via SharedPreferences with auto-reset mechanism. FREE users enjoy unlimited swaps with rewarded ads. UsageLimitService tracks counter, checks limits before processing, and provides user feedback when limit reached.
 - **2025-10-17**: 🎬 **Rewarded Ads for HD Image & Fix Old Photo**: Added full rewarded ad integration to HD Image Enhancement and Fix Old Photo Restoration features. FREE users watch ads before processing (AdMob/AppLovin with 'auto' fallback mode). PRO users bypass ads. Complete error handling with user feedback when ads unavailable.
 - **2025-10-17**: 🎨 **13 New Template Categories**: Expanded face swap templates from 1 to 14 categories: Travel, Gym, Selfie, Tattoo, Wedding, Sport, Christmas, New Year, Birthday, School, Fashion Show, Profile, Suits. Each template features carousel layout with PageView slider, dot indicators, 5-8 Unsplash placeholder images, and download functionality. Templates ready for user customization with real images.
@@ -44,7 +45,7 @@ Built with Flutter 3.32.0 (Dart 3.8.0), Viso AI integrates with a Python Flask b
 
 ### Feature Specifications
 - **AI Headshot & Avatar Generation**: Studio-grade AI headshots and stylized avatars.
-- **Photo Enhancement**: Includes HD Image Enhancement with a 3-tier fallback system (Huggingface Inference API, Replicate Real-ESRGAN, Huggingface Space), and Old Photo Restoration using GFPGAN via Replicate.
+- **Photo Enhancement**: Includes HD Image Enhancement using HD Image Gateway (Replicate Real-ESRGAN direct, bypassing slow Huggingface API), and Old Photo Restoration using GFPGAN via Replicate.
 - **Face Swapping**: AI-powered face replacement with multi-provider fallback strategy (PiAPI primary with 99.9% SLA, Replicate fallback), gallery permission handling, and rewarded ad integration. Supports both image and video face swap.
 - **AI Style Templates**: Provides 14 diverse template categories for face swap and aesthetic transformations: Travel, Gym, Selfie, Tattoo, Wedding, Sport, Christmas, New Year, Birthday, School, Fashion Show, Profile, Suits, plus original templates. Each category features carousel layout with 5-8 curated images and instant download capability.
 - **Monetization**:

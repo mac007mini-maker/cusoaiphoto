@@ -15,6 +15,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from services.image_ai_service import image_ai_service
 from services.face_swap_gateway import face_swap_gateway, FaceSwapMediaType
+from services.hd_image_gateway import hd_image_gateway
 
 app = Flask(__name__)
 CORS(app)
@@ -117,7 +118,7 @@ def text_to_image():
 
 @app.route('/api/ai/hd-image', methods=['POST'])
 def hd_image():
-    """HD Image Enhancement using Real-ESRGAN"""
+    """HD Image Enhancement using Multi-Provider Gateway (Replicate PRIMARY → PiAPI FALLBACK)"""
     try:
         data = request.get_json()
         image_base64 = data.get('image', '')
@@ -126,8 +127,8 @@ def hd_image():
         if not image_base64:
             return jsonify({'error': 'No image provided'}), 400
         
-        # Run async function
-        result = asyncio.run(image_ai_service.hd_image(image_base64, scale))
+        # Use HD Image Gateway (Replicate PRIMARY, skips slow Huggingface)
+        result = asyncio.run(hd_image_gateway.enhance_image(image_base64, scale))
         
         if result['success']:
             return jsonify(result)

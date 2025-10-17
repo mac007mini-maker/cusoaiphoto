@@ -228,7 +228,7 @@ class HuggingfaceService {
           'image': 'data:$mimeType;base64,$base64Image',
           'scale': scale,
         }),
-      ).timeout(const Duration(seconds: 120));
+      ).timeout(const Duration(seconds: 180));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
