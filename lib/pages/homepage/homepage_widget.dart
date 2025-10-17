@@ -395,19 +395,27 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                     Padding(
                       padding:
                           EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
-                      child: Container(
-                        width: double.infinity,
-                        height: 200.0,
-                        decoration: BoxDecoration(
-                          color: Color(0xFFFFA500),
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: Image.asset(
-                              'assets/images/te5r4g.png',
-                            ).image,
+                      child: InkWell(
+                        splashColor: Colors.transparent,
+                        focusColor: Colors.transparent,
+                        hoverColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        onTap: () async {
+                          context.pushNamed(TemplatesGalleryWidget.routeName);
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          height: 200.0,
+                          decoration: BoxDecoration(
+                            color: Color(0xFFFFA500),
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: Image.asset(
+                                'assets/images/te5r4g.png',
+                              ).image,
+                            ),
+                            borderRadius: BorderRadius.circular(16.0),
                           ),
-                          borderRadius: BorderRadius.circular(16.0),
-                        ),
                         child: Padding(
                           padding: EdgeInsets.all(12.0),
                           child: Row(
@@ -543,6 +551,7 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                             ],
                           ),
                         ),
+                      ),
                       ),
                     ),
                     Row(
