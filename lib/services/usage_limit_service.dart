@@ -11,7 +11,7 @@ class UsageLimitService {
   static Future<bool> canProcessSwap() async {
     final userService = UserService();
     
-    if (!userService.isPremium) {
+    if (!userService.isPremiumUser) {
       debugPrint('✅ FREE user - unlimited swaps with ads');
       return true;
     }
@@ -33,7 +33,7 @@ class UsageLimitService {
   static Future<void> incrementSwapCount() async {
     final userService = UserService();
     
-    if (!userService.isPremium) {
+    if (!userService.isPremiumUser) {
       return;
     }
 
@@ -50,7 +50,7 @@ class UsageLimitService {
   static Future<int> getRemainingSwaps() async {
     final userService = UserService();
     
-    if (!userService.isPremium) {
+    if (!userService.isPremiumUser) {
       return -1;
     }
 

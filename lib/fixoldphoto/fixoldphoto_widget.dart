@@ -88,7 +88,7 @@ class _FixoldphotoWidgetState extends State<FixoldphotoWidget> {
     final userService = UserService();
     
     // Check if user is premium or ads disabled
-    if (userService.isPremium || !remoteConfig.adsEnabled || !remoteConfig.rewardedAdsEnabled) {
+    if (userService.isPremiumUser || !remoteConfig.adsEnabled || !remoteConfig.rewardedAdsEnabled) {
       debugPrint('🚫 User is premium or ads disabled - proceeding directly');
       _restorePhoto();
       return;
