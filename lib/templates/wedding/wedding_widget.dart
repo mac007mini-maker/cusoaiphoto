@@ -7,7 +7,6 @@ import '/services/applovin_service.dart';
 import '/services/admob_rewarded_service.dart';
 import '/services/admob_banner_service.dart';
 import '/services/remote_config_service.dart';
-import '/services/usage_limit_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -16,24 +15,24 @@ import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 // Conditional imports for platform-specific code
-import 'swapface_download_stub.dart'
-    if (dart.library.html) 'swapface_download_web.dart'
-    if (dart.library.io) 'swapface_download_mobile.dart';
-import 'swapface_model.dart';
-export 'swapface_model.dart';
+import 'wedding_download_stub.dart'
+    if (dart.library.html) 'wedding_download_web.dart'
+    if (dart.library.io) 'wedding_download_mobile.dart';
+import 'wedding_model.dart';
+export 'wedding_model.dart';
 
-class SwapfaceWidget extends StatefulWidget {
-  const SwapfaceWidget({super.key});
+class WeddingWidget extends StatefulWidget {
+  const WeddingWidget({super.key});
 
-  static String routeName = 'swapface';
-  static String routePath = '/swapface';
+  static String routeName = 'wedding';
+  static String routePath = '/wedding';
 
   @override
-  State<SwapfaceWidget> createState() => _SwapfaceWidgetState();
+  State<WeddingWidget> createState() => _WeddingWidgetState();
 }
 
-class _SwapfaceWidgetState extends State<SwapfaceWidget> {
-  late SwapfaceModel _model;
+class _WeddingWidgetState extends State<WeddingWidget> {
+  late WeddingModel _model;
   final scaffoldKey = GlobalKey<ScaffoldState>();
   late PageController _pageController;
   int _currentPage = 0;
@@ -43,7 +42,7 @@ class _SwapfaceWidgetState extends State<SwapfaceWidget> {
   @override
   void initState() {
     super.initState();
-    _model = createModel(context, () => SwapfaceModel());
+    _model = createModel(context, () => WeddingModel());
     _pageController = PageController(viewportFraction: 0.85);
     
     // Load templates from Supabase
@@ -151,19 +150,6 @@ class _SwapfaceWidgetState extends State<SwapfaceWidget> {
     if (_model.selectedUserPhoto == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Please add your photo first')),
-      );
-      return;
-    }
-
-    final canProcess = await UsageLimitService.canProcessSwap();
-    if (!canProcess) {
-      final remaining = await UsageLimitService.getRemainingSwaps();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('⏰ Daily limit reached (20 swaps/day for premium users). Resets tomorrow!'),
-          backgroundColor: Colors.orange,
-          duration: Duration(seconds: 4),
-        ),
       );
       return;
     }
@@ -288,8 +274,6 @@ class _SwapfaceWidgetState extends State<SwapfaceWidget> {
         _model.resultImageBase64 = resultBase64;
         _model.isProcessing = false;
       });
-
-      await UsageLimitService.incrementSwapCount();
 
       _showResultDialog();
     } catch (e) {
@@ -443,7 +427,7 @@ class _SwapfaceWidgetState extends State<SwapfaceWidget> {
           },
         ),
         title: Text(
-          'Swapface',
+          'Wedding',
           style: FlutterFlowTheme.of(context).headlineMedium.override(
                 font: GoogleFonts.inter(),
                 letterSpacing: 0.0,

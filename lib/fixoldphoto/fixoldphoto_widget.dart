@@ -4,6 +4,10 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/services/huggingface_service.dart';
+import '/services/applovin_service.dart';
+import '/services/admob_rewarded_service.dart';
+import '/services/remote_config_service.dart';
+import '/services/user_service.dart';
 import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -71,6 +75,86 @@ class _FixoldphotoWidgetState extends State<FixoldphotoWidget> {
       }
     } catch (e) {
       _showError('Failed to capture image: $e');
+    }
+  }
+
+  Future<void> _showAdAndRestore() async {
+    if (_model.uploadedImageBytes == null) {
+      _showError('Please upload a photo first');
+      return;
+    }
+
+    final remoteConfig = RemoteConfigService();
+    final userService = UserService();
+    
+    // Check if user is premium or ads disabled
+    if (userService.isPremium || !remoteConfig.adsEnabled || !remoteConfig.rewardedAdsEnabled) {
+      debugPrint('🚫 User is premium or ads disabled - proceeding directly');
+      _restorePhoto();
+      return;
+    }
+
+    // Show rewarded ad for FREE users
+    final preferredNetwork = remoteConfig.rewardedAdNetwork.toLowerCase();
+    debugPrint('📺 Rewarded ad network preference: $preferredNetwork');
+
+    if (preferredNetwork == 'applovin') {
+      await AppLovinService.showRewardedAd(
+        onComplete: () {
+          debugPrint('✅ AppLovin ad watched - restoring old photo');
+          _restorePhoto();
+        },
+        onFailed: () {
+          debugPrint('❌ AppLovin ad failed');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('⏳ Ads not ready yet. Please try again in a moment.'),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        },
+      );
+    } else if (preferredNetwork == 'admob') {
+      await AdMobRewardedService.showRewardedAd(
+        onComplete: () {
+          debugPrint('✅ AdMob ad watched - restoring old photo');
+          _restorePhoto();
+        },
+        onFailed: () {
+          debugPrint('❌ AdMob ad failed');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('⏳ Ads not ready yet. Please try again in a moment.'),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        },
+      );
+    } else {
+      await AdMobRewardedService.showRewardedAd(
+        onComplete: () {
+          debugPrint('✅ AdMob ad watched - restoring old photo');
+          _restorePhoto();
+        },
+        onFailed: () async {
+          debugPrint('⚠️ AdMob ad failed - trying AppLovin fallback');
+          await AppLovinService.showRewardedAd(
+            onComplete: () {
+              debugPrint('✅ AppLovin ad watched - restoring old photo');
+              _restorePhoto();
+            },
+            onFailed: () {
+              debugPrint('❌ Both AdMob and AppLovin ads failed');
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('⏳ Ads not ready yet. Please try again in a moment.'),
+                  backgroundColor: Colors.orange,
+                ),
+              );
+            },
+          );
+        },
+      );
     }
   }
 
@@ -328,8 +412,8 @@ class _FixoldphotoWidgetState extends State<FixoldphotoWidget> {
                               ),
                               SizedBox(height: 16),
                               FFButtonWidget(
-                                onPressed: _model.isProcessing ? null : _restorePhoto,
-                                text: _model.isProcessing ? 'Processing...' : 'Restore Photo',
+                                onPressed: _model.isProcessing ? null : _showAdAndRestore,
+                                text: _model.isProcessing ? 'Processing...' : 'Watch Ad & Restore Photo',
                                 options: FFButtonOptions(
                                   width: double.infinity,
                                   height: 50,

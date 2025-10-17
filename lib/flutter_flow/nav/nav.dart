@@ -171,6 +171,71 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           builder: (context, params) => SwapfaceWidget(),
         ),
         FFRoute(
+          name: TravelWidget.routeName,
+          path: TravelWidget.routePath,
+          builder: (context, params) => TravelWidget(),
+        ),
+        FFRoute(
+          name: GymWidget.routeName,
+          path: GymWidget.routePath,
+          builder: (context, params) => GymWidget(),
+        ),
+        FFRoute(
+          name: SelfieWidget.routeName,
+          path: SelfieWidget.routePath,
+          builder: (context, params) => SelfieWidget(),
+        ),
+        FFRoute(
+          name: TattooWidget.routeName,
+          path: TattooWidget.routePath,
+          builder: (context, params) => TattooWidget(),
+        ),
+        FFRoute(
+          name: WeddingWidget.routeName,
+          path: WeddingWidget.routePath,
+          builder: (context, params) => WeddingWidget(),
+        ),
+        FFRoute(
+          name: SportWidget.routeName,
+          path: SportWidget.routePath,
+          builder: (context, params) => SportWidget(),
+        ),
+        FFRoute(
+          name: ChristmasWidget.routeName,
+          path: ChristmasWidget.routePath,
+          builder: (context, params) => ChristmasWidget(),
+        ),
+        FFRoute(
+          name: NewyearWidget.routeName,
+          path: NewyearWidget.routePath,
+          builder: (context, params) => NewyearWidget(),
+        ),
+        FFRoute(
+          name: BirthdayWidget.routeName,
+          path: BirthdayWidget.routePath,
+          builder: (context, params) => BirthdayWidget(),
+        ),
+        FFRoute(
+          name: SchoolWidget.routeName,
+          path: SchoolWidget.routePath,
+          builder: (context, params) => SchoolWidget(),
+        ),
+        FFRoute(
+          name: FashionshowWidget.routeName,
+          path: FashionshowWidget.routePath,
+          builder: (context, params) => FashionshowWidget(),
+        ),
+        FFRoute(
+          name: ProfileWidget.routeName,
+          path: ProfileWidget.routePath,
+          builder: (context, params) => ProfileWidget(),
+        ),
+        FFRoute(
+          name: SuitsWidget.routeName,
+          path: SuitsWidget.routePath,
+          builder: (context, params) => SuitsWidget(),
+        ),
+        FFRoute(
           name: AiTestWidget.routeName,
           path: AiTestWidget.routePath,
           builder: (context, params) => AiTestWidget(),
