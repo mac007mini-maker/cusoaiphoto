@@ -84,12 +84,12 @@ class RemoteConfigService {
   Future<void> initialize() async {
     try {
       await _remoteConfig.setDefaults({
-        'ads_enabled': false,
-        'banner_ads_enabled': false,
-        'rewarded_ads_enabled': false,
-        'interstitial_ads_enabled': false,
-        'app_open_ads_enabled': false,
-        'native_ads_enabled': false,
+        'ads_enabled': true,
+        'banner_ads_enabled': true,
+        'rewarded_ads_enabled': true,
+        'interstitial_ads_enabled': true,
+        'app_open_ads_enabled': true,
+        'native_ads_enabled': true,
         'min_user_count_for_ads': 5000,
         'banner_ad_network': 'auto',
         'rewarded_ad_network': 'auto',
