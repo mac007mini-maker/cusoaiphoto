@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '/flutter_flow/flutter_flow_util.dart';
 
@@ -13,6 +14,33 @@ export 'serialization_util.dart';
 const kTransitionInfoKey = '__transition_info__';
 
 GlobalKey<NavigatorState> appNavigatorKey = GlobalKey<NavigatorState>();
+
+class InitialPageWidget extends StatelessWidget {
+  const InitialPageWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<bool>(
+      future: _checkHasSeenIntro(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Container(
+            color: Colors.white,
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+        
+        final hasSeenIntro = snapshot.data ?? false;
+        return hasSeenIntro ? HomepageWidget() : Intro1Widget();
+      },
+    );
+  }
+
+  Future<bool> _checkHasSeenIntro() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('hasSeenIntro') ?? false;
+  }
+}
 
 class AppStateNotifier extends ChangeNotifier {
   AppStateNotifier._();
@@ -43,7 +71,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
                 ),
               ),
             )
-          : Intro1Widget(),
+          : InitialPageWidget(),
       routes: [
         FFRoute(
           name: '_initialize',
@@ -58,7 +86,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
                     ),
                   ),
                 )
-              : Intro1Widget(),
+              : InitialPageWidget(),
         ),
         FFRoute(
           name: XPageWidget.routeName,

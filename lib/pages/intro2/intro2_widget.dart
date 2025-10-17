@@ -3,8 +3,8 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/index.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'intro2_model.dart';
 export 'intro2_model.dart';
 
@@ -28,11 +28,6 @@ class _Intro2WidgetState extends State<Intro2Widget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => Intro2Model());
-
-    // On page load action.
-    SchedulerBinding.instance.addPostFrameCallback((_) async {
-      context.pushNamed(Intro3Widget.routeName);
-    });
   }
 
   @override
@@ -153,7 +148,9 @@ class _Intro2WidgetState extends State<Intro2Widget> {
                                 24.0, 0.0, 24.0, 0.0),
                             child: FFButtonWidget(
                               onPressed: () async {
-                                context.pushNamed(IapWidget.routeName);
+                                final prefs = await SharedPreferences.getInstance();
+                                await prefs.setBool('hasSeenIntro', true);
+                                context.pushNamed(HomepageWidget.routeName);
                               },
                               text: FFLocalizations.of(context).getText(
                                 'mgtuko3s' /* Skip */,
