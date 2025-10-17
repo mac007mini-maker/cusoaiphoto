@@ -28,11 +28,6 @@ class _Intro2WidgetState extends State<Intro2Widget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => Intro2Model());
-
-    // On page load action.
-    SchedulerBinding.instance.addPostFrameCallback((_) async {
-      context.pushNamed(Intro3Widget.routeName);
-    });
   }
 
   @override
@@ -153,7 +148,7 @@ class _Intro2WidgetState extends State<Intro2Widget> {
                                 24.0, 0.0, 24.0, 0.0),
                             child: FFButtonWidget(
                               onPressed: () async {
-                                context.pushNamed(IapWidget.routeName);
+                                context.pushNamed(HomepageWidget.routeName);
                               },
                               text: FFLocalizations.of(context).getText(
                                 'mgtuko3s' /* Skip */,

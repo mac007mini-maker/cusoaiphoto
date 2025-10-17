@@ -416,7 +416,7 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                             ),
                             borderRadius: BorderRadius.circular(16.0),
                           ),
-                        child: Padding(
+                          child: Padding(
                           padding: EdgeInsets.all(12.0),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
@@ -551,7 +551,6 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                             ],
                           ),
                         ),
-                      ),
                       ),
                     ),
                     Row(
