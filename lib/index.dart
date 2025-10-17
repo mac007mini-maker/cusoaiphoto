@@ -21,6 +21,7 @@ export '/headshots/headshots_widget.dart' show HeadshotsWidget;
 export '/tophits/tophits_widget.dart' show TophitsWidget;
 export '/explore/explore_widget.dart' show ExploreWidget;
 export '/swapface/swapface_widget.dart' show SwapfaceWidget;
+export '/pages/templates_gallery/templates_gallery_widget.dart' show TemplatesGalleryWidget;
 export '/templates/travel/travel_widget.dart' show TravelWidget;
 export '/templates/gym/gym_widget.dart' show GymWidget;
 export '/templates/selfie/selfie_widget.dart' show SelfieWidget;

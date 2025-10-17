@@ -199,6 +199,11 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           builder: (context, params) => SwapfaceWidget(),
         ),
         FFRoute(
+          name: TemplatesGalleryWidget.routeName,
+          path: TemplatesGalleryWidget.routePath,
+          builder: (context, params) => TemplatesGalleryWidget(),
+        ),
+        FFRoute(
           name: TravelWidget.routeName,
           path: TravelWidget.routePath,
           builder: (context, params) => TravelWidget(),
