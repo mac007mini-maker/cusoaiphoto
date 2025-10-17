@@ -1,0 +1,23 @@
+2025-10-17T12:39:02.000000000Z [inf]  Starting Container
+2025-10-17T12:39:02.627631507Z [err]  [2025-10-17 12:39:02 +0000] [1] [INFO] Starting gunicorn 21.2.0
+2025-10-17T12:39:02.627640478Z [err]  [2025-10-17 12:39:02 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2025-10-17T12:39:02.627646532Z [err]  [2025-10-17 12:39:02 +0000] [1] [INFO] Using worker: sync
+2025-10-17T12:39:02.627652129Z [err]  [2025-10-17 12:39:02 +0000] [2] [INFO] Booting worker with pid: 2
+2025-10-17T12:39:02.627658683Z [err]  [2025-10-17 12:39:02 +0000] [3] [INFO] Booting worker with pid: 3
+2025-10-17T12:39:03.022727647Z [inf]  ✅ Replicate provider enabled (PRIMARY - budget-friendly)
+2025-10-17T12:39:03.022733541Z [inf]  ✅ PiAPI provider enabled (FALLBACK - 99.9% uptime SLA)
+2025-10-17T12:39:03.022739118Z [inf]  🔌 Face Swap Gateway initialized with 2 provider(s)
+2025-10-17T12:39:03.022745361Z [inf]  📊 Provider priority: Replicate → PiAPI
+2025-10-17T12:39:03.025451718Z [inf]  🔌 HD Image Gateway initialized with 1 provider(s)
+2025-10-17T12:39:03.025461253Z [inf]  📊 Using Replicate Real-ESRGAN (direct, no Huggingface bottleneck)
+2025-10-17T12:39:03.123686006Z [inf]  ✅ Replicate provider enabled (PRIMARY - budget-friendly)
+2025-10-17T12:39:03.123692007Z [inf]  ✅ PiAPI provider enabled (FALLBACK - 99.9% uptime SLA)
+2025-10-17T12:39:03.123697788Z [inf]  🔌 Face Swap Gateway initialized with 2 provider(s)
+2025-10-17T12:39:03.123707097Z [inf]  📊 Provider priority: Replicate → PiAPI
+2025-10-17T12:39:03.123712473Z [inf]  🔌 HD Image Gateway initialized with 1 provider(s)
+2025-10-17T12:39:03.123718329Z [inf]  📊 Using Replicate Real-ESRGAN (direct, no Huggingface bottleneck)
+2025-10-17T12:47:53.293593888Z [inf]  
+2025-10-17T12:47:53.293601093Z [inf]  🎯 HD Image Gateway: Starting enhancement (scale=4x)
+2025-10-17T12:47:53.293606723Z [inf]  🚀 [PRIMARY] Trying Replicate Real-ESRGAN (scale=4x)...
+2025-10-17T12:47:57.518375432Z [inf]  📥 Downloading result from Replicate...
+2025-10-17T12:47:59.338455277Z [inf]  ✅ HD Image SUCCESS via Replicate (scale=4x)

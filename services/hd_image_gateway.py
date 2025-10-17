@@ -73,25 +73,28 @@ class HDImageGateway:
             loop = asyncio.get_event_loop()
             output = await loop.run_in_executor(None, _run_replicate)
             
-            if output:
-                print(f"📥 Downloading result from Replicate...")
-                
-                def _download():
-                    response = requests.get(str(output), timeout=30)
-                    response.raise_for_status()
-                    return response.content
-                
-                content = await loop.run_in_executor(None, _download)
-                result_base64 = base64.b64encode(content).decode()
-                
-                print(f"✅ HD Image SUCCESS via Replicate (scale={scale}x)")
-                
-                return {
-                    "success": True,
-                    "image": f"data:image/png;base64,{result_base64}",
-                    "message": f"Image upscaled {scale}x via Replicate",
-                    "source": "replicate"
-                }
+            if not output:
+                print(f"❌ Replicate returned empty output")
+                return {"success": False, "error": "Replicate returned no result"}
+            
+            print(f"📥 Downloading result from Replicate...")
+            
+            def _download():
+                response = requests.get(str(output), timeout=30)
+                response.raise_for_status()
+                return response.content
+            
+            content = await loop.run_in_executor(None, _download)
+            result_base64 = base64.b64encode(content).decode()
+            
+            print(f"✅ HD Image SUCCESS via Replicate (scale={scale}x)")
+            
+            return {
+                "success": True,
+                "image": f"data:image/png;base64,{result_base64}",
+                "message": f"Image upscaled {scale}x via Replicate",
+                "source": "replicate"
+            }
         
         except Exception as e:
             print(f"❌ Replicate Real-ESRGAN failed: {e}")
