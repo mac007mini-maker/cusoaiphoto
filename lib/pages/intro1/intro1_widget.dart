@@ -82,8 +82,8 @@ class _Intro1WidgetState extends State<Intro1Widget> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         FFButtonWidget(
-                          onPressed: () async {
-                            context.pushNamed(HomepageWidget.routeName);
+                          onPressed: () {
+                            print('Button pressed ...');
                           },
                           text: FFLocalizations.of(context).getText(
                             '5vr6qb6h' /* Skip */,

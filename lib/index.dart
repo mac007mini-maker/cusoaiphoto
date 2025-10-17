@@ -34,5 +34,4 @@ export '/templates/school/school_widget.dart' show SchoolWidget;
 export '/templates/fashionshow/fashionshow_widget.dart' show FashionshowWidget;
 export '/templates/profile/profile_widget.dart' show ProfileWidget;
 export '/templates/suits/suits_widget.dart' show SuitsWidget;
-export '/templates/templates_gallery_widget.dart' show TemplatesGalleryWidget;
 export '/pages/ai_test/ai_test_widget.dart' show AiTestWidget;

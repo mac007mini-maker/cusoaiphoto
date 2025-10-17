@@ -28,6 +28,11 @@ class _Intro3WidgetState extends State<Intro3Widget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => Intro3Model());
+
+    // On page load action.
+    SchedulerBinding.instance.addPostFrameCallback((_) async {
+      context.pushNamed(HomepageWidget.routeName);
+    });
   }
 
   @override
@@ -143,7 +148,7 @@ class _Intro3WidgetState extends State<Intro3Widget> {
                           EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
                       child: FFButtonWidget(
                         onPressed: () async {
-                          context.pushNamed(HomepageWidget.routeName);
+                          context.pushNamed(IapWidget.routeName);
                         },
                         text: FFLocalizations.of(context).getText(
                           'pevrmkld' /* Skip */,
@@ -251,7 +256,7 @@ class _Intro3WidgetState extends State<Intro3Widget> {
                         hoverColor: Colors.transparent,
                         highlightColor: Colors.transparent,
                         onTap: () async {
-                          context.pushNamed(HomepageWidget.routeName);
+                          context.pushNamed(IapWidget.routeName);
                         },
                         child: Container(
                           width: 64.0,
