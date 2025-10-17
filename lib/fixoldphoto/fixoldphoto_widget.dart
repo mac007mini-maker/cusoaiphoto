@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -12,6 +13,7 @@ import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:gal/gal.dart';
 import 'fixoldphoto_model.dart';
 export 'fixoldphoto_model.dart';
 
@@ -210,6 +212,24 @@ class _FixoldphotoWidgetState extends State<FixoldphotoWidget> {
     );
   }
 
+  Future<void> _downloadRestoredImage() async {
+    if (_model.restoredImageBase64 == null) {
+      _showError('No restored image to download');
+      return;
+    }
+
+    try {
+      final base64String = _model.restoredImageBase64!.split(',').last;
+      final Uint8List bytes = base64Decode(base64String);
+      
+      await Gal.putImageBytes(bytes, album: 'VisoAI');
+      
+      _showSuccess('✅ Image saved to Gallery/Photos!');
+    } catch (e) {
+      _showError('Failed to save image: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -380,6 +400,26 @@ class _FixoldphotoWidgetState extends State<FixoldphotoWidget> {
                                   ),
                                 ],
                               ),
+                              if (_model.restoredImageBase64 != null)
+                                Padding(
+                                  padding: EdgeInsets.only(top: 16),
+                                  child: FFButtonWidget(
+                                    onPressed: _downloadRestoredImage,
+                                    text: 'Download Restored Image',
+                                    icon: Icon(Icons.download, color: Colors.white),
+                                    options: FFButtonOptions(
+                                      width: double.infinity,
+                                      height: 50,
+                                      color: Color(0xFF10B981),
+                                      textStyle: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      borderRadius: BorderRadius.circular(25),
+                                    ),
+                                  ),
+                                ),
                               SizedBox(height: 16),
                               Container(
                                 padding: EdgeInsets.all(12),

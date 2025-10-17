@@ -11,6 +11,7 @@ import '/services/user_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:gal/gal.dart';
 import 'dart:typed_data';
 import 'dart:convert';
 import 'hdphoto_model.dart';
@@ -197,6 +198,36 @@ class _HdphotoWidgetState extends State<HdphotoWidget> {
         _model.errorMessage = 'HD enhancement failed: $e';
         _model.isProcessing = false;
       });
+    }
+  }
+
+  Future<void> _downloadHDImage() async {
+    if (_model.resultImageBase64 == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('No HD image to download')),
+      );
+      return;
+    }
+
+    try {
+      final base64String = _model.resultImageBase64!.split(',').last;
+      final Uint8List bytes = base64Decode(base64String);
+      
+      await Gal.putImageBytes(bytes, album: 'VisoAI');
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('✅ HD Image saved to Gallery/Photos!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to save image: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -633,6 +664,23 @@ class _HdphotoWidgetState extends State<HdphotoWidget> {
                                       font: GoogleFonts.inter(),
                                       color: Colors.green,
                                       fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  SizedBox(height: 16.0),
+                                  FFButtonWidget(
+                                    onPressed: _downloadHDImage,
+                                    text: 'Download HD Image',
+                                    icon: Icon(Icons.download, color: Colors.white),
+                                    options: FFButtonOptions(
+                                      width: double.infinity,
+                                      height: 50,
+                                      color: Color(0xFF10B981),
+                                      textStyle: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      borderRadius: BorderRadius.circular(25),
                                     ),
                                   ),
                                 ],
