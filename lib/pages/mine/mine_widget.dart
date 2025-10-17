@@ -59,9 +59,10 @@ class _MineWidgetState extends State<MineWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-        body: Stack(
-          children: [
-            SingleChildScrollView(
+        body: SafeArea(
+          child: Stack(
+            children: [
+              SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
@@ -459,6 +460,7 @@ class _MineWidgetState extends State<MineWidget> {
       ],
     ),
   ),
-);
+      ),
+    );
   }
 }
