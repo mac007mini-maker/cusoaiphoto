@@ -417,66 +417,66 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                             borderRadius: BorderRadius.circular(16.0),
                           ),
                           child: Padding(
-                          padding: EdgeInsets.all(12.0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Column(
-                                mainAxisSize: MainAxisSize.max,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    FFLocalizations.of(context).getText(
-                                      'bnefgjdb' /* Story */,
-                                    ),
-                                    style: FlutterFlowTheme.of(context)
-                                        .displaySmall
-                                        .override(
-                                          font: GoogleFonts.interTight(
+                            padding: EdgeInsets.all(12.0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      FFLocalizations.of(context).getText(
+                                        'bnefgjdb' /* Story */,
+                                      ),
+                                      style: FlutterFlowTheme.of(context)
+                                          .displaySmall
+                                          .override(
+                                            font: GoogleFonts.interTight(
+                                              fontWeight: FontWeight.bold,
+                                              fontStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .displaySmall
+                                                      .fontStyle,
+                                            ),
+                                            color: FlutterFlowTheme.of(context)
+                                                .secondaryBackground,
+                                            fontSize: 30.0,
+                                            letterSpacing: 0.0,
                                             fontWeight: FontWeight.bold,
                                             fontStyle:
                                                 FlutterFlowTheme.of(context)
                                                     .displaySmall
                                                     .fontStyle,
                                           ),
-                                          color: FlutterFlowTheme.of(context)
-                                              .secondaryBackground,
-                                          fontSize: 30.0,
-                                          letterSpacing: 0.0,
-                                          fontWeight: FontWeight.bold,
-                                          fontStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .displaySmall
-                                                  .fontStyle,
-                                        ),
-                                  ),
-                                  Text(
-                                    FFLocalizations.of(context).getText(
-                                      'lfjh4b4p' /* of Life */,
                                     ),
-                                    style: FlutterFlowTheme.of(context)
-                                        .displaySmall
-                                        .override(
-                                          font: GoogleFonts.interTight(
+                                    Text(
+                                      FFLocalizations.of(context).getText(
+                                        'lfjh4b4p' /* of Life */,
+                                      ),
+                                      style: FlutterFlowTheme.of(context)
+                                          .displaySmall
+                                          .override(
+                                            font: GoogleFonts.interTight(
+                                              fontWeight: FontWeight.bold,
+                                              fontStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .displaySmall
+                                                      .fontStyle,
+                                            ),
+                                            color: FlutterFlowTheme.of(context)
+                                                .secondaryBackground,
+                                            fontSize: 30.0,
+                                            letterSpacing: 0.0,
                                             fontWeight: FontWeight.bold,
                                             fontStyle:
                                                 FlutterFlowTheme.of(context)
                                                     .displaySmall
                                                     .fontStyle,
                                           ),
-                                          color: FlutterFlowTheme.of(context)
-                                              .secondaryBackground,
-                                          fontSize: 30.0,
-                                          letterSpacing: 0.0,
-                                          fontWeight: FontWeight.bold,
-                                          fontStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .displaySmall
-                                                  .fontStyle,
-                                        ),
-                                  ),
+                                    ),
                                 ],
                               ),
                               Column(
