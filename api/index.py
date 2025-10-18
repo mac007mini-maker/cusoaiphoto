@@ -376,12 +376,40 @@ def get_video_templates():
                 'filename': filename
             })
         
-        print(f"✅ [VIDEO_TEMPLATES] Found {sum(len(v) for v in templates.values())} videos in {len(templates)} categories")
+        total_videos = sum(len(v) for v in templates.values())
+        print(f"✅ [VIDEO_TEMPLATES] Found {total_videos} videos in {len(templates)} categories")
+        
+        # Fallback to DEMO templates if Supabase bucket is empty
+        if total_videos == 0:
+            print("⚠️  [VIDEO_TEMPLATES] No videos in Supabase, using DEMO templates")
+            templates = {
+                'Dance': [
+                    {'id': 'dance_1', 'title': 'Happy Dance', 'video_url': 'https://picsum.photos/seed/dance1/400/600.mp4', 'thumbnail_url': 'https://picsum.photos/seed/dance1/400/600', 'category': 'Dance'},
+                    {'id': 'dance_2', 'title': 'Cool Moves', 'video_url': 'https://picsum.photos/seed/dance2/400/600.mp4', 'thumbnail_url': 'https://picsum.photos/seed/dance2/400/600', 'category': 'Dance'},
+                ],
+                'Funny': [
+                    {'id': 'funny_1', 'title': 'Laugh Out Loud', 'video_url': 'https://picsum.photos/seed/funny1/400/600.mp4', 'thumbnail_url': 'https://picsum.photos/seed/funny1/400/600', 'category': 'Funny'},
+                    {'id': 'funny_2', 'title': 'Comedy Gold', 'video_url': 'https://picsum.photos/seed/funny2/400/600.mp4', 'thumbnail_url': 'https://picsum.photos/seed/funny2/400/600', 'category': 'Funny'},
+                ],
+                'Action': [
+                    {'id': 'action_1', 'title': 'Hero Moment', 'video_url': 'https://picsum.photos/seed/action1/400/600.mp4', 'thumbnail_url': 'https://picsum.photos/seed/action1/400/600', 'category': 'Action'},
+                    {'id': 'action_2', 'title': 'Epic Scene', 'video_url': 'https://picsum.photos/seed/action2/400/600.mp4', 'thumbnail_url': 'https://picsum.photos/seed/action2/400/600', 'category': 'Action'},
+                ],
+                'Travel': [
+                    {'id': 'travel_1', 'title': 'Beach Vibes', 'video_url': 'https://picsum.photos/seed/travel1/400/600.mp4', 'thumbnail_url': 'https://picsum.photos/seed/travel1/400/600', 'category': 'Travel'},
+                    {'id': 'travel_2', 'title': 'Mountain View', 'video_url': 'https://picsum.photos/seed/travel2/400/600.mp4', 'thumbnail_url': 'https://picsum.photos/seed/travel2/400/600', 'category': 'Travel'},
+                ],
+                'Fashion': [
+                    {'id': 'fashion_1', 'title': 'Runway Walk', 'video_url': 'https://picsum.photos/seed/fashion1/400/600.mp4', 'thumbnail_url': 'https://picsum.photos/seed/fashion1/400/600', 'category': 'Fashion'},
+                    {'id': 'fashion_2', 'title': 'Style Icon', 'video_url': 'https://picsum.photos/seed/fashion2/400/600.mp4', 'thumbnail_url': 'https://picsum.photos/seed/fashion2/400/600', 'category': 'Fashion'},
+                ],
+            }
+            total_videos = sum(len(v) for v in templates.values())
         
         return jsonify({
             'success': True,
             'templates': templates,
-            'total_videos': sum(len(v) for v in templates.values()),
+            'total_videos': total_videos,
             'categories': list(templates.keys())
         })
         
