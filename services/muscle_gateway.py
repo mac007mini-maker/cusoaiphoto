@@ -87,7 +87,7 @@ class ReplicateInstructPix2PixProvider(MuscleProvider):
             
             def _run():
                 return replicate.run(
-                    "arielreplicate/instruct-pix2pix:30c1d0b916a6f8efce20493f5d61ee27491ab2a60437c13c588468b9810ec23f",
+                    "timothybrooks/instruct-pix2pix:30c1d0b916a6f8efce20493f5d61ee27491ab2a60437c13c588468b9810ec23f",
                     input={
                         "image": data_uri,
                         "prompt": prompt,

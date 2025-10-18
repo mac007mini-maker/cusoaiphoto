@@ -80,7 +80,7 @@ class ReplicatePhotoMakerStyleProvider(MemojiProvider):
                     input={
                         "input_image": data_uri,
                         "prompt": prompt,
-                        "style_name": "3D Avatar",
+                        "style_name": "Digital Art",
                         "negative_prompt": "realistic, photo, dark, ugly, distorted",
                         "num_steps": 30,
                         "style_strength_ratio": 30,

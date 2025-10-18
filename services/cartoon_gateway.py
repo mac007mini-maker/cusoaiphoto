@@ -80,7 +80,7 @@ class ReplicatePhotoMakerStyleProvider(CartoonProvider):
                     input={
                         "input_image": data_uri,
                         "prompt": prompt,
-                        "style_name": "Cartoon",
+                        "style_name": "Disney Charactor",
                         "negative_prompt": "realistic, photo, blurry, ugly, distorted",
                         "num_steps": 30,
                         "style_strength_ratio": 30,

@@ -1,0 +1,109 @@
+2025-10-18T09:19:17.000000000Z [inf]  Starting Container
+2025-10-18T09:19:18.210680127Z [inf]  📊 Provider priority: Replicate → PiAPI
+2025-10-18T09:19:18.210683336Z [inf]    3. PiAPI Flux (timeout=20s)
+2025-10-18T09:19:18.210688163Z [inf]  🔌 HD Image Gateway initialized with 1 provider(s)
+2025-10-18T09:19:18.210694536Z [inf]  📊 Using Replicate Real-ESRGAN (direct, no Huggingface bottleneck)
+2025-10-18T09:19:18.210695265Z [inf]  🔌 Muscle Enhancement Gateway initialized with 2 provider(s)
+2025-10-18T09:19:18.210701286Z [inf]  🔌 Cartoon Gateway initialized with 2 provider(s)
+2025-10-18T09:19:18.210705219Z [inf]  🔌 Art Style Gateway initialized with 2 provider(s)
+2025-10-18T09:19:18.210706914Z [inf]  🔌 Memoji Gateway initialized with 2 provider(s)
+2025-10-18T09:19:18.210711750Z [inf]  🔌 Animal-Toon Gateway initialized with 3 provider(s)
+2025-10-18T09:19:18.210713868Z [inf]  ✅ Replicate provider enabled (PRIMARY - budget-friendly)
+2025-10-18T09:19:18.210717922Z [inf]    1. Replicate PhotoMaker (timeout=30s)
+2025-10-18T09:19:18.210720803Z [inf]  ✅ PiAPI provider enabled (FALLBACK - 99.9% uptime SLA)
+2025-10-18T09:19:18.210724731Z [inf]    2. Replicate InstantID (timeout=90s)
+2025-10-18T09:19:18.210779892Z [err]  [2025-10-18 09:19:17 +0000] [1] [INFO] Starting gunicorn 21.2.0
+2025-10-18T09:19:18.210784812Z [err]  [2025-10-18 09:19:17 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2025-10-18T09:19:18.210790706Z [err]  [2025-10-18 09:19:17 +0000] [1] [INFO] Using worker: sync
+2025-10-18T09:19:18.210796395Z [err]  [2025-10-18 09:19:17 +0000] [2] [INFO] Booting worker with pid: 2
+2025-10-18T09:19:18.210802990Z [err]  [2025-10-18 09:19:17 +0000] [3] [INFO] Booting worker with pid: 3
+2025-10-18T09:19:18.210810221Z [inf]  ✅ Replicate provider enabled (PRIMARY - budget-friendly)
+2025-10-18T09:19:18.210816834Z [inf]  ✅ PiAPI provider enabled (FALLBACK - 99.9% uptime SLA)
+2025-10-18T09:19:18.210823301Z [inf]  🔌 Face Swap Gateway initialized with 2 provider(s)
+2025-10-18T09:19:18.213882894Z [inf]  🔌 Cartoon Gateway initialized with 2 provider(s)
+2025-10-18T09:19:18.213889155Z [inf]  🔌 Memoji Gateway initialized with 2 provider(s)
+2025-10-18T09:19:18.213893947Z [inf]  🔌 Animal-Toon Gateway initialized with 3 provider(s)
+2025-10-18T09:19:18.213898498Z [inf]    1. Replicate PhotoMaker (timeout=30s)
+2025-10-18T09:19:18.213913027Z [inf]    2. Replicate InstantID (timeout=90s)
+2025-10-18T09:19:18.213918270Z [inf]    3. PiAPI Flux (timeout=20s)
+2025-10-18T09:19:18.213922896Z [inf]  🔌 Muscle Enhancement Gateway initialized with 2 provider(s)
+2025-10-18T09:19:18.213928835Z [inf]  🔌 Art Style Gateway initialized with 2 provider(s)
+2025-10-18T09:19:18.213930557Z [inf]  🔌 Face Swap Gateway initialized with 2 provider(s)
+2025-10-18T09:19:18.213936112Z [inf]  📊 Provider priority: Replicate → PiAPI
+2025-10-18T09:19:18.213941040Z [inf]  🔌 HD Image Gateway initialized with 1 provider(s)
+2025-10-18T09:19:18.213945375Z [inf]  📊 Using Replicate Real-ESRGAN (direct, no Huggingface bottleneck)
+2025-10-18T09:26:29.382969095Z [inf]  detail: - input.style_name: style_name must be one of the following: "(No style)", "Cinematic", "Disney Charactor", "Digital Art", "Photographic (Default)", "Fantasy art", "Neonpunk", "Enhance", "Comic book", "Lowpoly", "Line art"
+2025-10-18T09:26:29.382969250Z [inf]  ⚠️ Replicate InstantID Artistic failed, trying next...
+2025-10-18T09:26:29.382980061Z [inf]  📤 [CARTOON] Result: success=False, provider=None
+2025-10-18T09:26:29.382981553Z [inf]  
+2025-10-18T09:26:29.382988985Z [inf]  ⚠️ Replicate PhotoMaker-Style failed, trying next...
+2025-10-18T09:26:29.382996836Z [inf]  🔄 [FALLBACK 1] Trying Replicate InstantID Artistic...
+2025-10-18T09:26:29.383005118Z [inf]  🎯 Cartoon Gateway: Starting transformation
+2025-10-18T09:26:29.383005243Z [inf]  ❌ Replicate InstantID Artistic failed: ReplicateError Details:
+2025-10-18T09:26:29.383014089Z [inf]  📥 [CARTOON] Received request
+2025-10-18T09:26:29.383014943Z [inf]  title: Invalid version or not permitted
+2025-10-18T09:26:29.383015195Z [inf]  🚀 [PRIMARY] Trying Replicate PhotoMaker-Style (Cartoon)...
+2025-10-18T09:26:29.383023577Z [inf]  🚀 [CARTOON] Calling cartoon gateway...
+2025-10-18T09:26:29.383026332Z [inf]  ❌ Replicate PhotoMaker-Style failed: ReplicateError Details:
+2025-10-18T09:26:29.383026452Z [inf]  status: 422
+2025-10-18T09:26:29.383033693Z [inf]  
+2025-10-18T09:26:29.383036871Z [inf]  title: Input validation failed
+2025-10-18T09:26:29.383038067Z [inf]  detail: The specified version does not exist (or perhaps you don't have permission to use it?)
+2025-10-18T09:26:29.383044405Z [inf]  status: 422
+2025-10-18T09:27:19.210884248Z [inf]  📥 [MEMOJI] Received request
+2025-10-18T09:27:19.210897818Z [inf]  🚀 [MEMOJI] Calling memoji gateway...
+2025-10-18T09:27:19.210905598Z [inf]  
+2025-10-18T09:27:19.210913174Z [inf]  🎯 Memoji Gateway: Starting transformation
+2025-10-18T09:27:19.210920117Z [inf]  🚀 [PRIMARY] Trying Replicate PhotoMaker-Style (Memoji)...
+2025-10-18T09:27:19.210927242Z [inf]  ❌ Replicate PhotoMaker-Style failed: ReplicateError Details:
+2025-10-18T09:27:19.210933176Z [inf]  title: Input validation failed
+2025-10-18T09:27:19.210939718Z [inf]  status: 422
+2025-10-18T09:27:19.210945865Z [inf]  detail: - input.style_name: style_name must be one of the following: "(No style)", "Cinematic", "Disney Charactor", "Digital Art", "Photographic (Default)", "Fantasy art", "Neonpunk", "Enhance", "Comic book", "Lowpoly", "Line art"
+2025-10-18T09:27:19.210954257Z [inf]  
+2025-10-18T09:27:19.210959249Z [inf]  ⚠️ Replicate PhotoMaker-Style failed, trying next...
+2025-10-18T09:27:19.210963660Z [inf]  🔄 [FALLBACK 1] Trying Replicate InstantID...
+2025-10-18T09:27:19.210968726Z [inf]  ❌ Replicate InstantID failed: ReplicateError Details:
+2025-10-18T09:27:19.210975730Z [inf]  title: Invalid version or not permitted
+2025-10-18T09:27:19.210981872Z [inf]  status: 422
+2025-10-18T09:27:19.210986452Z [inf]  detail: The specified version does not exist (or perhaps you don't have permission to use it?)
+2025-10-18T09:27:19.210991541Z [inf]  ⚠️ Replicate InstantID failed, trying next...
+2025-10-18T09:27:19.210996343Z [inf]  📤 [MEMOJI] Result: success=False, provider=None
+2025-10-18T09:27:49.225851820Z [inf]  📥 [ANIMAL_TOON] Received request
+2025-10-18T09:27:49.225860348Z [inf]  🚀 [ANIMAL_TOON] Calling animal-toon gateway (animal=bunny)...
+2025-10-18T09:27:49.225868137Z [inf]  
+2025-10-18T09:27:49.225875437Z [inf]  🎯 Animal-Toon Gateway: Starting transformation (animal=bunny)
+2025-10-18T09:27:49.225883126Z [inf]  📊 Available providers: ['Replicate PhotoMaker', 'Replicate InstantID', 'PiAPI Flux']
+2025-10-18T09:27:49.225890853Z [inf]  🚀 [PRIMARY] Trying Replicate PhotoMaker (animal=bunny)...
+2025-10-18T09:27:53.217314736Z [inf]  📥 Downloading result...
+2025-10-18T09:27:54.421883439Z [inf]  ✅ Animal-Toon SUCCESS via Replicate PhotoMaker (bunny)
+2025-10-18T09:27:54.422925219Z [inf]  📤 [ANIMAL_TOON] Result: success=True, provider=Replicate PhotoMaker
+2025-10-18T09:29:24.440164591Z [inf]  📥 [MUSCLE] Received request
+2025-10-18T09:29:24.440171921Z [inf]  🚀 [MUSCLE] Calling muscle gateway (intensity=moderate)...
+2025-10-18T09:29:24.440177907Z [inf]  
+2025-10-18T09:29:24.440183092Z [inf]  🎯 Muscle Enhancement Gateway: Starting transformation (intensity=moderate)
+2025-10-18T09:29:24.440188804Z [inf]  🚀 [PRIMARY] Trying Replicate Instruct-Pix2Pix (intensity=moderate)...
+2025-10-18T09:30:24.479107596Z [inf]  ⏱️ Replicate Instruct-Pix2Pix timeout
+2025-10-18T09:30:24.479114807Z [inf]  ⚠️ Replicate Instruct-Pix2Pix failed, trying next...
+2025-10-18T09:30:24.479119907Z [inf]  🚀 [PRIMARY] Trying Replicate Instruct-Pix2Pix (intensity=moderate)...
+2025-10-18T09:30:24.479125093Z [inf]  ❌ Replicate Instruct-Pix2Pix failed: ReplicateError Details:
+2025-10-18T09:30:24.479130550Z [inf]  status: 404
+2025-10-18T09:30:24.479136148Z [inf]  detail: The requested resource could not be found.
+2025-10-18T09:30:24.479142214Z [inf]  ⚠️ Replicate Instruct-Pix2Pix failed, trying next...
+2025-10-18T09:30:24.479147564Z [inf]  📤 [MUSCLE] Result: success=False, provider=None
+2025-10-18T09:30:54.647619213Z [inf]  ❌ Replicate Neural Neighbor failed: ReplicateError Details:
+2025-10-18T09:30:54.647627339Z [inf]  title: Invalid version or not permitted
+2025-10-18T09:30:54.647634327Z [inf]  status: 422
+2025-10-18T09:30:54.647655322Z [inf]  status: 422
+2025-10-18T09:30:54.647673474Z [inf]  detail: The specified version does not exist (or perhaps you don't have permission to use it?)
+2025-10-18T09:30:54.647677154Z [inf]  📤 [ART_STYLE] Result: success=False, provider=None
+2025-10-18T09:30:54.647686099Z [inf]  ⚠️ Replicate Oil Painting failed, trying next...
+2025-10-18T09:30:54.647741265Z [inf]  ❌ Replicate Oil Painting failed: ReplicateError Details:
+2025-10-18T09:30:54.647777087Z [inf]  detail: The specified version does not exist (or perhaps you don't have permission to use it?)
+2025-10-18T09:30:54.647780321Z [inf]  title: Invalid version or not permitted
+2025-10-18T09:30:54.647790881Z [inf]  ⚠️ Replicate Neural Neighbor failed, trying next...
+2025-10-18T09:30:54.647796800Z [inf]  
+2025-10-18T09:30:54.647801163Z [inf]  🔄 [FALLBACK 2] Trying Replicate Oil Painting (SLOW - 11min)...
+2025-10-18T09:30:54.647811728Z [inf]  📥 [ART_STYLE] Received request
+2025-10-18T09:30:54.647814486Z [inf]  🎯 Art Style Gateway: Starting transformation (style=mosaic)
+2025-10-18T09:30:54.647827785Z [inf]  🚀 [PRIMARY] Trying Replicate Neural Neighbor (style=mosaic)...
+2025-10-18T09:30:54.647828017Z [inf]  🚀 [ART_STYLE] Calling art-style gateway (style=mosaic)...

@@ -33,18 +33,18 @@ class ArtStyleProvider(ABC):
     def get_timeout(self) -> int:
         pass
 
-class ReplicateNeuralNeighborProvider(ArtStyleProvider):
-    """Replicate Neural Neighbor Style Transfer - PRIMARY provider"""
+class ReplicatePhotoMakerArtProvider(ArtStyleProvider):
+    """Replicate PhotoMaker with Artistic Prompts - PRIMARY provider (WORKING MODEL)"""
     
     def __init__(self, api_token: str):
         self.api_token = api_token
         os.environ["REPLICATE_API_TOKEN"] = api_token
     
     def get_name(self) -> str:
-        return "Replicate Neural Neighbor"
+        return "Replicate PhotoMaker Art"
     
     def get_timeout(self) -> int:
-        return 60
+        return 30
     
     def _decode_base64_image(self, base64_str: str) -> tuple:
         data_uri_pattern = r'^data:image/(jpeg|jpg|png|gif|webp|bmp);base64,'
@@ -67,26 +67,30 @@ class ReplicateNeuralNeighborProvider(ArtStyleProvider):
     
     async def transform(self, image_base64: str, style: str = "mosaic", **kwargs) -> Dict[str, Any]:
         try:
-            print(f"🚀 [PRIMARY] Trying Replicate Neural Neighbor (style={style})...")
+            print(f"🚀 [PRIMARY] Trying Replicate PhotoMaker Art (style={style})...")
             
             image_bytes, format_ext = self._decode_base64_image(image_base64)
             data_uri = f"data:image/{format_ext};base64,{base64.b64encode(image_bytes).decode()}"
             
-            # Style image URLs (using public art images)
-            style_images = {
-                "mosaic": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Alexander_the_Great_mosaic.jpg/800px-Alexander_the_Great_mosaic.jpg",
-                "oil": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/800px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg",
-                "watercolor": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Paul_Cezanne_166.jpg/800px-Paul_Cezanne_166.jpg"
+            # Artistic style prompts
+            style_prompts = {
+                "mosaic": "person img as ancient mosaic art, colorful tiles, Byzantine style, artistic pattern",
+                "oil": "person img as oil painting, Van Gogh style, impressionist brushstrokes, vibrant colors",
+                "watercolor": "person img as watercolor painting, soft colors, artistic wash, traditional art style"
             }
             
-            style_image = style_images.get(style.lower(), style_images["mosaic"])
+            prompt = style_prompts.get(style.lower(), style_prompts["mosaic"])
             
             def _run():
                 return replicate.run(
-                    "nkolkin13/neuralneighborstyletransfer:7c7a8f9f69ff8e2f85c062aa97f3f3a839a5e06ca4f8a8c66eb7207c1673b54e",
+                    "tencentarc/photomaker:ddfc2b08d209f9fa8c1eca692712918bd449f695dabb4a958da31802a9570fe4",
                     input={
-                        "image": data_uri,
-                        "style_image": style_image
+                        "input_image": data_uri,
+                        "prompt": prompt,
+                        "negative_prompt": "realistic, photo, ugly, distorted, modern",
+                        "num_steps": 50,
+                        "style_strength_ratio": 40,
+                        "num_outputs": 1
                     }
                 )
             
@@ -216,8 +220,7 @@ class ArtStyleGateway:
         self.providers = []
         
         if self.replicate_token:
-            self.providers.append(ReplicateNeuralNeighborProvider(self.replicate_token))
-            self.providers.append(ReplicateOilPaintingProvider(self.replicate_token))
+            self.providers.append(ReplicatePhotoMakerArtProvider(self.replicate_token))
         
         print(f"🔌 Art Style Gateway initialized with {len(self.providers)} provider(s)")
     
