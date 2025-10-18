@@ -379,29 +379,30 @@ def get_video_templates():
         total_videos = sum(len(v) for v in templates.values())
         print(f"✅ [VIDEO_TEMPLATES] Found {total_videos} videos in {len(templates)} categories")
         
-        # Fallback to DEMO templates if Supabase bucket is empty
+        # Fallback to REAL videos from Supabase if Storage List API fails
         if total_videos == 0:
-            print("⚠️  [VIDEO_TEMPLATES] No videos in Supabase, using DEMO templates")
+            print("⚠️  [VIDEO_TEMPLATES] Storage List API failed, using direct video URLs")
+            base_url = f"{supabase_url}/storage/v1/object/public/video-swap-templates"
             templates = {
-                'Dance': [
-                    {'id': 'dance_1', 'title': 'Happy Dance', 'video_url': 'https://picsum.photos/seed/dance1/400/600.mp4', 'thumbnail_url': 'https://picsum.photos/seed/dance1/400/600', 'category': 'Dance'},
-                    {'id': 'dance_2', 'title': 'Cool Moves', 'video_url': 'https://picsum.photos/seed/dance2/400/600.mp4', 'thumbnail_url': 'https://picsum.photos/seed/dance2/400/600', 'category': 'Dance'},
+                'fashion': [
+                    {'id': 'fashion_fashion', 'title': 'Fashion', 'video_url': f'{base_url}/fashion/fashion.mp4', 'thumbnail_url': f'{base_url}/fashion/fashion.mp4', 'category': 'fashion'},
+                    {'id': 'fashion_nicegirl', 'title': 'Nice Girl', 'video_url': f'{base_url}/fashion/nicegirl.mp4', 'thumbnail_url': f'{base_url}/fashion/nicegirl.mp4', 'category': 'fashion'},
                 ],
-                'Funny': [
-                    {'id': 'funny_1', 'title': 'Laugh Out Loud', 'video_url': 'https://picsum.photos/seed/funny1/400/600.mp4', 'thumbnail_url': 'https://picsum.photos/seed/funny1/400/600', 'category': 'Funny'},
-                    {'id': 'funny_2', 'title': 'Comedy Gold', 'video_url': 'https://picsum.photos/seed/funny2/400/600.mp4', 'thumbnail_url': 'https://picsum.photos/seed/funny2/400/600', 'category': 'Funny'},
+                'fitness': [
+                    {'id': 'fitness_gym', 'title': 'Gym', 'video_url': f'{base_url}/fitness/gym.mp4', 'thumbnail_url': f'{base_url}/fitness/gym.mp4', 'category': 'fitness'},
+                    {'id': 'fitness_yoga', 'title': 'Yoga', 'video_url': f'{base_url}/fitness/yoga.mp4', 'thumbnail_url': f'{base_url}/fitness/yoga.mp4', 'category': 'fitness'},
                 ],
-                'Action': [
-                    {'id': 'action_1', 'title': 'Hero Moment', 'video_url': 'https://picsum.photos/seed/action1/400/600.mp4', 'thumbnail_url': 'https://picsum.photos/seed/action1/400/600', 'category': 'Action'},
-                    {'id': 'action_2', 'title': 'Epic Scene', 'video_url': 'https://picsum.photos/seed/action2/400/600.mp4', 'thumbnail_url': 'https://picsum.photos/seed/action2/400/600', 'category': 'Action'},
+                'people': [
+                    {'id': 'people_foodman', 'title': 'Food Man', 'video_url': f'{base_url}/people/foodman.mp4', 'thumbnail_url': f'{base_url}/people/foodman.mp4', 'category': 'people'},
+                    {'id': 'people_people', 'title': 'People', 'video_url': f'{base_url}/people/people.mp4', 'thumbnail_url': f'{base_url}/people/people.mp4', 'category': 'people'},
+                    {'id': 'people_woman', 'title': 'Woman', 'video_url': f'{base_url}/people/woman.mp4', 'thumbnail_url': f'{base_url}/people/woman.mp4', 'category': 'people'},
                 ],
-                'Travel': [
-                    {'id': 'travel_1', 'title': 'Beach Vibes', 'video_url': 'https://picsum.photos/seed/travel1/400/600.mp4', 'thumbnail_url': 'https://picsum.photos/seed/travel1/400/600', 'category': 'Travel'},
-                    {'id': 'travel_2', 'title': 'Mountain View', 'video_url': 'https://picsum.photos/seed/travel2/400/600.mp4', 'thumbnail_url': 'https://picsum.photos/seed/travel2/400/600', 'category': 'Travel'},
+                'professional': [
+                    {'id': 'professional_aman', 'title': 'A Man', 'video_url': f'{base_url}/professional/aman.mp4', 'thumbnail_url': f'{base_url}/professional/aman.mp4', 'category': 'professional'},
+                    {'id': 'professional_theman', 'title': 'The Man', 'video_url': f'{base_url}/professional/theman.mp4', 'thumbnail_url': f'{base_url}/professional/theman.mp4', 'category': 'professional'},
                 ],
-                'Fashion': [
-                    {'id': 'fashion_1', 'title': 'Runway Walk', 'video_url': 'https://picsum.photos/seed/fashion1/400/600.mp4', 'thumbnail_url': 'https://picsum.photos/seed/fashion1/400/600', 'category': 'Fashion'},
-                    {'id': 'fashion_2', 'title': 'Style Icon', 'video_url': 'https://picsum.photos/seed/fashion2/400/600.mp4', 'thumbnail_url': 'https://picsum.photos/seed/fashion2/400/600', 'category': 'Fashion'},
+                'travel': [
+                    {'id': 'travel_sport', 'title': 'Sport', 'video_url': f'{base_url}/travel/sport.mp4', 'thumbnail_url': f'{base_url}/travel/sport.mp4', 'category': 'travel'},
                 ],
             }
             total_videos = sum(len(v) for v in templates.values())
