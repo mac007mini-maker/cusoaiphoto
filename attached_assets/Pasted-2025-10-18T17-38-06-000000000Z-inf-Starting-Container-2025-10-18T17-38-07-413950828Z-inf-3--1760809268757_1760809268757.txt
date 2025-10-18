@@ -1,0 +1,51 @@
+2025-10-18T17:38:06.000000000Z [inf]  Starting Container
+2025-10-18T17:38:07.413950828Z [inf]    3. PiAPI Flux (timeout=20s)
+2025-10-18T17:38:07.413963454Z [inf]  🔌 Muscle Enhancement Gateway initialized with 2 provider(s)
+2025-10-18T17:38:07.413970771Z [inf]  🔌 Art Style Gateway initialized with 2 provider(s)
+2025-10-18T17:38:07.413978499Z [inf]  🔌 Video Swap Gateway initialized with 2 provider(s)
+2025-10-18T17:38:07.414013253Z [inf]  📊 Video Swap Provider priority: VModel Pro → Replicate Roop
+2025-10-18T17:38:07.414052468Z [err]  [2025-10-18 17:38:06 +0000] [1] [INFO] Starting gunicorn 21.2.0
+2025-10-18T17:38:07.414059530Z [err]  [2025-10-18 17:38:06 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2025-10-18T17:38:07.414065982Z [err]  [2025-10-18 17:38:06 +0000] [1] [INFO] Using worker: sync
+2025-10-18T17:38:07.414099377Z [err]  [2025-10-18 17:38:06 +0000] [2] [INFO] Booting worker with pid: 2
+2025-10-18T17:38:07.414104971Z [err]  [2025-10-18 17:38:06 +0000] [3] [INFO] Booting worker with pid: 3
+2025-10-18T17:38:07.414110435Z [inf]  ✅ Replicate provider enabled (PRIMARY - budget-friendly)
+2025-10-18T17:38:07.414116038Z [inf]  ✅ PiAPI provider enabled (FALLBACK - 99.9% uptime SLA)
+2025-10-18T17:38:07.414121089Z [inf]  🔌 Face Swap Gateway initialized with 2 provider(s)
+2025-10-18T17:38:07.414126633Z [inf]  📊 Provider priority: Replicate → PiAPI
+2025-10-18T17:38:07.414131771Z [inf]  🔌 HD Image Gateway initialized with 1 provider(s)
+2025-10-18T17:38:07.414136599Z [inf]  📊 Using Replicate Real-ESRGAN (direct, no Huggingface bottleneck)
+2025-10-18T17:38:07.414142179Z [inf]  🔌 Cartoon Gateway initialized with 2 provider(s)
+2025-10-18T17:38:07.414147698Z [inf]  🔌 Memoji Gateway initialized with 2 provider(s)
+2025-10-18T17:38:07.414157006Z [inf]  🔌 Animal-Toon Gateway initialized with 3 provider(s)
+2025-10-18T17:38:07.414162589Z [inf]    1. Replicate PhotoMaker (timeout=30s)
+2025-10-18T17:38:07.414168620Z [inf]    2. Replicate InstantID (timeout=90s)
+2025-10-18T17:38:07.415506371Z [inf]  🔌 Art Style Gateway initialized with 2 provider(s)
+2025-10-18T17:38:07.415507157Z [inf]  ✅ Replicate provider enabled (PRIMARY - budget-friendly)
+2025-10-18T17:38:07.415517417Z [inf]  ✅ PiAPI provider enabled (FALLBACK - 99.9% uptime SLA)
+2025-10-18T17:38:07.415518397Z [inf]  🔌 Video Swap Gateway initialized with 2 provider(s)
+2025-10-18T17:38:07.415526347Z [inf]  🔌 Face Swap Gateway initialized with 2 provider(s)
+2025-10-18T17:38:07.415527150Z [inf]  📊 Video Swap Provider priority: VModel Pro → Replicate Roop
+2025-10-18T17:38:07.415533994Z [inf]  📊 Provider priority: Replicate → PiAPI
+2025-10-18T17:38:07.415542328Z [inf]  🔌 HD Image Gateway initialized with 1 provider(s)
+2025-10-18T17:38:07.415548793Z [inf]  📊 Using Replicate Real-ESRGAN (direct, no Huggingface bottleneck)
+2025-10-18T17:38:07.415554547Z [inf]  🔌 Cartoon Gateway initialized with 2 provider(s)
+2025-10-18T17:38:07.415560984Z [inf]  🔌 Memoji Gateway initialized with 2 provider(s)
+2025-10-18T17:38:07.415566903Z [inf]  🔌 Animal-Toon Gateway initialized with 3 provider(s)
+2025-10-18T17:38:07.415573441Z [inf]    1. Replicate PhotoMaker (timeout=30s)
+2025-10-18T17:38:07.415579098Z [inf]    2. Replicate InstantID (timeout=90s)
+2025-10-18T17:38:07.415585892Z [inf]    3. PiAPI Flux (timeout=20s)
+2025-10-18T17:38:07.415595237Z [inf]  🔌 Muscle Enhancement Gateway initialized with 2 provider(s)
+2025-10-18T17:38:16.840182288Z [inf]  📥 [VIDEO_TEMPLATES] Fetching from Supabase...
+2025-10-18T17:38:17.589900019Z [inf]  ✅ [VIDEO_TEMPLATES] Found 10 videos in 5 categories (DYNAMIC)
+2025-10-18T17:38:37.594359573Z [inf]  📥 [VIDEO_SWAP] Received request
+2025-10-18T17:38:37.594371085Z [inf]  🚀 [VIDEO_SWAP] Starting swap - Template: https://cvtlvrtvnwbvyhojetyt.supabase.co/storage/v1/object/public/video-swap-templates/people/foodman.mp4
+2025-10-18T17:38:37.594380699Z [inf]  
+2025-10-18T17:38:37.594387888Z [inf]  🎯 Video Swap Gateway: Starting swap
+2025-10-18T17:38:37.594396175Z [inf]  📹 Template: https://cvtlvrtvnwbvyhojetyt.supabase.co/storage/v1/object/public/video-swap-templates/people/foodman.mp4
+2025-10-18T17:38:37.594402640Z [inf]  🚀 [PRIMARY] Trying VModel Pro...
+2025-10-18T17:38:42.149976113Z [inf]  ⚠️ VModel Pro failed: No task ID in response
+2025-10-18T17:38:42.149989920Z [inf]     Trying next provider...
+2025-10-18T17:38:42.149995016Z [inf]  🔄 [FALLBACK] Trying Replicate Roop...
+2025-10-18T17:39:52.168156498Z [inf]  ✅ Video Swap SUCCESS via Replicate Roop
+2025-10-18T17:39:52.168170771Z [inf]  📤 [VIDEO_SWAP] Result: success=True, provider=Replicate Roop
