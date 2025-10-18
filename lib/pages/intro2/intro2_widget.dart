@@ -47,9 +47,7 @@ class _Intro2WidgetState extends State<Intro2Widget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-        body: SafeArea(
-          top: true,
-          child: Container(
+        body: Container(
             width: double.infinity,
             height: double.infinity,
             child: Stack(
@@ -72,9 +70,12 @@ class _Intro2WidgetState extends State<Intro2Widget> {
                   decoration: BoxDecoration(
                     color: FlutterFlowTheme.of(context).accent1,
                   ),
-                  child: Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Column(
+                  child: SafeArea(
+                    top: true,
+                    bottom: true,
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Column(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -188,7 +189,7 @@ class _Intro2WidgetState extends State<Intro2Widget> {
                         ),
                         Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(
-                              24.0, 0.0, 24.0, 40.0),
+                              24.0, 0.0, 24.0, 60.0),
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -284,13 +285,13 @@ class _Intro2WidgetState extends State<Intro2Widget> {
                           ),
                         ),
                       ],
+                      ),
                     ),
                   ),
                 ),
               ],
             ),
           ),
-        ),
       ),
     );
   }

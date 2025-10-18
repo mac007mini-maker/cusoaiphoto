@@ -71,8 +71,11 @@ class _Intro1WidgetState extends State<Intro1Widget> {
                   color: FlutterFlowTheme.of(context).accent1,
                 ),
               ),
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(24.0, 60.0, 24.0, 40.0),
+              SafeArea(
+                top: true,
+                bottom: true,
+                child: Padding(
+                  padding: EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 20.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -218,6 +221,7 @@ class _Intro1WidgetState extends State<Intro1Widget> {
                       ),
                     ),
                   ],
+                ),
                 ),
               ),
             ],

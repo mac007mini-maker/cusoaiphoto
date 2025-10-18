@@ -71,7 +71,10 @@ class _Intro3WidgetState extends State<Intro3Widget> {
                   color: FlutterFlowTheme.of(context).accent1,
                 ),
               ),
-              Column(
+              SafeArea(
+                top: true,
+                bottom: true,
+                child: Column(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -182,7 +185,7 @@ class _Intro3WidgetState extends State<Intro3Widget> {
                   ),
                   Padding(
                     padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 100.0),
+                        EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 70.0),
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -246,7 +249,7 @@ class _Intro3WidgetState extends State<Intro3Widget> {
                     alignment: AlignmentDirectional(1.0, 1.0),
                     child: Padding(
                       padding:
-                          EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 50.0),
+                          EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 30.0),
                       child: InkWell(
                         splashColor: Colors.transparent,
                         focusColor: Colors.transparent,
@@ -278,6 +281,7 @@ class _Intro3WidgetState extends State<Intro3Widget> {
                     ),
                   ),
                 ],
+                ),
               ),
             ],
           ),
