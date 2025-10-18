@@ -15,9 +15,11 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:async';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:gal/gal.dart';
+import 'package:path_provider/path_provider.dart';
 import 'video_swap_model.dart';
 export 'video_swap_model.dart';
 
@@ -87,9 +89,9 @@ class _VideoSwapWidgetState extends State<VideoSwapWidget> {
     });
 
     try {
-      final apiUrl = HuggingfaceService.getApiUrl();
+      final apiUrl = HuggingfaceService.aiBaseUrl;
       final response = await http.get(
-        Uri.parse('$apiUrl/api/ai/video-templates'),
+        Uri.parse('$apiUrl/video-templates'),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -187,7 +189,7 @@ class _VideoSwapWidgetState extends State<VideoSwapWidget> {
     _startFunFactRotation();
 
     try {
-      final apiUrl = HuggingfaceService.getApiUrl();
+      final apiUrl = HuggingfaceService.aiBaseUrl;
       final templateVideoUrl = _model.selectedTemplate!['video_url'] as String;
       final userImageBase64 = 'data:image/jpeg;base64,${base64Encode(_model.selectedUserPhoto!)}';
 
@@ -195,7 +197,7 @@ class _VideoSwapWidgetState extends State<VideoSwapWidget> {
       print('📹 Template: $templateVideoUrl');
 
       final response = await http.post(
-        Uri.parse('$apiUrl/api/ai/video-swap'),
+        Uri.parse('$apiUrl/video-swap'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'user_image': userImageBase64,
@@ -279,11 +281,21 @@ class _VideoSwapWidgetState extends State<VideoSwapWidget> {
       if (response.statusCode == 200) {
         final videoBytes = response.bodyBytes;
         
+        // Save to temp file first, then use Gal.putVideo with path
+        final tempDir = await getTemporaryDirectory();
+        final timestamp = DateTime.now().millisecondsSinceEpoch;
+        final tempFile = File('${tempDir.path}/video_swap_$timestamp.mp4');
+        await tempFile.writeAsBytes(videoBytes);
+        
         // Save to gallery with gal package
-        await Gal.putVideoBytes(
-          videoBytes,
-          album: 'VisoAI',
-        );
+        await Gal.putVideo(tempFile.path, album: 'VisoAI');
+        
+        // Clean up temp file
+        try {
+          await tempFile.delete();
+        } catch (e) {
+          print('⚠️ Failed to delete temp file: $e');
+        }
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
