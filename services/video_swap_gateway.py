@@ -122,8 +122,11 @@ class ReplicateRoopProvider(VideoSwapProvider):
             print(f"❌ {self.get_name()} failed: {error_msg}")
             
             # Log Replicate error details
-            if 'ReplicateError' in type(e).__name__:
-                print(f"   Replicate error type: {type(e).__name__}")
+            print(f"   Error type: {type(e).__name__}")
+            if hasattr(e, 'status'):
+                print(f"   Status: {getattr(e, 'status', 'N/A')}")
+            if hasattr(e, 'detail'):
+                print(f"   Detail: {getattr(e, 'detail', 'N/A')}")
             
             return {"success": False, "error": error_msg, "provider": self.get_name()}
 
@@ -264,11 +267,14 @@ class VModelProProvider(VideoSwapProvider):
             error_msg = str(e)
             print(f"❌ {self.get_name()} failed: {error_msg}")
             
-            # Log VModel error details
+            # Log VModel error details for debugging
             if hasattr(e, 'response'):
                 response = getattr(e, 'response', None)
                 if response:
-                    print(f"   VModel response: {getattr(response, 'text', 'N/A')[:200]}")
+                    status_code = getattr(response, 'status_code', 'N/A')
+                    response_text = getattr(response, 'text', 'N/A')
+                    print(f"   HTTP Status: {status_code}")
+                    print(f"   Response: {response_text[:500]}")
             
             return {"success": False, "error": error_msg, "provider": self.get_name()}
 
@@ -319,7 +325,9 @@ class VideoSwapGateway:
             if result.get('success'):
                 return result
             else:
-                print(f"⚠️ {provider.get_name()} failed, trying next...")
+                error_detail = result.get('error', 'Unknown error')
+                print(f"⚠️ {provider.get_name()} failed: {error_detail}")
+                print(f"   Trying next provider...")
                 continue
         
         return {
