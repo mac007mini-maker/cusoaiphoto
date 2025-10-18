@@ -13,6 +13,3 @@ class MemojiAvatarModel {
   }
 }
 
-MemojiAvatarModel createModel(BuildContext context, Function modelCreator) {
-  return modelCreator();
-}

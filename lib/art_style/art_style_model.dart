@@ -14,6 +14,3 @@ class ArtStyleModel {
   }
 }
 
-ArtStyleModel createModel(BuildContext context, Function modelCreator) {
-  return modelCreator();
-}

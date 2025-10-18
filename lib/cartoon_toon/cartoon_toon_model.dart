@@ -12,7 +12,3 @@ class CartoonToonModel {
     resultImage = null;
   }
 }
-
-CartoonToonModel createModel(BuildContext context, Function modelCreator) {
-  return modelCreator();
-}

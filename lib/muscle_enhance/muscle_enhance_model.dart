@@ -14,6 +14,3 @@ class MuscleEnhanceModel {
   }
 }
 
-MuscleEnhanceModel createModel(BuildContext context, Function modelCreator) {
-  return modelCreator();
-}

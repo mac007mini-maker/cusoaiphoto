@@ -14,6 +14,3 @@ class AnimalToonModel {
   }
 }
 
-AnimalToonModel createModel(BuildContext context, Function modelCreator) {
-  return modelCreator();
-}
