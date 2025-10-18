@@ -1,0 +1,78 @@
+2025-10-18T16:23:05.000000000Z [inf]  Starting Container
+2025-10-18T16:23:06.110073432Z [err]  [2025-10-18 16:23:05 +0000] [1] [INFO] Starting gunicorn 21.2.0
+2025-10-18T16:23:06.110078400Z [err]  [2025-10-18 16:23:05 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2025-10-18T16:23:06.110083238Z [err]  [2025-10-18 16:23:05 +0000] [1] [INFO] Using worker: sync
+2025-10-18T16:23:06.110087805Z [err]  [2025-10-18 16:23:05 +0000] [2] [INFO] Booting worker with pid: 2
+2025-10-18T16:23:06.110092573Z [err]  [2025-10-18 16:23:05 +0000] [3] [INFO] Booting worker with pid: 3
+2025-10-18T16:23:06.110096737Z [inf]  ✅ Replicate provider enabled (PRIMARY - budget-friendly)
+2025-10-18T16:23:06.110101429Z [inf]  ✅ PiAPI provider enabled (FALLBACK - 99.9% uptime SLA)
+2025-10-18T16:23:06.110107099Z [inf]  🔌 Face Swap Gateway initialized with 2 provider(s)
+2025-10-18T16:23:06.110111531Z [inf]  📊 Provider priority: Replicate → PiAPI
+2025-10-18T16:23:06.110115209Z [inf]  🔌 HD Image Gateway initialized with 1 provider(s)
+2025-10-18T16:23:06.110119294Z [inf]  📊 Using Replicate Real-ESRGAN (direct, no Huggingface bottleneck)
+2025-10-18T16:23:06.110123289Z [inf]  🔌 Cartoon Gateway initialized with 2 provider(s)
+2025-10-18T16:23:06.110128091Z [inf]  🔌 Memoji Gateway initialized with 2 provider(s)
+2025-10-18T16:23:06.110133048Z [inf]  🔌 Animal-Toon Gateway initialized with 3 provider(s)
+2025-10-18T16:23:06.110137427Z [inf]    1. Replicate PhotoMaker (timeout=30s)
+2025-10-18T16:23:06.110142240Z [inf]    2. Replicate InstantID (timeout=90s)
+2025-10-18T16:23:06.110147046Z [inf]    3. PiAPI Flux (timeout=20s)
+2025-10-18T16:23:06.110152339Z [inf]  🔌 Muscle Enhancement Gateway initialized with 2 provider(s)
+2025-10-18T16:23:06.110157515Z [inf]  🔌 Art Style Gateway initialized with 2 provider(s)
+2025-10-18T16:23:06.112000495Z [inf]  🔌 Video Swap Gateway initialized with 3 provider(s)
+2025-10-18T16:23:06.112005014Z [inf]  📊 Video Swap Provider priority: VModel Pro → Replicate Roop → PiAPI Video Swap
+2025-10-18T16:23:06.158790280Z [inf]  🔌 Cartoon Gateway initialized with 2 provider(s)
+2025-10-18T16:23:06.158801526Z [inf]  🔌 Memoji Gateway initialized with 2 provider(s)
+2025-10-18T16:23:06.158810644Z [inf]  ✅ Replicate provider enabled (PRIMARY - budget-friendly)
+2025-10-18T16:23:06.158815949Z [inf]  ✅ PiAPI provider enabled (FALLBACK - 99.9% uptime SLA)
+2025-10-18T16:23:06.158824107Z [inf]  🔌 Face Swap Gateway initialized with 2 provider(s)
+2025-10-18T16:23:06.158829884Z [inf]  📊 Provider priority: Replicate → PiAPI
+2025-10-18T16:23:06.158835818Z [inf]  🔌 HD Image Gateway initialized with 1 provider(s)
+2025-10-18T16:23:06.158841507Z [inf]  📊 Using Replicate Real-ESRGAN (direct, no Huggingface bottleneck)
+2025-10-18T16:23:06.160393098Z [inf]  🔌 Animal-Toon Gateway initialized with 3 provider(s)
+2025-10-18T16:23:06.160402856Z [inf]    1. Replicate PhotoMaker (timeout=30s)
+2025-10-18T16:23:06.160410421Z [inf]    2. Replicate InstantID (timeout=90s)
+2025-10-18T16:23:06.160415948Z [inf]    3. PiAPI Flux (timeout=20s)
+2025-10-18T16:23:06.162782165Z [inf]  🔌 Muscle Enhancement Gateway initialized with 2 provider(s)
+2025-10-18T16:23:06.164576161Z [inf]  🔌 Art Style Gateway initialized with 2 provider(s)
+2025-10-18T16:23:06.172176730Z [inf]  🔌 Video Swap Gateway initialized with 3 provider(s)
+2025-10-18T16:23:06.172182417Z [inf]  📊 Video Swap Provider priority: VModel Pro → Replicate Roop → PiAPI Video Swap
+2025-10-18T16:27:06.849608200Z [inf]  📥 [VIDEO_TEMPLATES] Fetching from Supabase...
+2025-10-18T16:27:06.849613636Z [inf]  ✅ [VIDEO_TEMPLATES] Found 10 videos in 5 categories (DYNAMIC)
+2025-10-18T16:27:46.832943861Z [inf]  ✅ [VIDEO_TEMPLATES] Found 10 videos in 5 categories (DYNAMIC)
+2025-10-18T16:27:46.832994694Z [inf]  📥 [VIDEO_TEMPLATES] Fetching from Supabase...
+2025-10-18T16:27:54.989223755Z [inf]  📥 [VIDEO_SWAP] Received request
+2025-10-18T16:27:55.170545330Z [inf]  🚀 [VIDEO_SWAP] Starting swap - Template: https://cvtlvrtvnwbvyhojetyt.supabase.co/storage/v1/object/public/video-swap-templates/people/woman.mp4
+2025-10-18T16:27:55.170550995Z [inf]  
+2025-10-18T16:27:55.170562006Z [inf]  🎯 Video Swap Gateway: Starting swap
+2025-10-18T16:27:55.170568181Z [inf]  📹 Template: https://cvtlvrtvnwbvyhojetyt.supabase.co/storage/v1/object/public/video-swap-templates/people/woman.mp4
+2025-10-18T16:27:55.170574948Z [inf]  🚀 [PRIMARY] Trying VModel Pro...
+2025-10-18T16:28:01.078429338Z [inf]  ⚠️ VModel Pro failed, trying next...
+2025-10-18T16:28:01.078435291Z [inf]  🔄 [FALLBACK 1] Trying Replicate Roop...
+2025-10-18T16:28:01.577025735Z [inf]  ❌ Replicate Roop failed: ReplicateError Details:
+2025-10-18T16:28:01.577043317Z [inf]  status: 404
+2025-10-18T16:28:01.577059102Z [inf]  detail: The requested resource could not be found.
+2025-10-18T16:28:01.577069092Z [inf]     Replicate error type: ReplicateError
+2025-10-18T16:28:01.577077946Z [inf]  ⚠️ Replicate Roop failed, trying next...
+2025-10-18T16:28:01.577087151Z [inf]  🔄 [FALLBACK 2] Trying PiAPI Video Swap...
+2025-10-18T16:28:21.577429573Z [inf]  ❌ PiAPI Video Swap failed: 500 Server Error: Internal Server Error for url: https://api.piapi.ai/api/v1/task
+2025-10-18T16:28:21.577440319Z [inf]  ⚠️ PiAPI Video Swap failed, trying next...
+2025-10-18T16:28:21.577446263Z [inf]  📤 [VIDEO_SWAP] Result: success=False, provider=None
+2025-10-18T16:28:41.653821103Z [inf]  📥 [VIDEO_TEMPLATES] Fetching from Supabase...
+2025-10-18T16:28:41.653826727Z [inf]  ✅ [VIDEO_TEMPLATES] Found 10 videos in 5 categories (DYNAMIC)
+2025-10-18T16:29:01.694605785Z [inf]  📥 [VIDEO_SWAP] Received request
+2025-10-18T16:29:01.694613070Z [inf]  🚀 [VIDEO_SWAP] Starting swap - Template: https://cvtlvrtvnwbvyhojetyt.supabase.co/storage/v1/object/public/video-swap-templates/professional/aman.mp4
+2025-10-18T16:29:01.694619447Z [inf]  
+2025-10-18T16:29:01.694624985Z [inf]  🎯 Video Swap Gateway: Starting swap
+2025-10-18T16:29:01.694631037Z [inf]  📹 Template: https://cvtlvrtvnwbvyhojetyt.supabase.co/storage/v1/object/public/video-swap-templates/professional/aman.mp4
+2025-10-18T16:29:01.694636657Z [inf]  🚀 [PRIMARY] Trying VModel Pro...
+2025-10-18T16:29:01.694642246Z [inf]  ⚠️ VModel Pro failed, trying next...
+2025-10-18T16:29:01.694648519Z [inf]  🔄 [FALLBACK 1] Trying Replicate Roop...
+2025-10-18T16:29:01.694657145Z [inf]  ❌ Replicate Roop failed: ReplicateError Details:
+2025-10-18T16:29:01.694663071Z [inf]  status: 404
+2025-10-18T16:29:01.694668982Z [inf]  detail: The requested resource could not be found.
+2025-10-18T16:29:01.694675380Z [inf]     Replicate error type: ReplicateError
+2025-10-18T16:29:01.694681588Z [inf]  ⚠️ Replicate Roop failed, trying next...
+2025-10-18T16:29:01.694688136Z [inf]  🔄 [FALLBACK 2] Trying PiAPI Video Swap...
+2025-10-18T16:29:01.694693602Z [inf]  ❌ PiAPI Video Swap failed: 500 Server Error: Internal Server Error for url: https://api.piapi.ai/api/v1/task
+2025-10-18T16:29:01.694700165Z [inf]  ⚠️ PiAPI Video Swap failed, trying next...
+2025-10-18T16:29:01.694706450Z [inf]  📤 [VIDEO_SWAP] Result: success=False, provider=None
