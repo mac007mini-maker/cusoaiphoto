@@ -316,7 +316,7 @@ def video_swap():
 
 @app.route('/api/ai/video-templates', methods=['GET'])
 def get_video_templates():
-    """Load video templates from Supabase Storage dynamically"""
+    """Load video templates from Supabase Storage dynamically - 100% DYNAMIC!"""
     try:
         print("📥 [VIDEO_TEMPLATES] Fetching from Supabase...")
         
@@ -328,7 +328,6 @@ def get_video_templates():
         
         import requests as http_requests
         
-        # List all files in video-swap-templates bucket
         bucket_name = 'video-swap-templates'
         storage_url = f"{supabase_url}/storage/v1/object/list/{bucket_name}"
         
@@ -337,7 +336,7 @@ def get_video_templates():
             'Authorization': f'Bearer {supabase_key}'
         }
         
-        # List root folder to get categories
+        # Step 1: List root folder to get all categories (folders)
         response = http_requests.post(
             storage_url,
             headers=headers,
@@ -345,39 +344,48 @@ def get_video_templates():
             timeout=10
         )
         response.raise_for_status()
-        files = response.json()
+        folders = response.json()
         
-        # Organize by category
+        # Step 2: For each category, list all videos inside
         templates = {}
-        for item in files:
-            name = item.get('name')
-            if not name or '/' not in name:
+        for folder_item in folders:
+            category = folder_item.get('name')
+            if not category:
                 continue
             
-            parts = name.split('/')
-            if len(parts) != 2:
-                continue
+            # List videos in this category folder
+            folder_response = http_requests.post(
+                storage_url,
+                headers=headers,
+                json={'prefix': f'{category}/', 'limit': 1000},
+                timeout=10
+            )
+            folder_response.raise_for_status()
+            videos = folder_response.json()
             
-            category, filename = parts
-            if not filename.endswith('.mp4'):
-                continue
-            
-            if category not in templates:
-                templates[category] = []
-            
-            video_url = f"{supabase_url}/storage/v1/object/public/{bucket_name}/{name}"
-            
-            templates[category].append({
-                'id': name.replace('/', '_').replace('.mp4', ''),
-                'title': filename.replace('.mp4', '').replace('_', ' ').title(),
-                'video_url': video_url,
-                'thumbnail_url': video_url,  # Can be same as video for now
-                'category': category,
-                'filename': filename
-            })
+            # Process each video in this category
+            for video_item in videos:
+                filename = video_item.get('name')
+                if not filename or not filename.endswith('.mp4'):
+                    continue
+                
+                if category not in templates:
+                    templates[category] = []
+                
+                video_path = f"{category}/{filename}"
+                video_url = f"{supabase_url}/storage/v1/object/public/{bucket_name}/{video_path}"
+                
+                templates[category].append({
+                    'id': video_path.replace('/', '_').replace('.mp4', ''),
+                    'title': filename.replace('.mp4', '').replace('_', ' ').title(),
+                    'video_url': video_url,
+                    'thumbnail_url': video_url,
+                    'category': category,
+                    'filename': filename
+                })
         
         total_videos = sum(len(v) for v in templates.values())
-        print(f"✅ [VIDEO_TEMPLATES] Found {total_videos} videos in {len(templates)} categories")
+        print(f"✅ [VIDEO_TEMPLATES] Found {total_videos} videos in {len(templates)} categories (DYNAMIC)")
         
         # Fallback to REAL videos from Supabase if Storage List API fails
         if total_videos == 0:
