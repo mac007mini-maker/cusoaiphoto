@@ -1,0 +1,41 @@
+PS C:\7code\aihubtech18tp\aihubtech> flutter build apk --debug
+Support for Android x86 targets will be removed in the next stable release
+after 3.27. See https://github.com/flutter/flutter/issues/157543 for details. 
+lib/cartoon_toon/cartoon_toon_widget.dart:42:41: Error: A value of type 'CartoonToonModel' can't be returned from a function with return type 'Never'.      
+ - 'CartoonToonModel' is from 'package:viso_a_i_photo_avatar_headshot/cartoon_toon/cartoon_toon_model.dart' ('lib/cartoon_toon/cartoon_toon_model.dart').   
+    _model = createModel(context, () => CartoonToonModel());
+                                        ^
+lib/memoji_avatar/memoji_avatar_widget.dart:42:41: Error: A value of type 'MemojiAvatarModel' can't be returned from a function with return type 'Never'.   
+ - 'MemojiAvatarModel' is from 'package:viso_a_i_photo_avatar_headshot/memoji_avatar/memoji_avatar_model.dart' ('lib/memoji_avatar/memoji_avatar_model.dart').
+    _model = createModel(context, () => MemojiAvatarModel());
+                                        ^
+lib/animal_toon/animal_toon_widget.dart:42:41: Error: A value of type 'AnimalToonModel' can't be returned from a function with return type 'Never'.
+ - 'AnimalToonModel' is from 'package:viso_a_i_photo_avatar_headshot/animal_toon/animal_toon_model.dart' ('lib/animal_toon/animal_toon_model.dart').        
+    _model = createModel(context, () => AnimalToonModel());
+                                        ^
+lib/muscle_enhance/muscle_enhance_widget.dart:42:41: Error: A value of type 'MuscleEnhanceModel' can't be returned from a function with return type 'Never'. - 'MuscleEnhanceModel' is from 'package:viso_a_i_photo_avatar_headshot/muscle_enhance/muscle_enhance_model.dart' ('lib/muscle_enhance/muscle_enhance_model.dart').
+    _model = createModel(context, () => MuscleEnhanceModel());
+                                        ^
+lib/art_style/art_style_widget.dart:42:41: Error: A value of type 'ArtStyleModel' can't be returned from a function with return type 'Never'.
+ - 'ArtStyleModel' is from 'package:viso_a_i_photo_avatar_headshot/art_style/art_style_model.dart' ('lib/art_style/art_style_model.dart').
+    _model = createModel(context, () => ArtStyleModel());
+                                        ^
+Target kernel_snapshot_program failed: Exception
+
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileFlutterBuildDebug'.
+> Process 'command 'C:\msdk\flutter\bin\flutter.bat'' finished with non-zero exit value 1
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 38s
+Running Gradle task 'assembleDebug'...                             38.7s
+Gradle task assembleDebug failed with exit code 1
+PS C:\7code\aihubtech18tp\aihubtech> 
