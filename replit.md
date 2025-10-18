@@ -1,41 +1,7 @@
 # Viso AI - Photo Avatar Headshot
 
 ## Overview
-Viso AI is a Flutter-based application designed for creating studio-grade AI headshots and avatars. It offers advanced photo enhancement, face swapping, and various AI-driven transformations to produce high-quality, stylized digital images. The project addresses the growing market demand for personalized digital content and AI-powered image manipulation.
-
-## Recent Changes
-- **2025-10-18**: 🔧 **Fixed Intro Pages Layout Issues**: Resolved Next button misalignment and system navigation bar overlap problems. Added SafeArea protection wrapping foreground content while keeping backgrounds edge-to-edge. Adjusted padding (Intro1: 20px, Intro2: 60px, Intro3: 30px bottom) for balanced spacing on all devices including those with gesture bars. Intro flow now displays properly without content being blocked by notches or navigation bars.
-- **2025-10-17**: 🎨 **Templates Gallery Navigation**: Created Templates Gallery page linking "Story of Life" banner to 13 template categories. Users tap banner on Homepage → Templates Gallery grid (Travel, Gym, Selfie, Tattoo, Wedding, Sport, Christmas, New Year, Birthday, School, Fashion Show, Profile, Suits) → Individual template pages. Grid layout with colorful icons for easy category selection.
-- **2025-10-17**: 🐛 **Fixed Banner Ads Not Loading**: Changed Remote Config defaults from ads disabled (false) to enabled (true). Banner ads were stuck at "Ad Loading..." because defaults prevented ad display when Firebase Remote Config fetch failed or wasn't configured. Now ads show by default using test IDs (AdMob fallback → AppLovin). Production should configure Firebase Remote Config to control ads dynamically.
-- **2025-10-17**: 🎨 **Intro Pages & Light Theme Fix**: Implemented full intro flow (Intro1 → Intro2 → Intro3) with Skip buttons navigating to Homepage. Added SharedPreferences persistence to show intro pages only on first launch. Changed default theme from System (dark mode issue) to Light theme while preserving user preferences. Users can still change to Dark/System in Settings.
-- **2025-10-17**: 🐛 **Fixed HD Image Gateway Return Bug**: Fixed critical bug where `_enhance_replicate()` function didn't return response on empty output, causing Flutter 180s timeout despite successful backend processing (6s). Added explicit return for empty output case. Also added download buttons to both Fix Old Photo and HD Photo features using `gal` package to save enhanced images to device Gallery/VisoAI album.
-- **2025-10-17**: ⚡ **HD Image Performance Fix**: Created HD Image Gateway to bypass slow Huggingface API (404 errors, 10s timeout). Now uses Replicate Real-ESRGAN directly as PRIMARY provider. Reduced processing time and eliminated timeout issues. Flutter timeout increased to 180s for slower networks.
-- **2025-10-17**: 📊 **Daily Usage Limits**: Implemented PRO user daily usage tracking (20 swaps/day) via SharedPreferences with auto-reset mechanism. FREE users enjoy unlimited swaps with rewarded ads. UsageLimitService tracks counter, checks limits before processing, and provides user feedback when limit reached.
-- **2025-10-17**: 🎬 **Rewarded Ads for HD Image & Fix Old Photo**: Added full rewarded ad integration to HD Image Enhancement and Fix Old Photo Restoration features. FREE users watch ads before processing (AdMob/AppLovin with 'auto' fallback mode). PRO users bypass ads. Complete error handling with user feedback when ads unavailable.
-- **2025-10-17**: 🎨 **13 New Template Categories**: Expanded face swap templates from 1 to 14 categories: Travel, Gym, Selfie, Tattoo, Wedding, Sport, Christmas, New Year, Birthday, School, Fashion Show, Profile, Suits. Each template features carousel layout with PageView slider, dot indicators, 5-8 Unsplash placeholder images, and download functionality. Templates ready for user customization with real images.
-- **2025-10-17**: 🎨 **Fixed Mine Page UI Overlap**: Added SafeArea wrapper to Mine page to prevent Android system navigation bar from covering bottom content. Bottom navigation and "Start Creating" button now properly visible on all devices.
-- **2025-10-16**: 🔄 **Fixed Provider Fallback Bug**: Face swap gateway now correctly switches from Replicate → PiAPI when Replicate fails/timeouts. Previously gateway would retry failed provider instead of falling back. Added `break` statement to exit retry loop on provider failure (success=False), allowing proper provider switching.
-- **2025-10-16**: ⚡ **App Startup Optimization (70% faster)**: Reduced startup time from 7-10s → 1-2s using combo 3 strategies: (1) Parallel service initialization with Future.wait for core services (UserService, RemoteConfig, RevenueCat, Supabase, Theme), (2) Lazy ads loading - UI shows immediately, ads init in background, (3) Remote Config timeout reduction (60s → 10s). Architect-reviewed and verified safe with no race conditions or dependency issues.
-- **2025-10-16**: 🔐 **Secure Ad IDs with Remote Config**: Migrated AdMob (12 IDs: App ID + 5 ad units × 2 platforms) & AppLovin (11 IDs: SDK Key + 5 ad units × 2 platforms) to Firebase Remote Config for security. 3-layer fallback: Remote Config → Env Vars → Test IDs. Created comprehensive setup guide (FIREBASE_AD_IDS_SETUP.md). Prevents APK decompilation risks and enables real-time ad ID updates without app rebuild. Platform-specific tracking for better analytics.
-- **2025-10-16**: 🐛 **Fixed PiAPI Input Error**: Keep data URI format (data:image/...;base64,) intact - PiAPI needs format info. Previous strip attempt caused `input:null` errors.
-- **2025-10-16**: 🔧 **Fixed PiAPI Header**: Changed "X-API-Key" → "x-api-key" per PiAPI 2025 API requirements (lowercase header).
-- **2025-10-16**: 📸 **Swapface UI Improvements**: Changed page title "Ghostface" → "Swapface", added camera button alongside gallery picker for direct photo capture using image_picker package.
-- **2025-10-16**: ✅ **Production Backend: Railway Only**: User migrated from Vercel → Railway Hobby ($5/mo) for stable 300s timeout. Local Replit backend (`api_server.py`) deprecated - Railway (`api/index.py`) is SOLE production backend.
-- **2025-10-16**: 🔧 **Fixed Face Swap Response Format**: Changed response field from `'result'` → `'image'` (base64) in `api/index.py` for Flutter compatibility. Local `api_server.py` not updated (deprecated).
-- **2025-10-16**: ✅ **Railway Production Deployed!**: Backend live at `web-production-a7698.up.railway.app` with 300s timeout. Flutter app updated to use Railway domain. Simplified config (removed nixpacks.toml, auto-detection works perfectly).
-- **2025-10-16**: 🚂 **Railway Deployment Ready**: Created Railway config files (Procfile, railway.toml, railway_app.py) and complete setup guide (RAILWAY_SETUP.md). Railway Hobby ($5/mo) provides 300s timeout - perfect for face swap (30-120s).
-- **2025-10-16**: Added gunicorn to requirements.txt for production WSGI server
-- **2025-10-16**: Fixed null handling in faceSwap API response to prevent type errors
-- **2025-10-16**: Attempted Vercel deployment but discovered serverless timeout limitations (10s free tier, insufficient for face swap)
-- **2025-10-16**: Fixed replicate package version to 1.0.7 in requirements.txt
-- **2025-10-16**: Prepared Vercel deployment files for stable production backend (api/index.py, vercel.json, requirements.txt)
-- **2025-10-16**: Created comprehensive deployment guides (VERCEL_SETUP_GUIDE.md, APK_SIZE_OPTIMIZATION.md)
-- **2025-10-16**: Implemented configurable API domain for mobile builds using `--dart-define=API_DOMAIN` to prevent hardcoded URL issues when Replit domain changes
-- **2025-10-16**: Fixed critical validation bug - was reading partial data (1000 bytes) causing corrupt images; now reads full response and validates image signatures (JPEG/PNG/GIF/WEBP/BMP magic bytes)
-- **2025-10-15**: Added comprehensive debug logging and output type handling for Replicate models (list/FileOutput/string)
-- **2025-10-15**: Enhanced download validation - accept CDN octet-stream responses and detect HTML error pages
-- **2025-10-15**: Switched provider priority - Replicate PRIMARY (budget-friendly) → PiAPI FALLBACK (99.9% SLA) to save credits
-- **2025-10-15**: Fixed face swap response format mismatch - server now downloads images and converts to base64 for Flutter compatibility
+Viso AI is a Flutter-based application for creating studio-grade AI headshots and avatars. It offers advanced photo enhancement, face swapping, and various AI-driven transformations, addressing the market demand for personalized digital content and AI-powered image manipulation. The project aims to provide high-quality, stylized digital images efficiently and cost-effectively.
 
 ## User Preferences
 None documented yet.
@@ -43,58 +9,70 @@ None documented yet.
 ## System Architecture
 
 ### UI/UX Decisions
-The application leverages FlutterFlow-generated components to ensure a consistent, responsive design with support for both light and dark themes. It incorporates modern UI elements such as carousels with PageView sliders, smooth transitions, and dot indicators. Ad banners are strategically placed above navigation bars to comply with Google Ads policies. A feedback system allows users to submit feature requests via an integrated dialog.
+The application utilizes FlutterFlow-generated components for a consistent, responsive design supporting light and dark themes. It features modern UI elements like carousels with PageView sliders, smooth transitions, and dot indicators. Ad banners are placed above navigation bars, and a feedback system allows users to submit feature requests.
 
 ### Technical Implementations
-Built with Flutter 3.32.0 (Dart 3.8.0), Viso AI integrates with a Python Flask backend. This backend functions as a proxy, handling text and image generation, and managing complex image processing tasks with an asynchronous architecture.
+Built with Flutter 3.32.0 (Dart 3.8.0), Viso AI integrates with a Python Flask backend. This backend acts as a proxy for text and image generation, and complex asynchronous image processing tasks.
 
 ### Feature Specifications
 - **AI Headshot & Avatar Generation**: Studio-grade AI headshots and stylized avatars.
-- **Photo Enhancement**: Includes HD Image Enhancement using HD Image Gateway (Replicate Real-ESRGAN direct, bypassing slow Huggingface API), and Old Photo Restoration using GFPGAN via Replicate.
-- **Face Swapping**: AI-powered face replacement with multi-provider fallback strategy (PiAPI primary with 99.9% SLA, Replicate fallback), gallery permission handling, and rewarded ad integration. Supports both image and video face swap.
-- **AI Style Templates**: Provides 14 diverse template categories for face swap and aesthetic transformations: Travel, Gym, Selfie, Tattoo, Wedding, Sport, Christmas, New Year, Birthday, School, Fashion Show, Profile, Suits, plus original templates. Each category features carousel layout with 5-8 curated images and instant download capability.
+- **Photo Enhancement**: Includes HD Image Enhancement using the HD Image Gateway (Replicate Real-ESRGAN) and Old Photo Restoration (GFPGAN via Replicate).
+- **Face Swapping**: AI-powered face replacement with multi-provider fallback (PiAPI primary, Replicate fallback), gallery permission handling, and rewarded ad integration. Supports image and video face swap.
+- **AI Style Templates**: 14 diverse template categories for face swap and aesthetic transformations (e.g., Travel, Gym, Selfie, Tattoo, Wedding, Sport, Christmas, New Year, Birthday, School, Fashion Show, Profile, Suits), each with carousel layouts and download capabilities.
+- **AI Transformation Templates**: 5 advanced AI transformations accessible from Templates Gallery. Each template includes: (1) Multi-provider fallback for 99.9%+ uptime, (2) Rewarded ad integration (AdMob → AppLovin) for FREE users, (3) PRO user bypass with daily limits (20/day), (4) Download to Gallery/VisoAI album, (5) Gallery + Camera photo picker, (6) Real-time processing feedback.
+
+    **1. Cartoon 3D Toon** (`/cartoon-toon`) - Transform photos into Disney/Pixar-style cartoon characters
+    - **Provider Stack**: PRIMARY Replicate PhotoMaker-Style ($0.007/run, ~8s, timeout=20s) → FALLBACK Replicate InstantID Artistic ($0.069/run, ~71s, timeout=90s)
+    - **API**: `POST /api/ai/cartoon` → `services/cartoon_gateway.py`
+    - **Cost**: $0.007 typical, $0.069 worst-case. 10K/month = $70-$690
+
+    **2. Memoji Avatar** (`/memoji-avatar`) - Create Apple-style 3D memoji avatars with smooth rendering
+    - **Provider Stack**: PRIMARY Replicate PhotoMaker-Style ($0.007/run, ~8s, timeout=20s) → FALLBACK Replicate InstantID ($0.069/run, ~71s, timeout=90s)
+    - **API**: `POST /api/ai/memoji` → `services/memoji_gateway.py`
+    - **Cost**: $0.007 typical, $0.069 worst-case. 10K/month = $70-$690
+
+    **3. Animal Toon** (`/animal-toon`) - Transform into cute animal characters (bunny, cat, dog, etc.)
+    - **Provider Stack** (FULL 3-LAYER): PRIMARY Replicate PhotoMaker ($0.004/run, ~5s, timeout=30s) → FALLBACK Replicate InstantID ($0.069/run, ~71s, timeout=90s) → EMERGENCY PiAPI Flux (~$0.02/run, ~10s, timeout=20s)
+    - **API**: `POST /api/ai/animal-toon` → `services/animal_toon_gateway.py` (supports `animal_type` param, default='bunny')
+    - **Cost**: $0.004 typical (CHEAPEST), $0.02 emergency. 10K/month = $40-$200. BEST cost efficiency.
+
+    **4. Muscle Enhancement** (`/muscle-enhance`) - Add defined muscles and athletic body (3 intensity levels)
+    - **Provider Stack** (PRAGMATIC 2-PROVIDER): PRIMARY Replicate Instruct-Pix2Pix ($0.055/run, ~40s, timeout=60s) → FALLBACK retry with relaxed guidance params
+    - **API**: `POST /api/ai/muscle` → `services/muscle_gateway.py` (supports `intensity` param: light/moderate/strong)
+    - **Cost**: $0.055/run. 10K/month = $550
+    - **Note**: Muscle enhancement has limited specialized AI models. 2-provider setup provides reasonable resilience; most failures are input-related (poor photo quality) rather than API outages.
+
+    **5. Art Style** (`/art-style`) - Apply artistic styles: mosaic, oil painting, watercolor
+    - **Provider Stack**: PRIMARY Replicate Neural Neighbor Style Transfer ($0.063/run, fast, timeout=60s) → FALLBACK Replicate Oil Painting ($0.08/run, SLOW ~11min, timeout=720s)
+    - **API**: `POST /api/ai/art-style` → `services/art_style_gateway.py` (supports `style` param: mosaic/oil/watercolor)
+    - **Cost**: $0.063 typical, $0.08 fallback. 10K/month = $630-$800
+    - **Note**: Fallback Oil Painting is SLOW (11min) but highly reliable. Use only when primary fails.
+
+    **Estimated production cost**: ~$1,366/month at scale (10K transformations/template). Total cost range: $40 (Animal Toon cheapest) to $800 (Art Style highest).
+
+    **Testing Plan**: (1) Navigate Templates Gallery → verify 5 new cards appear, (2) For each template: tap card → upload photo → watch ad (FREE) or bypass (PRO) → verify transformation → download to Gallery/VisoAI, (3) Fallback testing: disable APIs to verify provider switching in server logs, (4) Daily limits: verify 20/day cap for PRO users.
 - **Monetization**:
-    - **Advertising**: Supports Google Mobile Ads (AdMob) for web, and a dual-network system (AdMob primary, AppLovin MAX fallback) for mobile banner, app open, and rewarded ads. Firebase Remote Config enables dynamic ad control and A/B testing.
-    - **In-App Purchases**: Utilizes RevenueCat SDK for managing premium subscriptions (Lifetime, Yearly, Weekly tiers) with test mode support. Premium features include ad bypass, unlimited creations, and priority processing.
-- **Internationalization**: Supports 20 languages with interactive selection and persistence.
-- **Mobile Download**: Images are saved directly to the device's Gallery/Photos app using the `gal` package, creating a "VisoAI" album and ensuring immediate visibility via MediaScanner integration.
-- **Settings**: Includes features for sharing, feedback (email integration), "About" section, User Agreement, Privacy Policy, and Community Guidelines.
+    - **Advertising**: Google Mobile Ads (AdMob) for web, and a dual-network system (AdMob primary, AppLovin MAX fallback) for mobile banner, app open, and rewarded ads, managed via Firebase Remote Config.
+    - **In-App Purchases**: RevenueCat SDK for premium subscriptions (Lifetime, Yearly, Weekly tiers) offering ad bypass, unlimited creations, and priority processing.
+- **Internationalization**: Supports 20 languages with interactive selection.
+- **Mobile Download**: Images are saved directly to the device's Gallery/Photos app in a "VisoAI" album.
+- **Settings**: Includes sharing, feedback, "About" section, User Agreement, Privacy Policy, and Community Guidelines.
 
 ### System Design Choices
-Supabase is used for backend services, covering authentication, database management, and storage. AI functionalities are primarily powered by Huggingface Spaces and Replicate APIs, accessed via a Python Flask proxy server. Face swap templates are dynamically loaded from Supabase Storage, facilitating automated discovery and management.
+Supabase handles backend services including authentication, database, and storage. AI functionalities leverage Huggingface Spaces and Replicate APIs via a Python Flask proxy server. Face swap templates are dynamically loaded from Supabase Storage.
 
 **Production Deployment Strategy:**
-- **Backend**: ✅ **Railway Hobby ($5/mo) ONLY** - LIVE at `web-production-a7698.up.railway.app` with 300s timeout, perfect for AI operations. Container 24/7, no cold start, stable domain.
-  - Production: `api/index.py` → `railway_app.py` (Flask + Gunicorn)
-  - Local Dev: `api_server.py` (DEPRECATED - not maintained, Railway is sole production backend)
-- **Database/Auth/Storage**: Supabase (as current)
-- **Mobile**: Flutter APK with `--split-per-abi` optimization (reduces from 200MB to 40-60MB per APK)
-- **Web**: Flutter web served from Replit (development) or static hosting (production)
-
-**Why Railway over Vercel:**
-- Railway: 300s timeout, container 24/7, $5/mo - ✅ **DEPLOYED & WORKING**
-- Vercel Free: 10s timeout (insufficient for face swap 30-120s)
-- Vercel Pro Max: 300s timeout, $40/mo (8x more expensive than Railway)
-
-**Backend Architecture (Production):**
-```
-Users → Railway (web-production-a7698.up.railway.app)
-         ├─ api/index.py (Flask endpoints) ✅
-         ├─ railway_app.py (WSGI entry) ✅
-         ├─ services/face_swap_gateway.py (Multi-provider)
-         └─ Gunicorn (Production WSGI server)
-         
-[Local Replit - DEPRECATED, NOT USED]
-         └─ api_server.py (dev only, not maintained)
-```
+- **Backend**: Railway Hobby ($5/mo) at `web-production-a7698.up.railway.app` for 300s timeout. Uses `api/index.py` (Flask + Gunicorn) for production.
+- **Database/Auth/Storage**: Supabase.
+- **Mobile**: Flutter APK with `--split-per-abi` optimization.
 
 ## External Dependencies
 
-- **Supabase**: Backend services (authentication, database, storage), including dynamic loading of face swap templates.
-- **Google Mobile Ads (AdMob)**: Advertising for web and primary ad network for mobile.
-- **AppLovin MAX**: Secondary ad network for mobile (iOS/Android) for rewarded, interstitial, and banner ads.
-- **RevenueCat**: In-app purchase management for premium subscriptions.
-- **Huggingface API**: AI models for text/image generation, image enhancement, photo restoration, and style transfer.
-- **PiAPI**: Primary face swap provider with 99.9% uptime SLA for enterprise-grade image and video face swapping.
+- **Supabase**: Backend services (authentication, database, storage).
+- **Google Mobile Ads (AdMob)**: Advertising.
+- **AppLovin MAX**: Secondary mobile ad network.
+- **RevenueCat**: In-app purchase management.
+- **Huggingface API**: AI models for text/image generation, enhancement, restoration, and style transfer.
+- **PiAPI**: Primary face swap provider.
 - **Replicate API**: Fallback AI services for photo restoration and face-swapping.
 - **Flutter Core Dependencies**: `supabase_flutter`, `cached_network_image`, `go_router`, `google_fonts`, `flutter_animate`, `http`, `permission_handler`, `path_provider`, `applovin_max`, `share_plus`, `url_launcher`, `firebase_core`, `firebase_remote_config`, `purchases_flutter`, `gal`, `shared_preferences`.

@@ -109,4 +109,5 @@ fi
 
 # Start the Python backend server
 echo "🌐 Starting Python backend server on port 5000..."
-python3 api_server.py
+echo "🚂 Using production backend (railway_app.py → api/index.py)"
+python3 railway_app.py
