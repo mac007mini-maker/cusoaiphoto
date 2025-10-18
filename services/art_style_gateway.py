@@ -221,6 +221,7 @@ class ArtStyleGateway:
         
         if self.replicate_token:
             self.providers.append(ReplicatePhotoMakerArtProvider(self.replicate_token))
+            self.providers.append(ReplicateOilPaintingProvider(self.replicate_token))
         
         print(f"🔌 Art Style Gateway initialized with {len(self.providers)} provider(s)")
     
