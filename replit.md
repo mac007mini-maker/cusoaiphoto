@@ -12,6 +12,16 @@ Viso AI is a Flutter-based application for creating studio-grade AI headshots an
 - **Animal Toon**: Already working ✅ (no changes needed)
 - All gateways verified with multi-provider fallback architecture intact
 
+### Video Swap Feature - Local Build Compatibility & Navigation Fix
+- **Fixed API compatibility for local Flutter build**:
+  - Changed `HuggingfaceService.getApiUrl()` → `HuggingfaceService.aiBaseUrl` (correct getter)
+  - Fixed `Gal.putVideoBytes()` → save temp file + `Gal.putVideo(path)` (correct gal package API)
+  - Added missing imports: `dart:io`, `package:path_provider`
+- **Fixed SwapVideo navigation**:
+  - Added `VideoSwapWidget` route to GoRouter configuration (`lib/flutter_flow/nav/nav.dart`)
+  - SwapVideo card in Templates Gallery now navigates correctly to video swap page
+- All LSP diagnostics clean ✅, ready for APK build
+
 ## User Preferences
 None documented yet.
 

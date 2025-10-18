@@ -297,6 +297,11 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           name: ArtStyleWidget.routeName,
           path: ArtStyleWidget.routePath,
           builder: (context, params) => ArtStyleWidget(),
+        ),
+        FFRoute(
+          name: VideoSwapWidget.routeName,
+          path: VideoSwapWidget.routePath,
+          builder: (context, params) => VideoSwapWidget(),
         )
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );
