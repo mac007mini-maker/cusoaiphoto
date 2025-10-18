@@ -1,0 +1,201 @@
+PS C:\7code\aihubtech21video\aihubtech> flutter build apk --debug
+Support for Android x86 targets will be removed in the next stable release
+after 3.27. See https://github.com/flutter/flutter/issues/157543 for details. 
+lib/video_swap/video_swap_widget.dart:297:7: Error: Expected a class member, but got 'catch'.
+    } catch (e) {
+      ^^^^^
+lib/video_swap/video_swap_widget.dart:297:13: Error: Expected an identifier, but got '('.
+Try inserting an identifier before '('.
+    } catch (e) {
+            ^
+lib/video_swap/video_swap_widget.dart:830:1: Error: Expected a declaration, but got '}'.
+}
+^
+lib/video_swap/video_swap_widget.dart:34:7: Error: The non-abstract class '_VideoSwapWidgetState' is missing implementations for these members:
+ - State.build
+Try to either
+ - provide an implementation,
+ - inherit an implementation from a superclass or mixin,
+ - mark the class as abstract, or
+ - provide a 'noSuchMethod' implementation.
+
+class _VideoSwapWidgetState extends State<VideoSwapWidget> {
+      ^^^^^^^^^^^^^^^^^^^^^
+/C:/msdk/flutter/packages/flutter/lib/src/widgets/framework.dart:1461:10: Context: 'State.build' is defined here.
+  Widget build(BuildContext context);
+         ^^^^^
+lib/video_swap/video_swap_widget.dart:90:41: Error: Member not found: 'HuggingfaceService.getApiUrl'.
+      final apiUrl = HuggingfaceService.getApiUrl();
+                                        ^^^^^^^^^
+lib/video_swap/video_swap_widget.dart:190:41: Error: Member not found: 'HuggingfaceService.getApiUrl'.
+      final apiUrl = HuggingfaceService.getApiUrl();
+                                        ^^^^^^^^^
+lib/video_swap/video_swap_widget.dart:272:5: Error: A try statement must have 
+a body, even if it is empty.
+Try adding an empty body.
+    try:
+    ^^^
+lib/video_swap/video_swap_widget.dart:272:5: Error: A try block must be followed by an 'on', 'catch', or 'finally' clause.
+Try adding either a catch or finally clause, or remove the try statement.     
+    try:
+    ^^^
+lib/video_swap/video_swap_widget.dart:272:8: Error: Expected an identifier, but got ':'.
+Try inserting an identifier before ':'.
+    try:
+       ^
+lib/video_swap/video_swap_widget.dart:272:5: Error: Expected ';' after this.  
+    try:
+    ^^^
+lib/video_swap/video_swap_widget.dart:272:8: Error: Unexpected token ';'.     
+    try:
+       ^
+lib/video_swap/video_swap_widget.dart:283:19: Error: Member not found: 'Gal.putVideoBytes'.
+        await Gal.putVideoBytes(
+                  ^^^^^^^^^^^^^
+lib/video_swap/video_swap_widget.dart:310:16: Error: Undefined name 'context'.      context: context,
+               ^^^^^^^
+lib/video_swap/video_swap_widget.dart:367:14: Error: Undefined name 'scaffoldKey'.
+        key: scaffoldKey,
+             ^^^^^^^^^^^
+lib/video_swap/video_swap_widget.dart:406:19: Error: Undefined name '_isBannerAdLoaded'.
+              if (_isBannerAdLoaded && _bannerAd != null)
+                  ^^^^^^^^^^^^^^^^^
+lib/video_swap/video_swap_widget.dart:406:40: Error: Undefined name '_bannerAd'.
+              if (_isBannerAdLoaded && _bannerAd != null)
+                                       ^^^^^^^^^
+lib/video_swap/video_swap_widget.dart:410:39: Error: Undefined name '_bannerAd'.
+                  child: AdWidget(ad: _bannerAd!),
+                                      ^^^^^^^^^
+lib/video_swap/video_swap_widget.dart:420:9: Error: Undefined name '_model'.  
+    if (_model.isProcessing) {
+        ^^^^^^
+lib/video_swap/video_swap_widget.dart:424:9: Error: Undefined name '_model'.  
+    if (_model.resultVideoUrl != null) {
+        ^^^^^^
+lib/video_swap/video_swap_widget.dart:432:9: Error: Undefined name '_model'.  
+    if (_model.isLoadingTemplates) {
+        ^^^^^^
+lib/video_swap/video_swap_widget.dart:445:9: Error: Undefined name '_model'.  
+    if (_model.errorMessage != null) {
+        ^^^^^^
+lib/video_swap/video_swap_widget.dart:455:17: Error: Undefined name '_model'. 
+                _model.errorMessage!,
+                ^^^^^^
+lib/video_swap/video_swap_widget.dart:461:28: Error: Undefined name '_loadVideoTemplates'.
+                onPressed: _loadVideoTemplates,
+                           ^^^^^^^^^^^^^^^^^^^
+lib/video_swap/video_swap_widget.dart:466:46: Error: Undefined name 'context'.                  color: FlutterFlowTheme.of(context).primary,
+                                             ^^^^^^^
+lib/video_swap/video_swap_widget.dart:467:50: Error: Undefined name 'context'.                  textStyle: FlutterFlowTheme.of(context).titleSmall.override(                                                 ^^^^^^^
+lib/video_swap/video_swap_widget.dart:492:46: Error: Undefined name 'context'.                  style: FlutterFlowTheme.of(context).headlineSmall,
+                                             ^^^^^^^
+lib/video_swap/video_swap_widget.dart:498:46: Error: Undefined name 'context'.                  style: FlutterFlowTheme.of(context).bodyMedium,
+                                             ^^^^^^^
+lib/video_swap/video_swap_widget.dart:505:14: Error: Undefined name '_model'. 
+          ..._model.videoTemplates.entries.map((entry) {
+             ^^^^^^
+lib/video_swap/video_swap_widget.dart:518:50: Error: Undefined name 'context'.                      style: FlutterFlowTheme.of(context).titleMedium.override(
+                                                 ^^^^^^^
+lib/video_swap/video_swap_widget.dart:532:44: Error: Undefined name '_model'. 
+                        final isSelected = _model.selectedTemplate?['id'] == video['id'];
+                                           ^^^^^^
+lib/video_swap/video_swap_widget.dart:539:33: Error: Undefined name '_model'. 
+                                _model.selectedTemplate = video;
+                                ^^^^^^
+lib/video_swap/video_swap_widget.dart:538:31: Error: Method not found: 'setState'.
+                              setState(() {
+                              ^^^^^^^^
+lib/video_swap/video_swap_widget.dart:604:21: Error: Undefined name '_model'. 
+                if (_model.selectedTemplate != null) ...[
+                    ^^^^^^
+lib/video_swap/video_swap_widget.dart:608:48: Error: Undefined name 'context'.                    style: FlutterFlowTheme.of(context).headlineSmall,        
+                                               ^^^^^^^
+lib/video_swap/video_swap_widget.dart:612:23: Error: Undefined name '_model'. 
+                  if (_model.selectedUserPhoto != null)
+                      ^^^^^^
+lib/video_swap/video_swap_widget.dart:623:27: Error: Undefined name '_model'. 
+                          _model.selectedUserPhoto!,
+                          ^^^^^^
+lib/video_swap/video_swap_widget.dart:635:42: Error: Method not found: '_pickPhoto'.
+                        onPressed: () => _pickPhoto(source: ImageSource.gallery),
+                                         ^^^^^^^^^^
+lib/video_swap/video_swap_widget.dart:641:54: Error: Undefined name 'context'.                          color: FlutterFlowTheme.of(context).secondary,      
+                                                     ^^^^^^^
+lib/video_swap/video_swap_widget.dart:642:58: Error: Undefined name 'context'.                          textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                                                         ^^^^^^^
+lib/video_swap/video_swap_widget.dart:652:42: Error: Method not found: '_pickPhoto'.
+                        onPressed: () => _pickPhoto(source: ImageSource.camera),
+                                         ^^^^^^^^^^
+lib/video_swap/video_swap_widget.dart:658:54: Error: Undefined name 'context'.                          color: FlutterFlowTheme.of(context).secondary,
+                                                     ^^^^^^^
+lib/video_swap/video_swap_widget.dart:659:58: Error: Undefined name 'context'.                          textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                                                         ^^^^^^^
+lib/video_swap/video_swap_widget.dart:672:23: Error: Undefined name '_model'. 
+                  if (_model.selectedUserPhoto != null)
+                      ^^^^^^
+lib/video_swap/video_swap_widget.dart:674:34: Error: Undefined name '_processVideoSwap'.
+                      onPressed: _processVideoSwap,
+                                 ^^^^^^^^^^^^^^^^^
+lib/video_swap/video_swap_widget.dart:680:52: Error: Undefined name 'context'.                        color: FlutterFlowTheme.of(context).primary,
+                                                   ^^^^^^^
+lib/video_swap/video_swap_widget.dart:681:56: Error: Undefined name 'context'.                        textStyle: FlutterFlowTheme.of(context).titleMedium.override(
+                                                       ^^^^^^^
+lib/video_swap/video_swap_widget.dart:711:24: Error: Undefined name '_model'. 
+                value: _model.processingProgress,
+                       ^^^^^^
+lib/video_swap/video_swap_widget.dart:718:15: Error: Undefined name '_model'. 
+              _model.processingMessage,
+              ^^^^^^
+lib/video_swap/video_swap_widget.dart:720:42: Error: Undefined name 'context'.              style: FlutterFlowTheme.of(context).titleMedium,
+                                         ^^^^^^^
+lib/video_swap/video_swap_widget.dart:725:42: Error: Undefined name 'context'.              style: FlutterFlowTheme.of(context).bodyMedium.override(        
+                                         ^^^^^^^
+lib/video_swap/video_swap_widget.dart:733:42: Error: Undefined name 'context'.              style: FlutterFlowTheme.of(context).bodySmall.override(
+                                         ^^^^^^^
+lib/video_swap/video_swap_widget.dart:752:42: Error: Undefined name 'context'.              style: FlutterFlowTheme.of(context).headlineMedium.override(    
+                                         ^^^^^^^
+lib/video_swap/video_swap_widget.dart:784:26: Error: Undefined name '_downloadVideo'.
+              onPressed: _downloadVideo,
+                         ^^^^^^^^^^^^^^
+lib/video_swap/video_swap_widget.dart:789:44: Error: Undefined name 'context'.                color: FlutterFlowTheme.of(context).success,
+                                           ^^^^^^^
+lib/video_swap/video_swap_widget.dart:790:48: Error: Undefined name 'context'.                textStyle: FlutterFlowTheme.of(context).titleMedium.override( 
+                                               ^^^^^^^
+lib/video_swap/video_swap_widget.dart:806:19: Error: Undefined name '_model'. 
+                  _model.selectedTemplate = null;
+                  ^^^^^^
+lib/video_swap/video_swap_widget.dart:807:19: Error: Undefined name '_model'. 
+                  _model.selectedUserPhoto = null;
+                  ^^^^^^
+lib/video_swap/video_swap_widget.dart:808:19: Error: Undefined name '_model'. 
+                  _model.resultVideoUrl = null;
+                  ^^^^^^
+lib/video_swap/video_swap_widget.dart:809:19: Error: Undefined name '_model'. 
+                  _model.errorMessage = null;
+                  ^^^^^^
+lib/video_swap/video_swap_widget.dart:805:17: Error: Method not found: 'setState'.
+                setState(() {
+                ^^^^^^^^
+lib/video_swap/video_swap_widget.dart:816:44: Error: Undefined name 'context'.                color: FlutterFlowTheme.of(context).secondary,
+                                           ^^^^^^^
+lib/video_swap/video_swap_widget.dart:817:48: Error: Undefined name 'context'.                textStyle: FlutterFlowTheme.of(context).titleMedium.override( 
+                                               ^^^^^^^
+Target kernel_snapshot_program failed: Exception
+
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileFlutterBuildDebug'.
+> Process 'command 'C:\msdk\flutter\bin\flutter.bat'' finished with non-zero exit value 1
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 22s
+Running Gradle task 'assembleDebug'...                             22.6s      
+Gradle task assembleDebug failed with exit code 1
+PS C:\7code\aihubtech21video\aihubtech>
