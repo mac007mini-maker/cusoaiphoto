@@ -269,7 +269,7 @@ class _VideoSwapWidgetState extends State<VideoSwapWidget> {
   Future<void> _downloadVideo() async {
     if (_model.resultVideoUrl == null) return;
 
-    try:
+    try {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('📥 Downloading video...')),
       );
