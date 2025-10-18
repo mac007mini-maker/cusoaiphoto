@@ -173,7 +173,7 @@ class _ArtStyleWidgetState extends State<ArtStyleWidget> {
     });
 
     try {
-      await UsageLimitService.incrementUsageCount();
+      await UsageLimitService.incrementSwapCount();
       
       final String base64Image = base64Encode(_model.selectedUserPhoto!);
       

@@ -173,7 +173,7 @@ class _MemojiAvatarWidgetState extends State<MemojiAvatarWidget> {
     });
 
     try {
-      await UsageLimitService.incrementUsageCount();
+      await UsageLimitService.incrementSwapCount();
       
       final String base64Image = base64Encode(_model.selectedUserPhoto!);
       
