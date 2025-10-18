@@ -101,6 +101,36 @@ class _TemplatesGalleryWidgetState extends State<TemplatesGalleryWidget> {
       'color': Color(0xFF64748B),
       'route': SuitsWidget.routeName,
     },
+    {
+      'name': 'Cartoon 3D',
+      'icon': Icons.animation,
+      'color': Color(0xFFFF6B6B),
+      'route': CartoonToonWidget.routeName,
+    },
+    {
+      'name': 'Memoji',
+      'icon': Icons.emoji_emotions,
+      'color': Color(0xFFFFD93D),
+      'route': MemojiAvatarWidget.routeName,
+    },
+    {
+      'name': 'Animal Toon',
+      'icon': Icons.pets,
+      'color': Color(0xFF6BCB77),
+      'route': AnimalToonWidget.routeName,
+    },
+    {
+      'name': 'Muscle',
+      'icon': Icons.fitness_center,
+      'color': Color(0xFF4D96FF),
+      'route': MuscleEnhanceWidget.routeName,
+    },
+    {
+      'name': 'Art Style',
+      'icon': Icons.palette,
+      'color': Color(0xFFBB6BD9),
+      'route': ArtStyleWidget.routeName,
+    },
   ];
 
   @override
