@@ -3,6 +3,15 @@
 ## Overview
 Viso AI is a Flutter-based application for creating studio-grade AI headshots and avatars. It offers advanced photo enhancement, face swapping, and various AI-driven transformations, addressing the market demand for personalized digital content and AI-powered image manipulation. The project aims to provide high-quality, stylized digital images efficiently and cost-effectively.
 
+## Recent Changes (Oct 18, 2025)
+### AI Template Model Updates - Fixed 4/5 Templates
+- **Cartoon 3D Toon**: Fixed invalid `style_name` parameter - changed from "Cartoon" to "Disney Charactor" (valid PhotoMaker-Style param)
+- **Memoji Avatar**: Fixed invalid `style_name` parameter - changed from "3D Avatar" to "Digital Art" (valid PhotoMaker-Style param)  
+- **Muscle Enhancement**: Replaced broken model `arielreplicate/instruct-pix2pix` (404) with official `timothybrooks/instruct-pix2pix` (919K+ runs, $0.053/run)
+- **Art Style**: Replaced broken Neural Neighbor model with PhotoMaker + artistic prompts (PRIMARY) and retained Oil Painting fallback
+- **Animal Toon**: Already working ✅ (no changes needed)
+- All gateways verified with multi-provider fallback architecture intact
+
 ## User Preferences
 None documented yet.
 
@@ -37,18 +46,18 @@ Built with Flutter 3.32.0 (Dart 3.8.0), Viso AI integrates with a Python Flask b
     - **Cost**: $0.004 typical (CHEAPEST), $0.02 emergency. 10K/month = $40-$200. BEST cost efficiency.
 
     **4. Muscle Enhancement** (`/muscle-enhance`) - Add defined muscles and athletic body (3 intensity levels)
-    - **Provider Stack** (PRAGMATIC 2-PROVIDER): PRIMARY Replicate Instruct-Pix2Pix ($0.055/run, ~40s, timeout=60s) → FALLBACK retry with relaxed guidance params
+    - **Provider Stack** (PRAGMATIC 2-PROVIDER): PRIMARY timothybrooks/instruct-pix2pix ($0.053/run, ~40s, timeout=60s) → FALLBACK retry with relaxed guidance params
     - **API**: `POST /api/ai/muscle` → `services/muscle_gateway.py` (supports `intensity` param: light/moderate/strong)
-    - **Cost**: $0.055/run. 10K/month = $550
-    - **Note**: Muscle enhancement has limited specialized AI models. 2-provider setup provides reasonable resilience; most failures are input-related (poor photo quality) rather than API outages.
+    - **Cost**: $0.053/run. 10K/month = $530
+    - **Note**: Uses official Replicate Instruct-Pix2Pix model (919K+ runs). 2-provider setup provides reasonable resilience; most failures are input-related (poor photo quality) rather than API outages.
 
     **5. Art Style** (`/art-style`) - Apply artistic styles: mosaic, oil painting, watercolor
-    - **Provider Stack**: PRIMARY Replicate Neural Neighbor Style Transfer ($0.063/run, fast, timeout=60s) → FALLBACK Replicate Oil Painting ($0.08/run, SLOW ~11min, timeout=720s)
+    - **Provider Stack**: PRIMARY Replicate PhotoMaker Art ($0.004/run, ~30s, timeout=30s) → FALLBACK Replicate Oil Painting ($0.08/run, SLOW ~11min, timeout=720s)
     - **API**: `POST /api/ai/art-style` → `services/art_style_gateway.py` (supports `style` param: mosaic/oil/watercolor)
-    - **Cost**: $0.063 typical, $0.08 fallback. 10K/month = $630-$800
-    - **Note**: Fallback Oil Painting is SLOW (11min) but highly reliable. Use only when primary fails.
+    - **Cost**: $0.004 typical (uses same PhotoMaker as Animal Toon), $0.08 fallback. 10K/month = $40-$800
+    - **Note**: PRIMARY uses prompt-based artistic style transformation with PhotoMaker. Fallback Oil Painting is SLOW (11min) but provides alternative rendering when needed.
 
-    **Estimated production cost**: ~$1,366/month at scale (10K transformations/template). Total cost range: $40 (Animal Toon cheapest) to $800 (Art Style highest).
+    **Estimated production cost**: ~$1,250/month at scale (10K transformations/template). Total cost range: $40 (Animal Toon & Art Style cheapest with PhotoMaker) to $690 (Cartoon/Memoji worst-case).
 
     **Testing Plan**: (1) Navigate Templates Gallery → verify 5 new cards appear, (2) For each template: tap card → upload photo → watch ad (FREE) or bypass (PRO) → verify transformation → download to Gallery/VisoAI, (3) Fallback testing: disable APIs to verify provider switching in server logs, (4) Daily limits: verify 20/day cap for PRO users.
 - **Monetization**:
