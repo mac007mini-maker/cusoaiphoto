@@ -276,7 +276,13 @@ class _VideoSwapWidgetState extends State<VideoSwapWidget> {
         SnackBar(content: Text('📥 Downloading video...')),
       );
 
-      final response = await http.get(Uri.parse(_model.resultVideoUrl!));
+      // Download via backend proxy to avoid CDN connection issues
+      final apiUrl = HuggingfaceService.aiBaseUrl;
+      final response = await http.post(
+        Uri.parse('$apiUrl/video-swap/download'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'video_url': _model.resultVideoUrl}),
+      );
       
       if (response.statusCode == 200) {
         final videoBytes = response.bodyBytes;

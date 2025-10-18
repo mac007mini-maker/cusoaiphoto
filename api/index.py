@@ -45,6 +45,7 @@ def home():
             '/api/ai/face-swap',
             '/api/ai/face-swap-v2',
             '/api/ai/video-swap',
+            '/api/ai/video-swap/download',
             '/api/ai/video-templates',
             '/api/ai/cartoon',
             '/api/ai/memoji',
@@ -310,6 +311,82 @@ def video_swap():
             
     except Exception as e:
         print(f"❌ [VIDEO_SWAP] Error: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/ai/video-swap/download', methods=['POST'])
+def download_video():
+    """Proxy video download from CDN to avoid client-side connection issues"""
+    try:
+        print("📥 [VIDEO_DOWNLOAD] Received download request")
+        data = request.get_json()
+        
+        video_url = data.get('video_url', '')
+        if not video_url:
+            return jsonify({'error': 'video_url required'}), 400
+        
+        # SECURITY: Validate URL is from trusted CDN providers only (prevent SSRF)
+        from urllib.parse import urlparse
+        parsed_url = urlparse(video_url)
+        
+        # Enforce HTTPS only
+        if parsed_url.scheme != 'https':
+            print(f"⚠️ [VIDEO_DOWNLOAD] Blocked non-HTTPS scheme: {parsed_url.scheme}")
+            return jsonify({'error': 'Only HTTPS URLs are allowed'}), 403
+        
+        # Reject URLs with credentials (userinfo) to prevent bypass attacks
+        if parsed_url.username or parsed_url.password:
+            print(f"⚠️ [VIDEO_DOWNLOAD] Blocked URL with credentials")
+            return jsonify({'error': 'URLs with credentials are not allowed'}), 403
+        
+        # Use .hostname to properly extract host (ignores credentials and port)
+        hostname = parsed_url.hostname
+        if not hostname:
+            print(f"⚠️ [VIDEO_DOWNLOAD] Invalid URL: no hostname")
+            return jsonify({'error': 'Invalid URL'}), 400
+        
+        hostname = hostname.lower()  # Normalize to lowercase
+        
+        allowed_domains = [
+            'replicate.delivery',      # Replicate CDN
+            'cdn.vmimgs.com',           # VModel CDN
+            'pbxt.replicate.delivery',  # Replicate alternative CDN
+        ]
+        
+        # Check if hostname exactly matches OR is a subdomain of allowed domains
+        is_allowed = False
+        for domain in allowed_domains:
+            if hostname == domain or hostname.endswith('.' + domain):
+                is_allowed = True
+                break
+        
+        if not is_allowed:
+            print(f"⚠️ [VIDEO_DOWNLOAD] Blocked untrusted domain: {hostname}")
+            return jsonify({'error': 'Video URL must be from trusted provider CDN'}), 403
+        
+        print(f"⬇️ [VIDEO_DOWNLOAD] Downloading from: {video_url[:100]}...")
+        
+        import requests as http_requests
+        from flask import Response
+        
+        # Download video from CDN with streaming
+        video_response = http_requests.get(video_url, stream=True, timeout=300)
+        video_response.raise_for_status()
+        
+        print(f"✅ [VIDEO_DOWNLOAD] Downloaded successfully, streaming to client")
+        
+        # Stream video bytes to client
+        return Response(
+            video_response.iter_content(chunk_size=8192),
+            content_type='video/mp4',
+            headers={
+                'Content-Disposition': 'attachment; filename="viso_ai_video.mp4"'
+            }
+        )
+        
+    except Exception as e:
+        print(f"❌ [VIDEO_DOWNLOAD] Error: {e}")
         import traceback
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500

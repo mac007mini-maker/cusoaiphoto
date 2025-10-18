@@ -197,11 +197,11 @@ class VModelProProvider(VideoSwapProvider):
             loop = asyncio.get_event_loop()
             result = await loop.run_in_executor(None, _submit)
             
-            task_id = result.get('task_id')
+            task_id = result.get('id')  # VModel uses 'id' not 'task_id'
             if not task_id:
                 return {
                     "success": False,
-                    "error": "No task_id in response",
+                    "error": "No task ID in response",
                     "provider": self.get_name()
                 }
             
