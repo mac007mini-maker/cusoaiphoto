@@ -4,22 +4,19 @@
 Viso AI is a Flutter-based application for creating studio-grade AI headshots and avatars. It offers advanced photo enhancement, face swapping, and various AI-driven transformations, addressing the market demand for personalized digital content and AI-powered image manipulation. The project aims to provide high-quality, stylized digital images efficiently and cost-effectively.
 
 ## Recent Changes (Oct 18, 2025)
-### Video Swap Provider Priority - VModel Pro Now PRIMARY
-- **Changed provider priority for PRO users**: VModel Pro (PRIMARY) → Replicate Roop (FALLBACK 1) → PiAPI (FALLBACK 2)
-- **Rationale for VModel Pro PRIMARY**:
-  - ✅ **No file limits**: Unlimited file size/resolution (up to 4K) vs PiAPI's 10MB/720p/600 frame limits
-  - ✅ **Better pricing**: $0.03/second vs PiAPI $0.004/frame ($0.30 vs $1.20 for 10s video)
-  - ✅ **Highest quality**: "Pro" version optimized for production, superior blending/motion adaptation
-  - ✅ **Scalable free credits**: $10 free per email account (unlimited testing via multiple accounts)
-  - ✅ **Current videos compatible**: 100% of Supabase videos work (vs 80% with PiAPI due to size limits)
-- **PRO user experience**: Best quality/no restrictions for paying customers, with reliable fallbacks if VModel quota exhausted
-- **Production cost estimate**: $0.03-$0.30 per video swap (VModel typical), emergency fallback to Replicate $0.11 or PiAPI $0.004/frame
-
-### Video Swap Provider Fixes - Replicate Roop Model Updated
-- **Fixed Replicate Roop model version error**: Changed `arabyai-replicate/roop_face_swap:latest` → `arabyai-replicate/roop_face_swap` (removed `:latest` tag causing 422 "Invalid version" error)
-- **Improved error logging**: All 3 video swap providers now log detailed error responses for debugging (PiAPI response status/text, Replicate error type, VModel response details)
-- **LSP diagnostics fixed**: Proper error handling for exception.response attributes
-- Ready for production deployment
+### Video Swap Gateway - FINAL 2-PROVIDER ARCHITECTURE ✅
+- **Provider priority**: VModel Pro (PRIMARY) → Replicate Roop (FALLBACK)
+- **PiAPI removed**: Discovered PiAPI only supports video-to-video face swap (requires source video + target video), NOT photo-to-video swap needed for this feature
+- **VModel Pro configuration FIXED**:
+  - ✅ Corrected version ID: `537e83f7...` → `85e248d268bcc04f5302cf9645663c2c12acd03c953ec1a4bbfdc252a65bddc0` (official video-face-swap model)
+  - ✅ Fixed reversed params: `source=user_image, target=video_url` (was incorrectly swapped)
+  - ✅ Added `keep_fps: false` parameter per VModel API docs
+  - ✅ Cost: $0.03/sec (~$0.30 for 10s video), no file size limits, 4K support
+- **Replicate Roop configuration FIXED**:
+  - ✅ Added full version ID: `arabyai-replicate/roop_face_swap:11b6bf0f4e14d808f655e87e5448233cceff10a45f659d71539cafb7163b2e84`
+  - ✅ Fixed 404 "model not found" errors
+  - ✅ Cost: Flat $0.11/video, proven 28.7K+ runs
+- **Production cost estimate**: $0.30 typical (VModel), $0.11 fallback (Replicate)
 
 ### Dynamic Video Template Loading - 100% WORKING
 - **Fixed Supabase bucket permissions**: Added "Public can list files" policy for SELECT operations on `video-swap-templates` bucket
@@ -115,6 +112,7 @@ Supabase handles backend services including authentication, database, and storag
 - **AppLovin MAX**: Secondary mobile ad network.
 - **RevenueCat**: In-app purchase management.
 - **Huggingface API**: AI models for text/image generation, enhancement, restoration, and style transfer.
-- **PiAPI**: Primary face swap provider.
-- **Replicate API**: Fallback AI services for photo restoration and face-swapping.
+- **VModel API**: Primary video face swap provider (photo-to-video, 4K support, $0.03/sec).
+- **Replicate API**: Multi-purpose AI services (image face swap, video face swap fallback, photo restoration, style transfer).
+- **PiAPI**: Image face swap provider (fallback for image-only operations).
 - **Flutter Core Dependencies**: `supabase_flutter`, `cached_network_image`, `go_router`, `google_fonts`, `flutter_animate`, `http`, `permission_handler`, `path_provider`, `applovin_max`, `share_plus`, `url_launcher`, `firebase_core`, `firebase_remote_config`, `purchases_flutter`, `gal`, `shared_preferences`.
