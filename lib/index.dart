@@ -41,3 +41,4 @@ export '/memoji_avatar/memoji_avatar_widget.dart' show MemojiAvatarWidget;
 export '/animal_toon/animal_toon_widget.dart' show AnimalToonWidget;
 export '/muscle_enhance/muscle_enhance_widget.dart' show MuscleEnhanceWidget;
 export '/art_style/art_style_widget.dart' show ArtStyleWidget;
+export '/video_swap/video_swap_widget.dart' show VideoSwapWidget;

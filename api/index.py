@@ -21,6 +21,7 @@ from services.memoji_gateway import memoji_gateway
 from services.animal_toon_gateway import animal_toon_gateway
 from services.muscle_gateway import muscle_gateway
 from services.art_style_gateway import art_style_gateway
+from services.video_swap_gateway import video_swap_gateway
 
 app = Flask(__name__)
 CORS(app)
@@ -43,7 +44,8 @@ def home():
             '/api/ai/cartoonify',
             '/api/ai/face-swap',
             '/api/ai/face-swap-v2',
-            '/api/ai/video-face-swap',
+            '/api/ai/video-swap',
+            '/api/ai/video-templates',
             '/api/ai/cartoon',
             '/api/ai/memoji',
             '/api/ai/animal-toon',
@@ -283,24 +285,23 @@ def face_swap_v2():
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
-@app.route('/api/ai/video-face-swap', methods=['POST'])
-def video_face_swap():
-    """Video Face Swap using PiAPI"""
+@app.route('/api/ai/video-swap', methods=['POST'])
+def video_swap():
+    """Video Face Swap using Multi-Provider Gateway (PiAPI → Replicate → VModel)"""
     try:
-        print("📥 [VIDEO_FACE_SWAP] Received request")
+        print("📥 [VIDEO_SWAP] Received request")
         data = request.get_json()
         
-        video_url = data.get('video_url', '')
-        source_face = data.get('source_face', '')
+        user_image = data.get('user_image', '')
+        template_video_url = data.get('template_video_url', '')
         
-        if not video_url or not source_face:
-            return jsonify({'error': 'Both video_url and source_face required'}), 400
+        if not user_image or not template_video_url:
+            return jsonify({'error': 'Both user_image and template_video_url required'}), 400
         
-        result = asyncio.run(face_swap_gateway.swap_face(
-            target=video_url,
-            source=source_face,
-            media_type=FaceSwapMediaType.VIDEO
-        ))
+        print(f"🚀 [VIDEO_SWAP] Starting swap - Template: {template_video_url}")
+        result = asyncio.run(video_swap_gateway.swap_video(user_image, template_video_url))
+        
+        print(f"📤 [VIDEO_SWAP] Result: success={result.get('success')}, provider={result.get('provider')}")
         
         if result.get('success'):
             return jsonify(result)
@@ -308,7 +309,86 @@ def video_face_swap():
             return jsonify(result), 500
             
     except Exception as e:
-        print(f"❌ [VIDEO_FACE_SWAP] Error: {e}")
+        print(f"❌ [VIDEO_SWAP] Error: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/ai/video-templates', methods=['GET'])
+def get_video_templates():
+    """Load video templates from Supabase Storage dynamically"""
+    try:
+        print("📥 [VIDEO_TEMPLATES] Fetching from Supabase...")
+        
+        supabase_url = os.getenv('SUPABASE_URL')
+        supabase_key = os.getenv('SUPABASE_ANON_KEY')
+        
+        if not supabase_url or not supabase_key:
+            return jsonify({'error': 'Supabase not configured'}), 500
+        
+        import requests as http_requests
+        
+        # List all files in video-swap-templates bucket
+        bucket_name = 'video-swap-templates'
+        storage_url = f"{supabase_url}/storage/v1/object/list/{bucket_name}"
+        
+        headers = {
+            'apikey': supabase_key,
+            'Authorization': f'Bearer {supabase_key}'
+        }
+        
+        # List root folder to get categories
+        response = http_requests.post(
+            storage_url,
+            headers=headers,
+            json={'prefix': '', 'limit': 1000},
+            timeout=10
+        )
+        response.raise_for_status()
+        files = response.json()
+        
+        # Organize by category
+        templates = {}
+        for item in files:
+            name = item.get('name')
+            if not name or '/' not in name:
+                continue
+            
+            parts = name.split('/')
+            if len(parts) != 2:
+                continue
+            
+            category, filename = parts
+            if not filename.endswith('.mp4'):
+                continue
+            
+            if category not in templates:
+                templates[category] = []
+            
+            video_url = f"{supabase_url}/storage/v1/object/public/{bucket_name}/{name}"
+            
+            templates[category].append({
+                'id': name.replace('/', '_').replace('.mp4', ''),
+                'title': filename.replace('.mp4', '').replace('_', ' ').title(),
+                'video_url': video_url,
+                'thumbnail_url': video_url,  # Can be same as video for now
+                'category': category,
+                'filename': filename
+            })
+        
+        print(f"✅ [VIDEO_TEMPLATES] Found {sum(len(v) for v in templates.values())} videos in {len(templates)} categories")
+        
+        return jsonify({
+            'success': True,
+            'templates': templates,
+            'total_videos': sum(len(v) for v in templates.values()),
+            'categories': list(templates.keys())
+        })
+        
+    except Exception as e:
+        print(f"❌ [VIDEO_TEMPLATES] Error: {e}")
+        import traceback
+        traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/ai/cartoon', methods=['POST'])

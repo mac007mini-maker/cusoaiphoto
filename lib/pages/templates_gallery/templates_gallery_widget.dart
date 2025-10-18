@@ -131,6 +131,12 @@ class _TemplatesGalleryWidgetState extends State<TemplatesGalleryWidget> {
       'color': Color(0xFFBB6BD9),
       'route': ArtStyleWidget.routeName,
     },
+    {
+      'name': 'SwapVideo',
+      'icon': Icons.videocam,
+      'color': Color(0xFFE91E63),
+      'route': VideoSwapWidget.routeName,
+    },
   ];
 
   @override
