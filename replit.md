@@ -4,6 +4,18 @@
 Viso AI is a Flutter-based application for creating studio-grade AI headshots and avatars. It offers advanced photo enhancement, face swapping, and various AI-driven transformations, addressing the market demand for personalized digital content and AI-powered image manipulation. The project aims to provide high-quality, stylized digital images efficiently and cost-effectively.
 
 ## Recent Changes (Oct 18, 2025)
+### Video Swap Provider Fixes - Replicate Roop Model Updated
+- **Fixed Replicate Roop model version error**: Changed `arabyai-replicate/roop_face_swap:latest` → `arabyai-replicate/roop_face_swap` (removed `:latest` tag causing 422 "Invalid version" error)
+- **Improved error logging**: All 3 video swap providers now log detailed error responses for debugging (PiAPI response status/text, Replicate error type, VModel response details)
+- **Provider cascade remains**: PiAPI (PRIMARY) → Replicate Roop (FALLBACK 1) → VModel Pro (FALLBACK 2)
+- Ready for production testing after PRO purchase
+
+### Dynamic Video Template Loading - 100% WORKING
+- **Fixed Supabase bucket permissions**: Added "Public can list files" policy for SELECT operations on `video-swap-templates` bucket
+- **Confirmed working**: Supabase Storage List API now returns 10 videos across 5 categories (fashion, fitness, people, professional, travel)
+- **Fully dynamic**: Add new videos/categories to Supabase Storage → Auto-appears in app without code updates
+- Template loading: 2-step process (list folders → list videos per folder) with proper error handling
+
 ### AI Template Model Updates - Fixed 4/5 Templates
 - **Cartoon 3D Toon**: Fixed invalid `style_name` parameter - changed from "Cartoon" to "Disney Charactor" (valid PhotoMaker-Style param)
 - **Memoji Avatar**: Fixed invalid `style_name` parameter - changed from "3D Avatar" to "Digital Art" (valid PhotoMaker-Style param)  

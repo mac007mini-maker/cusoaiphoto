@@ -181,8 +181,15 @@ class PiAPIVideoSwapProvider(VideoSwapProvider):
             print(f"⏱️ {self.get_name()} timeout")
             return {"success": False, "error": "Timeout", "provider": self.get_name()}
         except Exception as e:
-            print(f"❌ {self.get_name()} failed: {e}")
-            return {"success": False, "error": str(e), "provider": self.get_name()}
+            error_msg = str(e)
+            print(f"❌ {self.get_name()} failed: {error_msg}")
+            
+            # Log PiAPI response details for debugging
+            if hasattr(e, 'response'):
+                print(f"   Response status: {getattr(e.response, 'status_code', 'N/A')}")
+                print(f"   Response text: {getattr(e.response, 'text', 'N/A')[:200]}")
+            
+            return {"success": False, "error": error_msg, "provider": self.get_name()}
 
 class ReplicateRoopProvider(VideoSwapProvider):
     """Replicate Roop Face Swap - FALLBACK 1 (proven, 105M+ runs)"""
@@ -225,7 +232,7 @@ class ReplicateRoopProvider(VideoSwapProvider):
             
             def _run():
                 return replicate.run(
-                    "arabyai-replicate/roop_face_swap:latest",
+                    "arabyai-replicate/roop_face_swap",
                     input={
                         "swap_image": data_uri,
                         "target_video": template_video_url
@@ -256,8 +263,14 @@ class ReplicateRoopProvider(VideoSwapProvider):
             print(f"⏱️ {self.get_name()} timeout")
             return {"success": False, "error": "Timeout", "provider": self.get_name()}
         except Exception as e:
-            print(f"❌ {self.get_name()} failed: {e}")
-            return {"success": False, "error": str(e), "provider": self.get_name()}
+            error_msg = str(e)
+            print(f"❌ {self.get_name()} failed: {error_msg}")
+            
+            # Log Replicate error details
+            if 'ReplicateError' in type(e).__name__:
+                print(f"   Replicate error type: {type(e).__name__}")
+            
+            return {"success": False, "error": error_msg, "provider": self.get_name()}
 
 class VModelProProvider(VideoSwapProvider):
     """VModel Pro - FALLBACK 2 (highest quality, 2K support)"""
@@ -392,8 +405,14 @@ class VModelProProvider(VideoSwapProvider):
             print(f"⏱️ {self.get_name()} timeout")
             return {"success": False, "error": "Timeout", "provider": self.get_name()}
         except Exception as e:
-            print(f"❌ {self.get_name()} failed: {e}")
-            return {"success": False, "error": str(e), "provider": self.get_name()}
+            error_msg = str(e)
+            print(f"❌ {self.get_name()} failed: {error_msg}")
+            
+            # Log VModel error details
+            if hasattr(e, 'response'):
+                print(f"   VModel response: {getattr(e.response, 'text', 'N/A')[:200]}")
+            
+            return {"success": False, "error": error_msg, "provider": self.get_name()}
 
 class VideoSwapGateway:
     """Main gateway with multi-provider fallback"""
