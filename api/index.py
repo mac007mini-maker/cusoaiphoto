@@ -16,6 +16,11 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from services.image_ai_service import image_ai_service
 from services.face_swap_gateway import face_swap_gateway, FaceSwapMediaType
 from services.hd_image_gateway import hd_image_gateway
+from services.cartoon_gateway import cartoon_gateway
+from services.memoji_gateway import memoji_gateway
+from services.animal_toon_gateway import animal_toon_gateway
+from services.muscle_gateway import muscle_gateway
+from services.art_style_gateway import art_style_gateway
 
 app = Flask(__name__)
 CORS(app)
@@ -38,7 +43,12 @@ def home():
             '/api/ai/cartoonify',
             '/api/ai/face-swap',
             '/api/ai/face-swap-v2',
-            '/api/ai/video-face-swap'
+            '/api/ai/video-face-swap',
+            '/api/ai/cartoon',
+            '/api/ai/memoji',
+            '/api/ai/animal-toon',
+            '/api/ai/muscle',
+            '/api/ai/art-style'
         ]
     })
 
@@ -299,6 +309,144 @@ def video_face_swap():
             
     except Exception as e:
         print(f"❌ [VIDEO_FACE_SWAP] Error: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/ai/cartoon', methods=['POST'])
+def cartoon():
+    """Cartoon/3D Toon transformation using Multi-Provider Gateway"""
+    try:
+        print("📥 [CARTOON] Received request")
+        data = request.get_json()
+        image_base64 = data.get('image', '')
+        
+        if not image_base64:
+            return jsonify({'error': 'No image provided'}), 400
+        
+        print("🚀 [CARTOON] Calling cartoon gateway...")
+        result = asyncio.run(cartoon_gateway.transform(image_base64))
+        
+        print(f"📤 [CARTOON] Result: success={result.get('success')}, provider={result.get('provider')}")
+        
+        if result.get('success'):
+            return jsonify(result)
+        else:
+            return jsonify(result), 500
+            
+    except Exception as e:
+        print(f"❌ [CARTOON] Error: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/ai/memoji', methods=['POST'])
+def memoji():
+    """Memoji/Face-Emoji transformation using Multi-Provider Gateway"""
+    try:
+        print("📥 [MEMOJI] Received request")
+        data = request.get_json()
+        image_base64 = data.get('image', '')
+        
+        if not image_base64:
+            return jsonify({'error': 'No image provided'}), 400
+        
+        print("🚀 [MEMOJI] Calling memoji gateway...")
+        result = asyncio.run(memoji_gateway.transform(image_base64))
+        
+        print(f"📤 [MEMOJI] Result: success={result.get('success')}, provider={result.get('provider')}")
+        
+        if result.get('success'):
+            return jsonify(result)
+        else:
+            return jsonify(result), 500
+            
+    except Exception as e:
+        print(f"❌ [MEMOJI] Error: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/ai/animal-toon', methods=['POST'])
+def animal_toon():
+    """Animal-Toon transformation using Multi-Provider Gateway"""
+    try:
+        print("📥 [ANIMAL_TOON] Received request")
+        data = request.get_json()
+        image_base64 = data.get('image', '')
+        animal_type = data.get('animal_type', 'bunny')
+        
+        if not image_base64:
+            return jsonify({'error': 'No image provided'}), 400
+        
+        print(f"🚀 [ANIMAL_TOON] Calling animal-toon gateway (animal={animal_type})...")
+        result = asyncio.run(animal_toon_gateway.transform(image_base64, animal_type))
+        
+        print(f"📤 [ANIMAL_TOON] Result: success={result.get('success')}, provider={result.get('provider')}")
+        
+        if result.get('success'):
+            return jsonify(result)
+        else:
+            return jsonify(result), 500
+            
+    except Exception as e:
+        print(f"❌ [ANIMAL_TOON] Error: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/ai/muscle', methods=['POST'])
+def muscle():
+    """Muscle Enhancement transformation using Multi-Provider Gateway"""
+    try:
+        print("📥 [MUSCLE] Received request")
+        data = request.get_json()
+        image_base64 = data.get('image', '')
+        intensity = data.get('intensity', 'moderate')
+        
+        if not image_base64:
+            return jsonify({'error': 'No image provided'}), 400
+        
+        print(f"🚀 [MUSCLE] Calling muscle gateway (intensity={intensity})...")
+        result = asyncio.run(muscle_gateway.transform(image_base64, intensity))
+        
+        print(f"📤 [MUSCLE] Result: success={result.get('success')}, provider={result.get('provider')}")
+        
+        if result.get('success'):
+            return jsonify(result)
+        else:
+            return jsonify(result), 500
+            
+    except Exception as e:
+        print(f"❌ [MUSCLE] Error: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/ai/art-style', methods=['POST'])
+def art_style():
+    """Art Style transformation using Multi-Provider Gateway"""
+    try:
+        print("📥 [ART_STYLE] Received request")
+        data = request.get_json()
+        image_base64 = data.get('image', '')
+        style = data.get('style', 'mosaic')
+        
+        if not image_base64:
+            return jsonify({'error': 'No image provided'}), 400
+        
+        print(f"🚀 [ART_STYLE] Calling art-style gateway (style={style})...")
+        result = asyncio.run(art_style_gateway.transform(image_base64, style))
+        
+        print(f"📤 [ART_STYLE] Result: success={result.get('success')}, provider={result.get('provider')}")
+        
+        if result.get('success'):
+            return jsonify(result)
+        else:
+            return jsonify(result), 500
+            
+    except Exception as e:
+        print(f"❌ [ART_STYLE] Error: {e}")
+        import traceback
+        traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':

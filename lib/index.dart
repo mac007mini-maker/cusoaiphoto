@@ -36,3 +36,8 @@ export '/templates/fashionshow/fashionshow_widget.dart' show FashionshowWidget;
 export '/templates/profile/profile_widget.dart' show ProfileWidget;
 export '/templates/suits/suits_widget.dart' show SuitsWidget;
 export '/pages/ai_test/ai_test_widget.dart' show AiTestWidget;
+export '/cartoon_toon/cartoon_toon_widget.dart' show CartoonToonWidget;
+export '/memoji_avatar/memoji_avatar_widget.dart' show MemojiAvatarWidget;
+export '/animal_toon/animal_toon_widget.dart' show AnimalToonWidget;
+export '/muscle_enhance/muscle_enhance_widget.dart' show MuscleEnhanceWidget;
+export '/art_style/art_style_widget.dart' show ArtStyleWidget;

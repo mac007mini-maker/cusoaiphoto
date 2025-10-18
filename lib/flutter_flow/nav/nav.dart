@@ -272,6 +272,31 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           name: AiTestWidget.routeName,
           path: AiTestWidget.routePath,
           builder: (context, params) => AiTestWidget(),
+        ),
+        FFRoute(
+          name: CartoonToonWidget.routeName,
+          path: CartoonToonWidget.routePath,
+          builder: (context, params) => CartoonToonWidget(),
+        ),
+        FFRoute(
+          name: MemojiAvatarWidget.routeName,
+          path: MemojiAvatarWidget.routePath,
+          builder: (context, params) => MemojiAvatarWidget(),
+        ),
+        FFRoute(
+          name: AnimalToonWidget.routeName,
+          path: AnimalToonWidget.routePath,
+          builder: (context, params) => AnimalToonWidget(),
+        ),
+        FFRoute(
+          name: MuscleEnhanceWidget.routeName,
+          path: MuscleEnhanceWidget.routePath,
+          builder: (context, params) => MuscleEnhanceWidget(),
+        ),
+        FFRoute(
+          name: ArtStyleWidget.routeName,
+          path: ArtStyleWidget.routePath,
+          builder: (context, params) => ArtStyleWidget(),
         )
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );
