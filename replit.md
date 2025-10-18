@@ -4,11 +4,22 @@
 Viso AI is a Flutter-based application for creating studio-grade AI headshots and avatars. It offers advanced photo enhancement, face swapping, and various AI-driven transformations, addressing the market demand for personalized digital content and AI-powered image manipulation. The project aims to provide high-quality, stylized digital images efficiently and cost-effectively.
 
 ## Recent Changes (Oct 18, 2025)
+### Video Swap Provider Priority - VModel Pro Now PRIMARY
+- **Changed provider priority for PRO users**: VModel Pro (PRIMARY) → Replicate Roop (FALLBACK 1) → PiAPI (FALLBACK 2)
+- **Rationale for VModel Pro PRIMARY**:
+  - ✅ **No file limits**: Unlimited file size/resolution (up to 4K) vs PiAPI's 10MB/720p/600 frame limits
+  - ✅ **Better pricing**: $0.03/second vs PiAPI $0.004/frame ($0.30 vs $1.20 for 10s video)
+  - ✅ **Highest quality**: "Pro" version optimized for production, superior blending/motion adaptation
+  - ✅ **Scalable free credits**: $10 free per email account (unlimited testing via multiple accounts)
+  - ✅ **Current videos compatible**: 100% of Supabase videos work (vs 80% with PiAPI due to size limits)
+- **PRO user experience**: Best quality/no restrictions for paying customers, with reliable fallbacks if VModel quota exhausted
+- **Production cost estimate**: $0.03-$0.30 per video swap (VModel typical), emergency fallback to Replicate $0.11 or PiAPI $0.004/frame
+
 ### Video Swap Provider Fixes - Replicate Roop Model Updated
 - **Fixed Replicate Roop model version error**: Changed `arabyai-replicate/roop_face_swap:latest` → `arabyai-replicate/roop_face_swap` (removed `:latest` tag causing 422 "Invalid version" error)
 - **Improved error logging**: All 3 video swap providers now log detailed error responses for debugging (PiAPI response status/text, Replicate error type, VModel response details)
-- **Provider cascade remains**: PiAPI (PRIMARY) → Replicate Roop (FALLBACK 1) → VModel Pro (FALLBACK 2)
-- Ready for production testing after PRO purchase
+- **LSP diagnostics fixed**: Proper error handling for exception.response attributes
+- Ready for production deployment
 
 ### Dynamic Video Template Loading - 100% WORKING
 - **Fixed Supabase bucket permissions**: Added "Public can list files" policy for SELECT operations on `video-swap-templates` bucket

@@ -4,9 +4,9 @@ Video Face Swap Gateway - Multi-Provider Video Processing
 Swaps user's face into template videos using advanced AI
 
 Providers (priority order):
-1. PiAPI Video Face Swap (PRIMARY) - $0.02/call, fast, high reliability
-2. Replicate Roop Face Swap (FALLBACK 1) - $0.015/run, 105M+ runs
-3. VModel Pro (FALLBACK 2) - $0.03/sec, highest quality, 2K support
+1. VModel Pro (PRIMARY) - $0.03/sec, highest quality, 4K support, no file limits, $10 free/email
+2. Replicate Roop Face Swap (FALLBACK 1) - $0.11/run, proven reliability, no file limits
+3. PiAPI Video Face Swap (FALLBACK 2) - $0.004/frame, fast backup (max 10MB/720p/600 frames)
 """
 
 import os
@@ -46,7 +46,7 @@ class VideoSwapProvider(ABC):
         pass
 
 class PiAPIVideoSwapProvider(VideoSwapProvider):
-    """PiAPI Video Face Swap - PRIMARY provider (best reliability)"""
+    """PiAPI Video Face Swap - FALLBACK 2 (fast processing backup, max 10MB/720p)"""
     
     def __init__(self, api_key: str):
         self.api_key = api_key
@@ -79,7 +79,7 @@ class PiAPIVideoSwapProvider(VideoSwapProvider):
     
     async def swap(self, user_image_base64: str, template_video_url: str, **kwargs) -> Dict[str, Any]:
         try:
-            print(f"🚀 [PRIMARY] Trying PiAPI Video Swap...")
+            print(f"🔄 [FALLBACK 2] Trying PiAPI Video Swap...")
             
             # Decode user image
             image_bytes, format_ext = self._decode_base64_image(user_image_base64)
@@ -186,8 +186,10 @@ class PiAPIVideoSwapProvider(VideoSwapProvider):
             
             # Log PiAPI response details for debugging
             if hasattr(e, 'response'):
-                print(f"   Response status: {getattr(e.response, 'status_code', 'N/A')}")
-                print(f"   Response text: {getattr(e.response, 'text', 'N/A')[:200]}")
+                response = getattr(e, 'response', None)
+                if response:
+                    print(f"   Response status: {getattr(response, 'status_code', 'N/A')}")
+                    print(f"   Response text: {getattr(response, 'text', 'N/A')[:200]}")
             
             return {"success": False, "error": error_msg, "provider": self.get_name()}
 
@@ -273,7 +275,7 @@ class ReplicateRoopProvider(VideoSwapProvider):
             return {"success": False, "error": error_msg, "provider": self.get_name()}
 
 class VModelProProvider(VideoSwapProvider):
-    """VModel Pro - FALLBACK 2 (highest quality, 2K support)"""
+    """VModel Pro - PRIMARY (highest quality, 4K support, no file limits)"""
     
     def __init__(self, api_token: str):
         self.api_token = api_token
@@ -306,7 +308,7 @@ class VModelProProvider(VideoSwapProvider):
     
     async def swap(self, user_image_base64: str, template_video_url: str, **kwargs) -> Dict[str, Any]:
         try:
-            print(f"🔄 [FALLBACK 2] Trying VModel Pro...")
+            print(f"🚀 [PRIMARY] Trying VModel Pro...")
             
             image_bytes, format_ext = self._decode_base64_image(user_image_base64)
             user_image_data_uri = f"data:image/{format_ext};base64,{base64.b64encode(image_bytes).decode()}"
@@ -410,7 +412,9 @@ class VModelProProvider(VideoSwapProvider):
             
             # Log VModel error details
             if hasattr(e, 'response'):
-                print(f"   VModel response: {getattr(e.response, 'text', 'N/A')[:200]}")
+                response = getattr(e, 'response', None)
+                if response:
+                    print(f"   VModel response: {getattr(response, 'text', 'N/A')[:200]}")
             
             return {"success": False, "error": error_msg, "provider": self.get_name()}
 
@@ -424,16 +428,22 @@ class VideoSwapGateway:
         
         self.providers = []
         
-        if self.piapi_key:
-            self.providers.append(PiAPIVideoSwapProvider(self.piapi_key))
-        
-        if self.replicate_token:
-            self.providers.append(ReplicateRoopProvider(self.replicate_token))
-        
+        # VModel Pro: PRIMARY - Best quality (4K), no file limits, $0.03/sec, $10 free/email
         if self.vmodel_token:
             self.providers.append(VModelProProvider(self.vmodel_token))
         
+        # Replicate Roop: FALLBACK 1 - Proven reliability, flat $0.11/video
+        if self.replicate_token:
+            self.providers.append(ReplicateRoopProvider(self.replicate_token))
+        
+        # PiAPI: FALLBACK 2 - Fast backup, $0.004/frame (max 10MB, 720p, 600 frames)
+        if self.piapi_key:
+            self.providers.append(PiAPIVideoSwapProvider(self.piapi_key))
+        
         print(f"🔌 Video Swap Gateway initialized with {len(self.providers)} provider(s)")
+        if self.providers:
+            provider_names = " → ".join([p.get_name() for p in self.providers])
+            print(f"📊 Video Swap Provider priority: {provider_names}")
     
     async def swap_video(self, user_image_base64: str, template_video_url: str) -> Dict[str, Any]:
         """
