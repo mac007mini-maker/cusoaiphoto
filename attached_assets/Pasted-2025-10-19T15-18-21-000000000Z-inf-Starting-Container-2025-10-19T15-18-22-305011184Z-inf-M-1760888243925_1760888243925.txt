@@ -1,0 +1,70 @@
+2025-10-19T15:18:21.000000000Z [inf]  Starting Container
+2025-10-19T15:18:22.305011184Z [inf]  🔌 Muscle Enhancement Gateway initialized with 2 provider(s)
+2025-10-19T15:18:22.305019587Z [err]  [2025-10-19 15:18:21 +0000] [1] [INFO] Starting gunicorn 21.2.0
+2025-10-19T15:18:22.305024048Z [inf]  🔌 Art Style Gateway initialized with 2 provider(s)
+2025-10-19T15:18:22.305028508Z [inf]  📊 Using Replicate Real-ESRGAN (direct, no Huggingface bottleneck)
+2025-10-19T15:18:22.305032920Z [inf]  🔌 Video Swap Gateway initialized with 2 provider(s)
+2025-10-19T15:18:22.305035920Z [inf]  🔌 Cartoon Gateway initialized with 2 provider(s)
+2025-10-19T15:18:22.305041784Z [inf]  📊 Video Swap Provider priority: VModel Pro → Replicate Roop
+2025-10-19T15:18:22.305044059Z [inf]  🔌 Memoji Gateway initialized with 2 provider(s)
+2025-10-19T15:18:22.305051471Z [inf]  🔌 Animal-Toon Gateway initialized with 3 provider(s)
+2025-10-19T15:18:22.305053133Z [err]  [2025-10-19 15:18:21 +0000] [1] [INFO] Listening at: http://0.0.0.0:8080 (1)
+2025-10-19T15:18:22.305059289Z [inf]  ✅ PiAPI provider enabled (FALLBACK - 99.9% uptime SLA)
+2025-10-19T15:18:22.305061010Z [inf]    1. Replicate PhotoMaker (timeout=30s)
+2025-10-19T15:18:22.305061543Z [err]  [2025-10-19 15:18:21 +0000] [3] [INFO] Booting worker with pid: 3
+2025-10-19T15:18:22.305065047Z [err]  [2025-10-19 15:18:21 +0000] [1] [INFO] Using worker: sync
+2025-10-19T15:18:22.305072157Z [inf]  ✅ Replicate provider enabled (PRIMARY - budget-friendly)
+2025-10-19T15:18:22.305072568Z [inf]    2. Replicate InstantID (timeout=90s)
+2025-10-19T15:18:22.305075177Z [inf]  🔌 Face Swap Gateway initialized with 2 provider(s)
+2025-10-19T15:18:22.305075877Z [err]  [2025-10-19 15:18:21 +0000] [2] [INFO] Booting worker with pid: 2
+2025-10-19T15:18:22.305080827Z [inf]    3. PiAPI Flux (timeout=20s)
+2025-10-19T15:18:22.305084940Z [inf]  📊 Provider priority: Replicate → PiAPI
+2025-10-19T15:18:22.305095947Z [inf]  🔌 HD Image Gateway initialized with 1 provider(s)
+2025-10-19T15:18:22.309362973Z [inf]  ✅ Replicate provider enabled (PRIMARY - budget-friendly)
+2025-10-19T15:18:22.309367916Z [inf]  ✅ PiAPI provider enabled (FALLBACK - 99.9% uptime SLA)
+2025-10-19T15:18:22.309372804Z [inf]  🔌 Face Swap Gateway initialized with 2 provider(s)
+2025-10-19T15:18:22.309384256Z [inf]  📊 Provider priority: Replicate → PiAPI
+2025-10-19T15:18:22.309389611Z [inf]  🔌 HD Image Gateway initialized with 1 provider(s)
+2025-10-19T15:18:22.309394277Z [inf]  📊 Using Replicate Real-ESRGAN (direct, no Huggingface bottleneck)
+2025-10-19T15:18:22.309398840Z [inf]  🔌 Cartoon Gateway initialized with 2 provider(s)
+2025-10-19T15:18:22.309403583Z [inf]  🔌 Memoji Gateway initialized with 2 provider(s)
+2025-10-19T15:18:22.309408666Z [inf]  🔌 Animal-Toon Gateway initialized with 3 provider(s)
+2025-10-19T15:18:22.309413322Z [inf]    1. Replicate PhotoMaker (timeout=30s)
+2025-10-19T15:18:22.309418800Z [inf]    2. Replicate InstantID (timeout=90s)
+2025-10-19T15:18:22.309423522Z [inf]    3. PiAPI Flux (timeout=20s)
+2025-10-19T15:18:22.309428537Z [inf]  🔌 Muscle Enhancement Gateway initialized with 2 provider(s)
+2025-10-19T15:18:22.309435227Z [inf]  🔌 Art Style Gateway initialized with 2 provider(s)
+2025-10-19T15:18:22.309440764Z [inf]  🔌 Video Swap Gateway initialized with 2 provider(s)
+2025-10-19T15:18:22.309445638Z [inf]  📊 Video Swap Provider priority: VModel Pro → Replicate Roop
+2025-10-19T15:32:08.319785101Z [inf]  ✅ [PHOTO_TEMPLATES_STORY] Found 12 photos in 2 categories (DYNAMIC)
+2025-10-19T15:32:08.319845439Z [inf]  📥 [PHOTO_TEMPLATES_STORY] Fetching from Supabase...
+2025-10-19T15:32:09.359529467Z [inf]  📥 [PHOTO_TEMPLATES_STORY] Fetching from Supabase...
+2025-10-19T15:32:10.359909028Z [inf]  ✅ [PHOTO_TEMPLATES_STORY] Found 12 photos in 2 categories (DYNAMIC)
+2025-10-19T15:32:50.717289851Z [inf]  📥 [FACE_SWAP] Received request
+2025-10-19T15:32:50.717296990Z [inf]  🖼️  [FACE_SWAP] Target: data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...
+2025-10-19T15:32:50.717303742Z [inf]  👤 [FACE_SWAP] Source: data:image/jpeg;base64,/9j/4QBqRXhpZgAATU0AKgAAAAg...
+2025-10-19T15:32:50.717313765Z [inf]  🚀 [FACE_SWAP] Calling gateway...
+2025-10-19T15:32:50.717321259Z [inf]  🔄 Trying provider: Replicate
+2025-10-19T15:32:50.717328000Z [inf]  🔄 [REPLICATE] Trying easel/advanced-face-swap (timeout=90s)...
+2025-10-19T15:32:55.345375333Z [inf]  ✅ [REPLICATE] Success via easel/advanced-face-swap, URL: https://replicate.delivery/xezq/gfCQcje4Iap1TEMC4DidIRPHcfsefKO0OjBTYx11sXzxUbFsC/output.1.png...
+2025-10-19T15:32:55.345399521Z [inf]  🔍 [REPLICATE] Output type: FileOutput
+2025-10-19T15:32:55.345406065Z [inf]  🔍 [REPLICATE] Output content: https://replicate.delivery/xezq/gfCQcje4Iap1TEMC4DidIRPHcfsefKO0OjBTYx11sXzxUbFsC/output.1.png
+2025-10-19T15:32:55.345413005Z [inf]  📎 [REPLICATE] FileOutput, using .url: https://replicate.delivery/xezq/gfCQcje4Iap1TEMC4DidIRPHcfsefKO0OjBTYx11sXzxUbFsC/output.1.png
+2025-10-19T15:32:55.346670100Z [inf]  📤 [FACE_SWAP] Result: success=True
+2025-10-19T15:32:55.346679786Z [inf]  ✅ [FACE_SWAP] Returning URL: https://replicate.delivery/xezq/gfCQcje4Iap1TEMC4DidIRPHcfsefKO0OjBTYx11sXzxUbFs...
+2025-10-19T15:32:55.880737490Z [inf]  🔗 [PROXY] Downloading from: https://replicate.delivery/xezq/gfCQcje4Iap1TEMC4DidIRPHcfsefKO0OjBTYx11sXzxUbFs...
+2025-10-19T15:32:57.801229052Z [inf]  ✅ [PROXY] Success, 6889533 bytes, type: image/png
+2025-10-19T15:34:27.728821973Z [inf]  📥 [FACE_SWAP] Received request
+2025-10-19T15:34:27.728831820Z [inf]  🖼️  [FACE_SWAP] Target: data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...
+2025-10-19T15:34:27.728838236Z [inf]  👤 [FACE_SWAP] Source: data:image/jpeg;base64,/9j/4QCxRXhpZgAATU0AKgAAAAg...
+2025-10-19T15:34:27.728845593Z [inf]  🚀 [FACE_SWAP] Calling gateway...
+2025-10-19T15:34:27.728851256Z [inf]  🔄 Trying provider: Replicate
+2025-10-19T15:34:27.728858199Z [inf]  🔄 [REPLICATE] Trying easel/advanced-face-swap (timeout=90s)...
+2025-10-19T15:34:32.934527052Z [inf]  🔍 [REPLICATE] Output type: FileOutput
+2025-10-19T15:34:32.934536392Z [inf]  🔍 [REPLICATE] Output content: https://replicate.delivery/xezq/dRrNFYodo0qyEpfnIswEH8haG5R8vbdYLeKKl0vby1RHcrgVA/output.1.png
+2025-10-19T15:34:32.934544286Z [inf]  📎 [REPLICATE] FileOutput, using .url: https://replicate.delivery/xezq/dRrNFYodo0qyEpfnIswEH8haG5R8vbdYLeKKl0vby1RHcrgVA/output.1.png
+2025-10-19T15:34:32.934551705Z [inf]  ✅ [REPLICATE] Success via easel/advanced-face-swap, URL: https://replicate.delivery/xezq/dRrNFYodo0qyEpfnIswEH8haG5R8vbdYLeKKl0vby1RHcrgVA/output.1.png...
+2025-10-19T15:34:32.934557587Z [inf]  📤 [FACE_SWAP] Result: success=True
+2025-10-19T15:34:32.934566341Z [inf]  ✅ [FACE_SWAP] Returning URL: https://replicate.delivery/xezq/dRrNFYodo0qyEpfnIswEH8haG5R8vbdYLeKKl0vby1RHcrgV...
+2025-10-19T15:34:33.516850928Z [inf]  🔗 [PROXY] Downloading from: https://replicate.delivery/xezq/dRrNFYodo0qyEpfnIswEH8haG5R8vbdYLeKKl0vby1RHcrgV...
+2025-10-19T15:34:35.801343074Z [inf]  ✅ [PROXY] Success, 6899184 bytes, type: image/png

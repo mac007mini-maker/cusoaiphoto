@@ -45,19 +45,22 @@ class HuggingfaceService {
       final encodedUrl = Uri.encodeComponent(replicateUrl);
       final proxyUrl = '$proxyBaseUrl/proxy-image?url=$encodedUrl';
       
+      debugPrint('🔗 Proxy URL: $proxyUrl');
       debugPrint('⬇️ Downloading via proxy: ${replicateUrl.substring(0, 80)}...');
       
       final response = await http.get(
         Uri.parse(proxyUrl),
-      ).timeout(const Duration(seconds: 60));
+      ).timeout(const Duration(seconds: 120));
       
       if (response.statusCode != 200) {
+        debugPrint('❌ Proxy failed: HTTP ${response.statusCode}');
         throw Exception('Proxy download failed: HTTP ${response.statusCode}');
       }
       
       debugPrint('✅ Downloaded ${response.bodyBytes.length} bytes via proxy');
       return response.bodyBytes;
     } catch (e) {
+      debugPrint('❌ Proxy error: $e');
       throw Exception('Failed to download image via proxy: $e');
     }
   }
