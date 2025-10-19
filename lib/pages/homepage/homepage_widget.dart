@@ -7,6 +7,7 @@ import '/flutter_flow/admob_util.dart' as admob;
 import '/components/bottom_navigation_with_ad.dart';
 import '/index.dart';
 import '/app_constants.dart';
+import '/services/revenue_cat_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -339,41 +340,51 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                         Row(
                           mainAxisSize: MainAxisSize.max,
                           children: [
-                            FFButtonWidget(
-                              onPressed: () async {
-                                context.pushNamed(ProWidget.routeName);
+                            FutureBuilder<bool>(
+                              future: RevenueCatService().isPremiumUser(),
+                              builder: (context, snapshot) {
+                                // Hide button during loading OR if user is premium
+                                if (!snapshot.hasData || snapshot.data == true) {
+                                  return SizedBox.shrink();
+                                }
+                                
+                                return FFButtonWidget(
+                                  onPressed: () async {
+                                    context.pushNamed(ProWidget.routeName);
+                                  },
+                                  text: FFLocalizations.of(context).getText(
+                                    '4xthsfn2' /* 👑 PRO */,
+                                  ),
+                                  options: FFButtonOptions(
+                                    height: 36.0,
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        16.0, 8.0, 16.0, 8.0),
+                                    iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                        0.0, 0.0, 0.0, 0.0),
+                                    color: Color(0xFF9810FA),
+                                    textStyle: FlutterFlowTheme.of(context)
+                                        .bodyMedium
+                                        .override(
+                                          font: GoogleFonts.inter(
+                                            fontWeight: FontWeight.bold,
+                                            fontStyle: FlutterFlowTheme.of(context)
+                                                .bodyMedium
+                                                .fontStyle,
+                                          ),
+                                          color: FlutterFlowTheme.of(context)
+                                              .secondaryBackground,
+                                          fontSize: 14.0,
+                                          letterSpacing: 0.0,
+                                          fontWeight: FontWeight.bold,
+                                          fontStyle: FlutterFlowTheme.of(context)
+                                              .bodyMedium
+                                              .fontStyle,
+                                        ),
+                                    elevation: 0.0,
+                                    borderRadius: BorderRadius.circular(20.0),
+                                  ),
+                                );
                               },
-                              text: FFLocalizations.of(context).getText(
-                                '4xthsfn2' /* 👑 PRO */,
-                              ),
-                              options: FFButtonOptions(
-                                height: 36.0,
-                                padding: EdgeInsetsDirectional.fromSTEB(
-                                    16.0, 8.0, 16.0, 8.0),
-                                iconPadding: EdgeInsetsDirectional.fromSTEB(
-                                    0.0, 0.0, 0.0, 0.0),
-                                color: Color(0xFF9810FA),
-                                textStyle: FlutterFlowTheme.of(context)
-                                    .bodyMedium
-                                    .override(
-                                      font: GoogleFonts.inter(
-                                        fontWeight: FontWeight.bold,
-                                        fontStyle: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .fontStyle,
-                                      ),
-                                      color: FlutterFlowTheme.of(context)
-                                          .secondaryBackground,
-                                      fontSize: 14.0,
-                                      letterSpacing: 0.0,
-                                      fontWeight: FontWeight.bold,
-                                      fontStyle: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .fontStyle,
-                                    ),
-                                elevation: 0.0,
-                                borderRadius: BorderRadius.circular(20.0),
-                              ),
                             ),
                             FlutterFlowIconButton(
                               borderRadius: 20.0,

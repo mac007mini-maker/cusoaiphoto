@@ -3,6 +3,32 @@
 ## Overview
 Viso AI is a Flutter-based application for creating studio-grade AI headshots and avatars. It offers advanced photo enhancement, face swapping, and various AI-driven transformations, addressing the market demand for personalized digital content and AI-powered image manipulation. The project aims to provide high-quality, stylized digital images efficiently and cost-effectively.
 
+## Recent Changes (Oct 19, 2025)
+### PRO Icon & Remove Ads Button Auto-Hide Feature ✅
+**Feature:** Automatically hide PRO icons and "Remove Ads" buttons when user is already a premium subscriber.
+
+**Implementation:**
+- **Locations updated (15 total):**
+  - Homepage PRO icon (👑 PRO button)
+  - Mine page PRO icon (👑 PRO button)
+  - SwapFace "Remove Ad" button (AppBar)
+  - 13 Story templates "Remove Ad" buttons (Travel, Gym, Selfie, Tattoo, Wedding, Sport, Christmas, New Year, Birthday, School, Fashion Show, Profile, Suits)
+
+- **Technical approach:**
+  - Uses `FutureBuilder<bool>` with `RevenueCatService().isPremiumUser()`
+  - Button hidden during loading state (`!snapshot.hasData`) to prevent UI flicker
+  - Button hidden for premium users (`snapshot.data == true`)
+  - Button visible only for confirmed non-premium users (`snapshot.data == false`)
+  - RevenueCat SDK caches customer info internally → No excessive API calls
+  - Widget rebuilds trigger FutureBuilder refresh → Detects status changes after purchase
+
+- **User experience:**
+  - **FREE users:** See PRO icons and "Remove Ads" buttons (can upgrade)
+  - **Premium users (Weekly/Yearly/Lifetime):** All upsell UI elements automatically hidden
+  - **After purchase:** Buttons disappear immediately on next page navigation/rebuild
+
+- **Performance:** RevenueCat SDK caching prevents API spam; FutureBuilder pattern balances reactivity with efficiency
+
 ## Recent Changes (Oct 18, 2025)
 ### Video Swap Production Bugs - FIXED ✅
 **Critical bug fixes after production testing:**

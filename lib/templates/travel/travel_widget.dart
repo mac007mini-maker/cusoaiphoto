@@ -7,6 +7,7 @@ import '/services/applovin_service.dart';
 import '/services/admob_rewarded_service.dart';
 import '/services/admob_banner_service.dart';
 import '/services/remote_config_service.dart';
+import '/services/revenue_cat_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -434,23 +435,33 @@ class _TravelWidgetState extends State<TravelWidget> {
               ),
         ),
         actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 16),
-            child: ElevatedButton(
-              onPressed: () {
-                context.pushNamed('pro');
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF7C4DFF),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+          FutureBuilder<bool>(
+              future: RevenueCatService().isPremiumUser(),
+              builder: (context, snapshot) {
+                // Hide button during loading OR if user is premium
+                if (!snapshot.hasData || snapshot.data == true) {
+                return SizedBox.shrink();
+              }
+              
+              return Padding(
+                padding: EdgeInsets.only(right: 16),
+                child: ElevatedButton(
+                  onPressed: () {
+                    context.pushNamed('pro');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF7C4DFF),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  child: Text(
+                    'Remove Ad',
+                    style: TextStyle(color: Colors.white, fontSize: 12),
+                  ),
                 ),
-              ),
-              child: Text(
-                'Remove Ad',
-                style: TextStyle(color: Colors.white, fontSize: 12),
-              ),
-            ),
+              );
+            },
           ),
         ],
         centerTitle: false,
