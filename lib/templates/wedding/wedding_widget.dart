@@ -265,14 +265,22 @@ class _WeddingWidgetState extends State<WeddingWidget> {
         templateBytes = templateData.buffer.asUint8List();
       }
 
-      // Call Face Swap API
-      final resultBase64 = await HuggingfaceService.faceSwap(
+      // Call Face Swap API (returns URL)
+      final resultUrl = await HuggingfaceService.faceSwap(
         targetImageBytes: templateBytes,
         sourceFaceBytes: _model.selectedUserPhoto!,
       );
 
+      // Download image from URL
+      debugPrint('⬇️ Downloading face swap result from URL...');
+      final imageResponse = await http.get(Uri.parse(resultUrl));
+      
+      if (imageResponse.statusCode != 200) {
+        throw Exception('Failed to download result: HTTP ${imageResponse.statusCode}');
+      }
+
       setState(() {
-        _model.resultImageBase64 = resultBase64;
+        _model.resultImageBytes = imageResponse.bodyBytes;
         _model.isProcessing = false;
       });
 
@@ -292,7 +300,7 @@ class _WeddingWidgetState extends State<WeddingWidget> {
   }
 
   void _showResultDialog() {
-    if (_model.resultImageBase64 == null) return;
+    if (_model.resultImageBytes == null) return;
 
     showDialog(
       context: context,
@@ -317,7 +325,7 @@ class _WeddingWidgetState extends State<WeddingWidget> {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12.0),
                   child: Image.memory(
-                    base64Decode(_model.resultImageBase64!.split(',').last),
+                    _model.resultImageBytes!,
                     fit: BoxFit.contain,
                   ),
                 ),
@@ -354,10 +362,10 @@ class _WeddingWidgetState extends State<WeddingWidget> {
   }
 
   Future<void> _downloadResult() async {
-    if (_model.resultImageBase64 == null) return;
+    if (_model.resultImageBytes == null) return;
 
     try {
-      final bytes = base64Decode(_model.resultImageBase64!.split(',').last);
+      final bytes = _model.resultImageBytes!;
       final filename = 'face_swap_${DateTime.now().millisecondsSinceEpoch}.png';
       
       // Download image

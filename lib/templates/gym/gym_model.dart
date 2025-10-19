@@ -23,7 +23,7 @@ class GymModel extends FlutterFlowModel<GymWidget> {
   
   StyleTemplate? selectedTemplate;
   Uint8List? selectedUserPhoto;
-  String? resultImageBase64;
+  Uint8List? resultImageBytes;
   bool isProcessing = false;
   String? errorMessage;
   bool isTemplatesLoading = true;

@@ -24,7 +24,7 @@ class TravelModel extends FlutterFlowModel<TravelWidget> {
   // Face swap state
   StyleTemplate? selectedTemplate;
   Uint8List? selectedUserPhoto;
-  String? resultImageBase64;
+  Uint8List? resultImageBytes;
   bool isProcessing = false;
   String? errorMessage;
 
