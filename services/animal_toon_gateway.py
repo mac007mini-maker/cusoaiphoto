@@ -124,22 +124,11 @@ class ReplicatePhotoMakerProvider(AnimalToonProvider):
             # Get result URL
             result_url = output[0] if isinstance(output, list) else str(output)
             
-            # Download and convert to base64
-            print(f"📥 Downloading result...")
-            def _download():
-                response = requests.get(result_url, timeout=30)
-                response.raise_for_status()
-                return response.content
-            
-            content = await loop.run_in_executor(None, _download)
-            result_base64 = base64.b64encode(content).decode()
-            
-            print(f"✅ Animal-Toon SUCCESS via {self.get_name()} ({animal_type})")
+            print(f"✅ Animal-Toon SUCCESS via {self.get_name()} ({animal_type}) - Returning URL")
             
             return {
                 "success": True,
-                "image": f"data:image/png;base64,{result_base64}",
-                "message": f"Transformed to {animal_type} character",
+                "url": result_url,
                 "provider": self.get_name()
             }
         
@@ -219,21 +208,11 @@ class ReplicateInstantIDProvider(AnimalToonProvider):
             
             result_url = output[0] if isinstance(output, list) else str(output)
             
-            print(f"📥 Downloading result...")
-            def _download():
-                response = requests.get(result_url, timeout=30)
-                response.raise_for_status()
-                return response.content
-            
-            content = await loop.run_in_executor(None, _download)
-            result_base64 = base64.b64encode(content).decode()
-            
-            print(f"✅ Animal-Toon SUCCESS via {self.get_name()} ({animal_type})")
+            print(f"✅ Animal-Toon SUCCESS via {self.get_name()} ({animal_type}) - Returning URL")
             
             return {
                 "success": True,
-                "image": f"data:image/png;base64,{result_base64}",
-                "message": f"Transformed to {animal_type} character (fallback)",
+                "url": result_url,
                 "provider": self.get_name()
             }
         

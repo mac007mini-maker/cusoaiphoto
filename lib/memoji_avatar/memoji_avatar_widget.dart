@@ -190,13 +190,17 @@ class _MemojiAvatarWidgetState extends State<MemojiAvatarWidget> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        if (data['success'] == true && data['image'] != null) {
-          String base64Result = data['image'];
-          if (base64Result.contains('base64,')) {
-            base64Result = base64Result.split('base64,')[1];
+        if (data['success'] == true && data['url'] != null) {
+          final resultUrl = data['url'];
+          
+          debugPrint('⬇️ Downloading memoji result from URL...');
+          final imageResponse = await http.get(Uri.parse(resultUrl));
+          
+          if (imageResponse.statusCode != 200) {
+            throw Exception('Failed to download result: HTTP ${imageResponse.statusCode}');
           }
           
-          final resultBytes = base64Decode(base64Result);
+          final resultBytes = imageResponse.bodyBytes;
           
           setState(() {
             _model.resultImage = resultBytes;

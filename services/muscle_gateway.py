@@ -108,21 +108,11 @@ class ReplicateInstructPix2PixProvider(MuscleProvider):
             
             result_url = output[0] if isinstance(output, list) else str(output)
             
-            print(f"📥 Downloading result...")
-            def _download():
-                response = requests.get(result_url, timeout=30)
-                response.raise_for_status()
-                return response.content
-            
-            content = await loop.run_in_executor(None, _download)
-            result_base64 = base64.b64encode(content).decode()
-            
-            print(f"✅ Muscle Enhancement SUCCESS via {self.get_name()} ({intensity})")
+            print(f"✅ Muscle Enhancement SUCCESS via {self.get_name()} ({intensity}) - Returning URL")
             
             return {
                 "success": True,
-                "image": f"data:image/png;base64,{result_base64}",
-                "message": f"Muscle enhancement applied ({intensity})",
+                "url": result_url,
                 "provider": self.get_name()
             }
         

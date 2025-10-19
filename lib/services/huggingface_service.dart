@@ -189,7 +189,11 @@ class HuggingfaceService {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         if (data['success'] == true) {
-          return data['image'];
+          final resultUrl = data['url'];
+          if (resultUrl == null || resultUrl.toString().isEmpty) {
+            throw Exception('Empty URL from fix old photo API');
+          }
+          return resultUrl.toString();
         }
         throw Exception(data['error'] ?? 'Photo restoration failed');
       } else {
@@ -233,7 +237,11 @@ class HuggingfaceService {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         if (data['success'] == true) {
-          return data['image'];
+          final resultUrl = data['url'];
+          if (resultUrl == null || resultUrl.toString().isEmpty) {
+            throw Exception('Empty URL from HD image API');
+          }
+          return resultUrl.toString();
         }
         throw Exception(data['error'] ?? 'HD enhancement failed');
       } else {
@@ -279,7 +287,11 @@ class HuggingfaceService {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         if (data['success'] == true) {
-          return data['image'];
+          final resultUrl = data['url'];
+          if (resultUrl == null || resultUrl.toString().isEmpty) {
+            throw Exception('Empty URL from cartoonify API');
+          }
+          return resultUrl.toString();
         }
         throw Exception(data['error'] ?? 'Cartoonify failed');
       } else {

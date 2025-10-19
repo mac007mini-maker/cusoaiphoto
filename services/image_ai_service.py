@@ -330,23 +330,12 @@ class ImageAIService:
             output = await loop.run_in_executor(None, _run_replicate)
             
             if output:
-                print(f"📥 Downloading result from Replicate...")
-                
-                def _download():
-                    response = requests.get(str(output), timeout=30)
-                    response.raise_for_status()
-                    return response.content
-                
-                # Use default executor
-                content = await loop.run_in_executor(None, _download)
-                
-                result_base64 = base64.b64encode(content).decode()
-                print(f"✅ GFPGAN restoration successful via Replicate")
+                result_url = str(output)
+                print(f"✅ GFPGAN restoration successful via Replicate - Returning URL")
                 
                 return {
                     "success": True,
-                    "image": f"data:image/png;base64,{result_base64}",
-                    "message": "Old photo restored successfully",
+                    "url": result_url,
                     "source": "replicate"
                 }
             else:

@@ -77,22 +77,12 @@ class HDImageGateway:
                 print(f"❌ Replicate returned empty output")
                 return {"success": False, "error": "Replicate returned no result"}
             
-            print(f"📥 Downloading result from Replicate...")
-            
-            def _download():
-                response = requests.get(str(output), timeout=30)
-                response.raise_for_status()
-                return response.content
-            
-            content = await loop.run_in_executor(None, _download)
-            result_base64 = base64.b64encode(content).decode()
-            
-            print(f"✅ HD Image SUCCESS via Replicate (scale={scale}x)")
+            result_url = str(output)
+            print(f"✅ HD Image SUCCESS via Replicate (scale={scale}x) - Returning URL")
             
             return {
                 "success": True,
-                "image": f"data:image/png;base64,{result_base64}",
-                "message": f"Image upscaled {scale}x via Replicate",
+                "url": result_url,
                 "source": "replicate"
             }
         

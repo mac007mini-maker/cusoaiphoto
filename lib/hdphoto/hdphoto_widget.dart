@@ -14,6 +14,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:gal/gal.dart';
 import 'dart:typed_data';
 import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'hdphoto_model.dart';
 export 'hdphoto_model.dart';
 
@@ -184,13 +185,23 @@ class _HdphotoWidgetState extends State<HdphotoWidget> {
     });
 
     try {
-      final resultBase64 = await HuggingfaceService.hdImage(
+      final resultUrl = await HuggingfaceService.hdImage(
         imageBytes: _model.selectedImageBytes!,
         scale: 4,
       );
       
+      debugPrint('⬇️ Downloading HD image result from URL...');
+      final imageResponse = await http.get(Uri.parse(resultUrl));
+      
+      if (imageResponse.statusCode != 200) {
+        throw Exception('Failed to download result: HTTP ${imageResponse.statusCode}');
+      }
+      
+      final resultBytes = imageResponse.bodyBytes;
+      final base64Result = 'data:image/png;base64,${base64Encode(resultBytes)}';
+      
       setState(() {
-        _model.resultImageBase64 = resultBase64;
+        _model.resultImageBase64 = base64Result;
         _model.isProcessing = false;
       });
     } catch (e) {

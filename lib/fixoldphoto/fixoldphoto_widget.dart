@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:gal/gal.dart';
+import 'package:http/http.dart' as http;
 import 'fixoldphoto_model.dart';
 export 'fixoldphoto_model.dart';
 
@@ -173,13 +174,23 @@ class _FixoldphotoWidgetState extends State<FixoldphotoWidget> {
     });
 
     try {
-      final restoredImage = await HuggingfaceService.fixOldPhoto(
+      final resultUrl = await HuggingfaceService.fixOldPhoto(
         imageBytes: _model.uploadedImageBytes!,
         version: _model.selectedVersion,
       );
 
+      debugPrint('⬇️ Downloading restored photo from URL...');
+      final imageResponse = await http.get(Uri.parse(resultUrl));
+      
+      if (imageResponse.statusCode != 200) {
+        throw Exception('Failed to download result: HTTP ${imageResponse.statusCode}');
+      }
+      
+      final resultBytes = imageResponse.bodyBytes;
+      final base64Result = 'data:image/png;base64,${base64Encode(resultBytes)}';
+
       setState(() {
-        _model.setRestoredImage(restoredImage);
+        _model.setRestoredImage(base64Result);
         _model.setProcessing(false);
       });
 

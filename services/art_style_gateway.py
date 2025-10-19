@@ -105,21 +105,11 @@ class ReplicatePhotoMakerArtProvider(ArtStyleProvider):
             
             result_url = output[0] if isinstance(output, list) else str(output)
             
-            print(f"📥 Downloading result...")
-            def _download():
-                response = requests.get(result_url, timeout=30)
-                response.raise_for_status()
-                return response.content
-            
-            content = await loop.run_in_executor(None, _download)
-            result_base64 = base64.b64encode(content).decode()
-            
-            print(f"✅ Art Style SUCCESS via {self.get_name()} ({style})")
+            print(f"✅ Art Style SUCCESS via {self.get_name()} ({style}) - Returning URL")
             
             return {
                 "success": True,
-                "image": f"data:image/png;base64,{result_base64}",
-                "message": f"Applied {style} art style",
+                "url": result_url,
                 "provider": self.get_name()
             }
         
@@ -186,21 +176,11 @@ class ReplicateOilPaintingProvider(ArtStyleProvider):
             
             result_url = output[0] if isinstance(output, list) else str(output)
             
-            print(f"📥 Downloading result...")
-            def _download():
-                response = requests.get(result_url, timeout=30)
-                response.raise_for_status()
-                return response.content
-            
-            content = await loop.run_in_executor(None, _download)
-            result_base64 = base64.b64encode(content).decode()
-            
-            print(f"✅ Art Style SUCCESS via {self.get_name()}")
+            print(f"✅ SUCCESS via {self.get_name()} - Returning URL")
             
             return {
                 "success": True,
-                "image": f"data:image/png;base64,{result_base64}",
-                "message": "Applied oil painting style (fallback)",
+                "url": result_url,
                 "provider": self.get_name()
             }
         
