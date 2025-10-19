@@ -193,14 +193,7 @@ class _ArtStyleWidgetState extends State<ArtStyleWidget> {
         if (data['success'] == true && data['url'] != null) {
           final resultUrl = data['url'];
           
-          debugPrint('⬇️ Downloading art style result from URL...');
-          final imageResponse = await http.get(Uri.parse(resultUrl));
-          
-          if (imageResponse.statusCode != 200) {
-            throw Exception('Failed to download result: HTTP ${imageResponse.statusCode}');
-          }
-          
-          final resultBytes = imageResponse.bodyBytes;
+          final resultBytes = await HuggingfaceService.downloadImageViaProxy(resultUrl);
           
           setState(() {
             _model.resultImage = resultBytes;

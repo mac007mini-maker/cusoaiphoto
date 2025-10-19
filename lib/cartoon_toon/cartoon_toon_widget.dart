@@ -193,15 +193,8 @@ class _CartoonToonWidgetState extends State<CartoonToonWidget> {
         if (data['success'] == true && data['url'] != null) {
           final resultUrl = data['url'];
           
-          // Download image from URL
-          debugPrint('⬇️ Downloading cartoon result from URL...');
-          final imageResponse = await http.get(Uri.parse(resultUrl));
-          
-          if (imageResponse.statusCode != 200) {
-            throw Exception('Failed to download result: HTTP ${imageResponse.statusCode}');
-          }
-          
-          final resultBytes = imageResponse.bodyBytes;
+          // Download image via proxy to avoid network blocking
+          final resultBytes = await HuggingfaceService.downloadImageViaProxy(resultUrl);
           
           setState(() {
             _model.resultImage = resultBytes;

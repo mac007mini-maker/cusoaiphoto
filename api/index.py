@@ -806,6 +806,45 @@ def art_style():
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/proxy-image', methods=['GET'])
+def proxy_image():
+    """Proxy image download from Replicate CDN to solve network blocking issues"""
+    try:
+        image_url = request.args.get('url', '')
+        
+        if not image_url:
+            return jsonify({'error': 'No URL provided'}), 400
+        
+        if not image_url.startswith('https://replicate.delivery/'):
+            return jsonify({'error': 'Invalid URL - only Replicate CDN allowed'}), 400
+        
+        print(f"🔗 [PROXY] Downloading from: {image_url[:80]}...")
+        
+        import requests as http_requests
+        response = http_requests.get(image_url, timeout=30)
+        
+        if response.status_code != 200:
+            print(f"❌ [PROXY] Failed: HTTP {response.status_code}")
+            return jsonify({'error': f'Download failed: HTTP {response.status_code}'}), response.status_code
+        
+        content_type = response.headers.get('Content-Type', 'image/png')
+        print(f"✅ [PROXY] Success, {len(response.content)} bytes, type: {content_type}")
+        
+        from flask import send_file
+        import io
+        return send_file(
+            io.BytesIO(response.content),
+            mimetype=content_type,
+            as_attachment=False,
+            download_name='result.png'
+        )
+        
+    except Exception as e:
+        print(f"❌ [PROXY] Error: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
 if __name__ == '__main__':
     # For local testing
     app.run(host='0.0.0.0', port=5000, debug=True)

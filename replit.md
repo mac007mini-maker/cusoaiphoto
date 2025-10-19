@@ -80,18 +80,20 @@ Backend gateways now return Replicate CDN URLs directly (no download/encode). Fl
 
 All return `{"success": True, "url": result_url}` instead of `{"image": base64_string}`
 
-*Flutter (Dart) - Service + Widgets:*
-- `lib/services/huggingface_service.dart`: Updated 3 methods (fixOldPhoto, hdImage, cartoonify) to parse `data['url']` and validate non-empty
-- 7 widgets updated to download from URL after API call:
-  - `lib/cartoon_toon/cartoon_toon_widget.dart`
-  - `lib/memoji_avatar/memoji_avatar_widget.dart`
-  - `lib/animal_toon/animal_toon_widget.dart`
-  - `lib/muscle_enhance/muscle_enhance_widget.dart`
-  - `lib/art_style/art_style_widget.dart`
-  - `lib/hdphoto/hdphoto_widget.dart`
-  - `lib/fixoldphoto/fixoldphoto_widget.dart`
+*Backend Proxy (Python):*
+- `api/index.py`: Added `/api/proxy-image` endpoint to download from Replicate CDN and stream to Flutter
+- Solves network blocking issue where direct Replicate CDN downloads were refused by some networks/firewalls
+- Security: Only allows `https://replicate.delivery/` URLs to prevent abuse
 
-All use pattern: `http.get(Uri.parse(resultUrl))` → `imageResponse.bodyBytes` → display/save
+*Flutter (Dart) - Service + Widgets:*
+- `lib/services/huggingface_service.dart`: 
+  - Added `downloadImageViaProxy()` method for secure image download via backend proxy
+  - Updated 3 API methods (fixOldPhoto, hdImage, cartoonify) to parse `data['url']`
+- **SwapFace**: 1 widget updated to use proxy download
+- **Story templates**: 13 widgets updated (birthday, christmas, newyear, travel, gym, selfie, tattoo, wedding, sport, school, fashionshow, profile, suits)
+- **AI transformations**: 7 widgets updated (cartoon_toon, memoji_avatar, animal_toon, muscle_enhance, art_style, hdphoto, fixoldphoto)
+
+All use pattern: `HuggingfaceService.downloadImageViaProxy(resultUrl)` → `resultBytes` → display/save
 
 **📊 Performance Impact:**
 - **Before**: 6.8MB download + 9MB base64 encode + 9MB HTTP transfer = 120-180s timeout risk

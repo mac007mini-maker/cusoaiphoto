@@ -285,16 +285,11 @@ class _SwapfaceWidgetState extends State<SwapfaceWidget> {
         sourceFaceBytes: _model.selectedUserPhoto!,
       );
 
-      // Download image from URL
-      debugPrint('⬇️ Downloading face swap result from URL...');
-      final imageResponse = await http.get(Uri.parse(resultUrl));
-      
-      if (imageResponse.statusCode != 200) {
-        throw Exception('Failed to download result: HTTP ${imageResponse.statusCode}');
-      }
+      // Download image via proxy to avoid network blocking
+      final resultBytes = await HuggingfaceService.downloadImageViaProxy(resultUrl);
 
       setState(() {
-        _model.resultImageBytes = imageResponse.bodyBytes;
+        _model.resultImageBytes = resultBytes;
         _model.isProcessing = false;
       });
 

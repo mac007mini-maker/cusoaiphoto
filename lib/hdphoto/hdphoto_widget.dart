@@ -190,14 +190,7 @@ class _HdphotoWidgetState extends State<HdphotoWidget> {
         scale: 4,
       );
       
-      debugPrint('⬇️ Downloading HD image result from URL...');
-      final imageResponse = await http.get(Uri.parse(resultUrl));
-      
-      if (imageResponse.statusCode != 200) {
-        throw Exception('Failed to download result: HTTP ${imageResponse.statusCode}');
-      }
-      
-      final resultBytes = imageResponse.bodyBytes;
+      final resultBytes = await HuggingfaceService.downloadImageViaProxy(resultUrl);
       final base64Result = 'data:image/png;base64,${base64Encode(resultBytes)}';
       
       setState(() {

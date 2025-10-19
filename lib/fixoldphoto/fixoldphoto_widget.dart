@@ -179,14 +179,7 @@ class _FixoldphotoWidgetState extends State<FixoldphotoWidget> {
         version: _model.selectedVersion,
       );
 
-      debugPrint('⬇️ Downloading restored photo from URL...');
-      final imageResponse = await http.get(Uri.parse(resultUrl));
-      
-      if (imageResponse.statusCode != 200) {
-        throw Exception('Failed to download result: HTTP ${imageResponse.statusCode}');
-      }
-      
-      final resultBytes = imageResponse.bodyBytes;
+      final resultBytes = await HuggingfaceService.downloadImageViaProxy(resultUrl);
       final base64Result = 'data:image/png;base64,${base64Encode(resultBytes)}';
 
       setState(() {

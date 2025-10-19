@@ -30,6 +30,37 @@ class HuggingfaceService {
       return 'https://$_apiDomain/api/ai';
     }
   }
+  
+  static String get proxyBaseUrl {
+    if (kIsWeb) {
+      final origin = Uri.base.origin;
+      return '$origin/api';
+    } else {
+      return 'https://$_apiDomain/api';
+    }
+  }
+  
+  static Future<Uint8List> downloadImageViaProxy(String replicateUrl) async {
+    try {
+      final encodedUrl = Uri.encodeComponent(replicateUrl);
+      final proxyUrl = '$proxyBaseUrl/proxy-image?url=$encodedUrl';
+      
+      debugPrint('⬇️ Downloading via proxy: ${replicateUrl.substring(0, 80)}...');
+      
+      final response = await http.get(
+        Uri.parse(proxyUrl),
+      ).timeout(const Duration(seconds: 60));
+      
+      if (response.statusCode != 200) {
+        throw Exception('Proxy download failed: HTTP ${response.statusCode}');
+      }
+      
+      debugPrint('✅ Downloaded ${response.bodyBytes.length} bytes via proxy');
+      return response.bodyBytes;
+    } catch (e) {
+      throw Exception('Failed to download image via proxy: $e');
+    }
+  }
 
   static Future<String> generateText({
     required String prompt,
