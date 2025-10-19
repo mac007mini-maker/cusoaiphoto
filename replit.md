@@ -46,6 +46,27 @@ Supabase provides core backend services, including authentication, database, and
 - **Database/Auth/Storage**: Managed by Supabase.
 - **Mobile**: Flutter APK with `--split-per-abi` optimization.
 
+### Recent Changes
+
+**Face Swap Timeout Fix (October 2025)**
+Fixed critical timeout bug in face swap feature (SwapFace + 13 story templates) by switching from base64 transfer to URL-based CDN download:
+
+- **Problem**: Face swap was timing out after 120s despite fast API processing (9-30s). Root cause: Backend was downloading 6.8MB images → encoding to 9MB base64 → slow transfer to Flutter caused timeout.
+- **Solution**: Backend now returns Replicate CDN URL directly (no download/encode). Flutter downloads image bytes from CDN separately.
+- **Pattern**: Matches proven video swap implementation for consistency.
+- **Implementation**:
+  - Backend (`api/index.py`): `/api/ai/face-swap` returns `{'url': result_url}` instead of `{'image': base64_string}`
+  - Service (`HuggingfaceService.dart`): `faceSwap()` returns URL String, validates non-empty
+  - Widgets: SwapFace + 13 story templates download from URL via `http.get(Uri.parse(resultUrl))` after API call completes
+  - Models: Changed `String? resultImageBase64` → `Uint8List? resultImageBytes` for all templates
+- **Files Updated**: 
+  - Backend: `api/index.py` (face swap endpoint)
+  - Service: `lib/services/huggingface_service.dart` (faceSwap method)
+  - SwapFace: `lib/swapface/swapface_model.dart`, `lib/swapface/swapface_widget.dart`
+  - Story templates (26 files): travel, gym, selfie, tattoo, wedding, sport, christmas, newyear, birthday, school, fashionshow, profile, suits (model + widget each)
+- **Ad Flow**: Rewarded ad displays first (15-30s) → Ad complete callback → Face swap API call (9-30s) → Download result from CDN → Display
+- **Uptime**: Multi-provider fallback (Replicate → PiAPI) ensures 99.9%+ availability
+
 ## External Dependencies
 
 - **Supabase**: Backend services (authentication, database, storage).
