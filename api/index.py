@@ -227,55 +227,15 @@ def face_swap_v2():
         print(f"📤 [FACE_SWAP] Result: success={result.get('success')}")
         
         if result.get('success'):
-            # Download and convert to base64
+            # Return URL directly (Flutter will download) - fixes timeout issue
             result_url = result.get('result_url')
             if result_url:
-                try:
-                    print(f"⬇️  [FACE_SWAP] Downloading result from: {result_url[:80]}...")
-                    import base64
-                    import requests as http_requests
-                    
-                    img_response = http_requests.get(result_url, timeout=30)
-                    
-                    if img_response.status_code != 200:
-                        raise Exception(f"HTTP {img_response.status_code} from result URL")
-                    
-                    image_data = img_response.content
-                    print(f"📦 [FACE_SWAP] Downloaded {len(image_data)} bytes")
-                    
-                    # Validate image data
-                    if image_data.startswith(b'<!DOCTYPE') or image_data.startswith(b'<html'):
-                        raise Exception("Received HTML instead of image")
-                    
-                    # Check for valid image signatures
-                    valid_signatures = [
-                        b'\xFF\xD8\xFF',  # JPEG
-                        b'\x89PNG',        # PNG
-                        b'GIF8',           # GIF
-                        b'RIFF',           # WEBP
-                        b'BM'              # BMP
-                    ]
-                    
-                    is_valid = any(image_data.startswith(sig) for sig in valid_signatures)
-                    if not is_valid:
-                        raise Exception(f"Invalid image signature. First bytes: {image_data[:20]}")
-                    
-                    # Convert to base64
-                    result_base64 = base64.b64encode(image_data).decode('utf-8')
-                    print(f"✅ [FACE_SWAP] Successfully encoded {len(result_base64)} base64 chars")
-                    
-                    return jsonify({
-                        'success': True,
-                        'image': result_base64,  # Changed from 'result' to 'image' for Flutter compatibility
-                        'provider': result.get('provider', 'unknown')
-                    })
-                    
-                except Exception as download_error:
-                    print(f"❌ [FACE_SWAP] Download failed: {download_error}")
-                    return jsonify({
-                        'success': False,
-                        'error': f'Failed to download result: {str(download_error)}'
-                    }), 500
+                print(f"✅ [FACE_SWAP] Returning URL: {result_url[:80]}...")
+                return jsonify({
+                    'success': True,
+                    'url': result_url,
+                    'provider': result.get('provider', 'unknown')
+                })
             else:
                 return jsonify({'success': False, 'error': 'No result URL in response'}), 500
         else:
