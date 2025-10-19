@@ -141,11 +141,11 @@ class HuggingfaceService {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         if (data['success'] == true) {
-          final imageData = data['image'];
-          if (imageData == null || imageData.toString().isEmpty) {
-            throw Exception('Empty response from face swap API');
+          final resultUrl = data['url'];
+          if (resultUrl == null || resultUrl.toString().isEmpty) {
+            throw Exception('Empty URL from face swap API');
           }
-          return imageData.toString();
+          return resultUrl.toString();
         }
         throw Exception(data['error'] ?? 'Face swap failed');
       } else {
