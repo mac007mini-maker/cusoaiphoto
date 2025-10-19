@@ -2,6 +2,9 @@ import '/flutter_flow/flutter_flow_util.dart';
 import 'sport_widget.dart' show SportWidget;
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
+import '/services/huggingface_service.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class StyleTemplate {
   final String name;
@@ -33,38 +36,40 @@ class SportModel extends FlutterFlowModel<SportWidget> {
       isTemplatesLoading = true;
       templatesError = null;
       
-      sportStyles = [
-        StyleTemplate(
-          name: 'Soccer Star',
-          imagePath: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=800',
-          category: 'sport',
-        ),
-        StyleTemplate(
-          name: 'Basketball Pro',
-          imagePath: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800',
-          category: 'sport',
-        ),
-        StyleTemplate(
-          name: 'Tennis Champion',
-          imagePath: 'https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?w=800',
-          category: 'sport',
-        ),
-        StyleTemplate(
-          name: 'Running Hero',
-          imagePath: 'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=800',
-          category: 'sport',
-        ),
-        StyleTemplate(
-          name: 'Sports Elite',
-          imagePath: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800',
-          category: 'sport',
-        ),
-      ];
-      
-      isTemplatesLoading = false;
+      final apiUrl = HuggingfaceService.aiBaseUrl;
+      final response = await http.get(
+        Uri.parse('$apiUrl/photo-templates/story'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success'] == true) {
+          final templates = Map<String, List<dynamic>>.from(data['templates']);
+          
+          final category = 'sport';
+          if (templates.containsKey(category)) {
+            sportStyles = (templates[category] as List).map((item) {
+              return StyleTemplate(
+                name: item['name'] as String,
+                imagePath: item['imagePath'] as String,
+                category: category,
+              );
+            }).toList();
+          }
+          
+          isTemplatesLoading = false;
+          print('✅ Loaded ${templates[category]?.length ?? 0} $category templates (DYNAMIC)');
+        } else {
+          throw Exception(data['error'] ?? 'Failed to load templates');
+        }
+      } else {
+        throw Exception('HTTP ${response.statusCode}: ${response.body}');
+      }
     } catch (e) {
       isTemplatesLoading = false;
       templatesError = e.toString();
+      print('❌ Error loading templates: $e');
     }
   }
 

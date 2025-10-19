@@ -2,6 +2,9 @@ import '/flutter_flow/flutter_flow_util.dart';
 import 'birthday_widget.dart' show BirthdayWidget;
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
+import '/services/huggingface_service.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class StyleTemplate {
   final String name;
@@ -33,38 +36,40 @@ class BirthdayModel extends FlutterFlowModel<BirthdayWidget> {
       isTemplatesLoading = true;
       templatesError = null;
       
-      birthdayStyles = [
-        StyleTemplate(
-          name: 'Birthday Party',
-          imagePath: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=800',
-          category: 'birthday',
-        ),
-        StyleTemplate(
-          name: 'Cake Celebration',
-          imagePath: 'https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=800',
-          category: 'birthday',
-        ),
-        StyleTemplate(
-          name: 'Birthday Fun',
-          imagePath: 'https://images.unsplash.com/photo-1530103043960-ef38714abb15?w=800',
-          category: 'birthday',
-        ),
-        StyleTemplate(
-          name: 'Special Day',
-          imagePath: 'https://images.unsplash.com/photo-1558636508-e0db3814bd1d?w=800',
-          category: 'birthday',
-        ),
-        StyleTemplate(
-          name: 'Birthday Joy',
-          imagePath: 'https://images.unsplash.com/photo-1555353540-064ed58e4cc8?w=800',
-          category: 'birthday',
-        ),
-      ];
-      
-      isTemplatesLoading = false;
+      final apiUrl = HuggingfaceService.aiBaseUrl;
+      final response = await http.get(
+        Uri.parse('$apiUrl/photo-templates/story'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success'] == true) {
+          final templates = Map<String, List<dynamic>>.from(data['templates']);
+          
+          final category = 'birthday';
+          if (templates.containsKey(category)) {
+            birthdayStyles = (templates[category] as List).map((item) {
+              return StyleTemplate(
+                name: item['name'] as String,
+                imagePath: item['imagePath'] as String,
+                category: category,
+              );
+            }).toList();
+          }
+          
+          isTemplatesLoading = false;
+          print('✅ Loaded ${templates[category]?.length ?? 0} $category templates (DYNAMIC)');
+        } else {
+          throw Exception(data['error'] ?? 'Failed to load templates');
+        }
+      } else {
+        throw Exception('HTTP ${response.statusCode}: ${response.body}');
+      }
     } catch (e) {
       isTemplatesLoading = false;
       templatesError = e.toString();
+      print('❌ Error loading templates: $e');
     }
   }
 

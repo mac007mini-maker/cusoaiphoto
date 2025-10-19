@@ -2,6 +2,9 @@ import '/flutter_flow/flutter_flow_util.dart';
 import 'wedding_widget.dart' show WeddingWidget;
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
+import '/services/huggingface_service.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class StyleTemplate {
   final String name;
@@ -33,38 +36,40 @@ class WeddingModel extends FlutterFlowModel<WeddingWidget> {
       isTemplatesLoading = true;
       templatesError = null;
       
-      weddingStyles = [
-        StyleTemplate(
-          name: 'Bride Elegance',
-          imagePath: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=800',
-          category: 'wedding',
-        ),
-        StyleTemplate(
-          name: 'Groom Style',
-          imagePath: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800',
-          category: 'wedding',
-        ),
-        StyleTemplate(
-          name: 'Wedding Day',
-          imagePath: 'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=800',
-          category: 'wedding',
-        ),
-        StyleTemplate(
-          name: 'Royal Wedding',
-          imagePath: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800',
-          category: 'wedding',
-        ),
-        StyleTemplate(
-          name: 'Dream Ceremony',
-          imagePath: 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=800',
-          category: 'wedding',
-        ),
-      ];
-      
-      isTemplatesLoading = false;
+      final apiUrl = HuggingfaceService.aiBaseUrl;
+      final response = await http.get(
+        Uri.parse('$apiUrl/photo-templates/story'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success'] == true) {
+          final templates = Map<String, List<dynamic>>.from(data['templates']);
+          
+          final category = 'wedding';
+          if (templates.containsKey(category)) {
+            weddingStyles = (templates[category] as List).map((item) {
+              return StyleTemplate(
+                name: item['name'] as String,
+                imagePath: item['imagePath'] as String,
+                category: category,
+              );
+            }).toList();
+          }
+          
+          isTemplatesLoading = false;
+          print('✅ Loaded ${templates[category]?.length ?? 0} $category templates (DYNAMIC)');
+        } else {
+          throw Exception(data['error'] ?? 'Failed to load templates');
+        }
+      } else {
+        throw Exception('HTTP ${response.statusCode}: ${response.body}');
+      }
     } catch (e) {
       isTemplatesLoading = false;
       templatesError = e.toString();
+      print('❌ Error loading templates: $e');
     }
   }
 

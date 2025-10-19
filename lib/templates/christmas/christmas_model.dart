@@ -2,6 +2,9 @@ import '/flutter_flow/flutter_flow_util.dart';
 import 'christmas_widget.dart' show ChristmasWidget;
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
+import '/services/huggingface_service.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class StyleTemplate {
   final String name;
@@ -33,38 +36,40 @@ class ChristmasModel extends FlutterFlowModel<ChristmasWidget> {
       isTemplatesLoading = true;
       templatesError = null;
       
-      christmasStyles = [
-        StyleTemplate(
-          name: 'Santa Claus',
-          imagePath: 'https://images.unsplash.com/photo-1512909006721-3d6018887383?w=800',
-          category: 'christmas',
-        ),
-        StyleTemplate(
-          name: 'Christmas Spirit',
-          imagePath: 'https://images.unsplash.com/photo-1543589077-47d81606c1bf?w=800',
-          category: 'christmas',
-        ),
-        StyleTemplate(
-          name: 'Winter Holiday',
-          imagePath: 'https://images.unsplash.com/photo-1576919228236-a097c32a5cd4?w=800',
-          category: 'christmas',
-        ),
-        StyleTemplate(
-          name: 'Festive Cheer',
-          imagePath: 'https://images.unsplash.com/photo-1482517967863-00e15c9b44be?w=800',
-          category: 'christmas',
-        ),
-        StyleTemplate(
-          name: 'Holiday Magic',
-          imagePath: 'https://images.unsplash.com/photo-1544273677-c433136021de?w=800',
-          category: 'christmas',
-        ),
-      ];
-      
-      isTemplatesLoading = false;
+      final apiUrl = HuggingfaceService.aiBaseUrl;
+      final response = await http.get(
+        Uri.parse('$apiUrl/photo-templates/story'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success'] == true) {
+          final templates = Map<String, List<dynamic>>.from(data['templates']);
+          
+          final category = 'christmas';
+          if (templates.containsKey(category)) {
+            christmasStyles = (templates[category] as List).map((item) {
+              return StyleTemplate(
+                name: item['name'] as String,
+                imagePath: item['imagePath'] as String,
+                category: category,
+              );
+            }).toList();
+          }
+          
+          isTemplatesLoading = false;
+          print('✅ Loaded ${templates[category]?.length ?? 0} $category templates (DYNAMIC)');
+        } else {
+          throw Exception(data['error'] ?? 'Failed to load templates');
+        }
+      } else {
+        throw Exception('HTTP ${response.statusCode}: ${response.body}');
+      }
     } catch (e) {
       isTemplatesLoading = false;
       templatesError = e.toString();
+      print('❌ Error loading templates: $e');
     }
   }
 

@@ -2,6 +2,9 @@ import '/flutter_flow/flutter_flow_util.dart';
 import 'selfie_widget.dart' show SelfieWidget;
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
+import '/services/huggingface_service.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class StyleTemplate {
   final String name;
@@ -33,38 +36,40 @@ class SelfieModel extends FlutterFlowModel<SelfieWidget> {
       isTemplatesLoading = true;
       templatesError = null;
       
-      selfieStyles = [
-        StyleTemplate(
-          name: 'Perfect Selfie',
-          imagePath: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800',
-          category: 'selfie',
-        ),
-        StyleTemplate(
-          name: 'Candid Smile',
-          imagePath: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=800',
-          category: 'selfie',
-        ),
-        StyleTemplate(
-          name: 'Urban Selfie',
-          imagePath: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=800',
-          category: 'selfie',
-        ),
-        StyleTemplate(
-          name: 'Natural Beauty',
-          imagePath: 'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=800',
-          category: 'selfie',
-        ),
-        StyleTemplate(
-          name: 'Stylish Portrait',
-          imagePath: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=800',
-          category: 'selfie',
-        ),
-      ];
-      
-      isTemplatesLoading = false;
+      final apiUrl = HuggingfaceService.aiBaseUrl;
+      final response = await http.get(
+        Uri.parse('$apiUrl/photo-templates/story'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success'] == true) {
+          final templates = Map<String, List<dynamic>>.from(data['templates']);
+          
+          final category = 'selfie';
+          if (templates.containsKey(category)) {
+            selfieStyles = (templates[category] as List).map((item) {
+              return StyleTemplate(
+                name: item['name'] as String,
+                imagePath: item['imagePath'] as String,
+                category: category,
+              );
+            }).toList();
+          }
+          
+          isTemplatesLoading = false;
+          print('✅ Loaded ${templates[category]?.length ?? 0} $category templates (DYNAMIC)');
+        } else {
+          throw Exception(data['error'] ?? 'Failed to load templates');
+        }
+      } else {
+        throw Exception('HTTP ${response.statusCode}: ${response.body}');
+      }
     } catch (e) {
       isTemplatesLoading = false;
       templatesError = e.toString();
+      print('❌ Error loading templates: $e');
     }
   }
 

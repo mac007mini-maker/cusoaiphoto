@@ -1,98 +1,7 @@
 # Viso AI - Photo Avatar Headshot
 
 ## Overview
-Viso AI is a Flutter-based application for creating studio-grade AI headshots and avatars. It offers advanced photo enhancement, face swapping, and various AI-driven transformations, addressing the market demand for personalized digital content and AI-powered image manipulation. The project aims to provide high-quality, stylized digital images efficiently and cost-effectively.
-
-## Recent Changes (Oct 19, 2025)
-### PRO Icon & Remove Ads Button Auto-Hide Feature ✅
-**Feature:** Automatically hide PRO icons and "Remove Ads" buttons when user is already a premium subscriber.
-
-**Implementation:**
-- **Locations updated (15 total):**
-  - Homepage PRO icon (👑 PRO button)
-  - Mine page PRO icon (👑 PRO button)
-  - SwapFace "Remove Ad" button (AppBar)
-  - 13 Story templates "Remove Ad" buttons (Travel, Gym, Selfie, Tattoo, Wedding, Sport, Christmas, New Year, Birthday, School, Fashion Show, Profile, Suits)
-
-- **Technical approach:**
-  - Uses `FutureBuilder<bool>` with `RevenueCatService().isPremiumUser()`
-  - Button hidden during loading state (`!snapshot.hasData`) to prevent UI flicker
-  - Button hidden for premium users (`snapshot.data == true`)
-  - Button visible only for confirmed non-premium users (`snapshot.data == false`)
-  - RevenueCat SDK caches customer info internally → No excessive API calls
-  - Widget rebuilds trigger FutureBuilder refresh → Detects status changes after purchase
-
-- **User experience:**
-  - **FREE users:** See PRO icons and "Remove Ads" buttons (can upgrade)
-  - **Premium users (Weekly/Yearly/Lifetime):** All upsell UI elements automatically hidden
-  - **After purchase:** Buttons disappear immediately on next page navigation/rebuild
-
-- **Performance:** RevenueCat SDK caching prevents API spam; FutureBuilder pattern balances reactivity with efficiency
-
-## Recent Changes (Oct 18, 2025)
-### Video Swap Production Bugs - FIXED ✅
-**Critical bug fixes after production testing:**
-
-1. **VModel API Integration Fixed** - VModel was succeeding but backend reported failure
-   - **Bug**: Code checked for `task_id` field, but VModel API returns `id` field
-   - **Impact**: VModel created videos successfully ($0.20) but backend fell back to Replicate ($0.11), causing double charges ($0.31/video)
-   - **Fix**: Changed `result.get('task_id')` → `result.get('id')` in `services/video_swap_gateway.py`
-   - **Result**: VModel now works correctly as PRIMARY, saving $0.11/video
-
-2. **Video Download CDN Block Fixed** - Videos created but download failed with "Connection refused"
-   - **Bug**: Flutter downloaded directly from CDN URLs (`replicate.delivery`, `cdn.vmimgs.com`) → Mobile network blocked connections
-   - **Fix**: Added `/api/ai/video-swap/download` proxy endpoint - backend downloads from CDN → streams to Flutter
-   - **Security**: Comprehensive SSRF protection with HTTPS-only, credential blocking, and domain whitelist validation
-   - **Result**: Downloads now work 100% reliably through backend proxy
-
-3. **Enhanced Error Logging** - Improved debugging for production issues
-   - Added detailed error logging for VModel (HTTP status + response body)
-   - Added detailed error logging for Replicate (error type + details)
-   - Gateway now logs provider failure details before fallback
-
-**Production impact:**
-- ✅ VModel PRIMARY now works correctly (no wasted Replicate fallback calls)
-- ✅ Video downloads work 100% (backend proxy bypasses CDN blocks)
-- ✅ Cost reduced from $0.31 to $0.20 per video (37% savings)
-- ✅ Security hardened with production-grade SSRF protection
-
-### Video Swap Gateway - FINAL 2-PROVIDER ARCHITECTURE ✅
-- **Provider priority**: VModel Pro (PRIMARY) → Replicate Roop (FALLBACK)
-- **PiAPI removed**: Discovered PiAPI only supports video-to-video face swap (requires source video + target video), NOT photo-to-video swap needed for this feature
-- **VModel Pro configuration FIXED**:
-  - ✅ Corrected version ID: `537e83f7...` → `85e248d268bcc04f5302cf9645663c2c12acd03c953ec1a4bbfdc252a65bddc0` (official video-face-swap model)
-  - ✅ Fixed reversed params: `source=user_image, target=video_url` (was incorrectly swapped)
-  - ✅ Added `keep_fps: false` parameter per VModel API docs
-  - ✅ Cost: $0.03/sec (~$0.30 for 10s video), no file size limits, 4K support
-- **Replicate Roop configuration FIXED**:
-  - ✅ Added full version ID: `arabyai-replicate/roop_face_swap:11b6bf0f4e14d808f655e87e5448233cceff10a45f659d71539cafb7163b2e84`
-  - ✅ Fixed 404 "model not found" errors
-  - ✅ Cost: Flat $0.11/video, proven 28.7K+ runs
-- **Production cost estimate**: $0.30 typical (VModel), $0.11 fallback (Replicate)
-
-### Dynamic Video Template Loading - 100% WORKING
-- **Fixed Supabase bucket permissions**: Added "Public can list files" policy for SELECT operations on `video-swap-templates` bucket
-- **Confirmed working**: Supabase Storage List API now returns 10 videos across 5 categories (fashion, fitness, people, professional, travel)
-- **Fully dynamic**: Add new videos/categories to Supabase Storage → Auto-appears in app without code updates
-- Template loading: 2-step process (list folders → list videos per folder) with proper error handling
-
-### AI Template Model Updates - Fixed 4/5 Templates
-- **Cartoon 3D Toon**: Fixed invalid `style_name` parameter - changed from "Cartoon" to "Disney Charactor" (valid PhotoMaker-Style param)
-- **Memoji Avatar**: Fixed invalid `style_name` parameter - changed from "3D Avatar" to "Digital Art" (valid PhotoMaker-Style param)  
-- **Muscle Enhancement**: Replaced broken model `arielreplicate/instruct-pix2pix` (404) with official `timothybrooks/instruct-pix2pix` (919K+ runs, $0.053/run)
-- **Art Style**: Replaced broken Neural Neighbor model with PhotoMaker + artistic prompts (PRIMARY) and retained Oil Painting fallback
-- **Animal Toon**: Already working ✅ (no changes needed)
-- All gateways verified with multi-provider fallback architecture intact
-
-### Video Swap Feature - Local Build Compatibility & Navigation Fix
-- **Fixed API compatibility for local Flutter build**:
-  - Changed `HuggingfaceService.getApiUrl()` → `HuggingfaceService.aiBaseUrl` (correct getter)
-  - Fixed `Gal.putVideoBytes()` → save temp file + `Gal.putVideo(path)` (correct gal package API)
-  - Added missing imports: `dart:io`, `package:path_provider`
-- **Fixed SwapVideo navigation**:
-  - Added `VideoSwapWidget` route to GoRouter configuration (`lib/flutter_flow/nav/nav.dart`)
-  - SwapVideo card in Templates Gallery now navigates correctly to video swap page
-- All LSP diagnostics clean ✅, ready for APK build
+Viso AI is a Flutter-based application for generating studio-grade AI headshots and avatars. It provides advanced photo enhancement, face swapping, and various AI-driven transformations. The project aims to deliver high-quality, personalized digital images efficiently and cost-effectively, addressing the market demand for AI-powered image manipulation.
 
 ## User Preferences
 None documented yet.
@@ -100,71 +9,51 @@ None documented yet.
 ## System Architecture
 
 ### UI/UX Decisions
-The application utilizes FlutterFlow-generated components for a consistent, responsive design supporting light and dark themes. It features modern UI elements like carousels with PageView sliders, smooth transitions, and dot indicators. Ad banners are placed above navigation bars, and a feedback system allows users to submit feature requests.
+The application features a consistent and responsive design built with FlutterFlow-generated components, supporting both light and dark themes. It incorporates modern UI elements such as carousels with PageView sliders, smooth transitions, and dot indicators. Ad banners are strategically placed above navigation bars. A feedback system allows users to submit feature requests.
 
 ### Technical Implementations
-Built with Flutter 3.32.0 (Dart 3.8.0), Viso AI integrates with a Python Flask backend. This backend acts as a proxy for text and image generation, and complex asynchronous image processing tasks.
+Developed with Flutter 3.32.0 (Dart 3.8.0), Viso AI integrates with a Python Flask backend. This backend serves as a proxy for complex asynchronous image processing tasks and AI model interactions.
 
 ### Feature Specifications
-- **AI Headshot & Avatar Generation**: Studio-grade AI headshots and stylized avatars.
-- **Photo Enhancement**: Includes HD Image Enhancement using the HD Image Gateway (Replicate Real-ESRGAN) and Old Photo Restoration (GFPGAN via Replicate).
-- **Face Swapping**: AI-powered face replacement with multi-provider fallback (PiAPI primary, Replicate fallback), gallery permission handling, and rewarded ad integration. Supports image and video face swap.
-- **AI Style Templates**: 14 diverse template categories for face swap and aesthetic transformations (e.g., Travel, Gym, Selfie, Tattoo, Wedding, Sport, Christmas, New Year, Birthday, School, Fashion Show, Profile, Suits), each with carousel layouts and download capabilities.
-- **AI Transformation Templates**: 5 advanced AI transformations accessible from Templates Gallery. Each template includes: (1) Multi-provider fallback for 99.9%+ uptime, (2) Rewarded ad integration (AdMob → AppLovin) for FREE users, (3) PRO user bypass with daily limits (20/day), (4) Download to Gallery/VisoAI album, (5) Gallery + Camera photo picker, (6) Real-time processing feedback.
-
-    **1. Cartoon 3D Toon** (`/cartoon-toon`) - Transform photos into Disney/Pixar-style cartoon characters
-    - **Provider Stack**: PRIMARY Replicate PhotoMaker-Style ($0.007/run, ~8s, timeout=20s) → FALLBACK Replicate InstantID Artistic ($0.069/run, ~71s, timeout=90s)
-    - **API**: `POST /api/ai/cartoon` → `services/cartoon_gateway.py`
-    - **Cost**: $0.007 typical, $0.069 worst-case. 10K/month = $70-$690
-
-    **2. Memoji Avatar** (`/memoji-avatar`) - Create Apple-style 3D memoji avatars with smooth rendering
-    - **Provider Stack**: PRIMARY Replicate PhotoMaker-Style ($0.007/run, ~8s, timeout=20s) → FALLBACK Replicate InstantID ($0.069/run, ~71s, timeout=90s)
-    - **API**: `POST /api/ai/memoji` → `services/memoji_gateway.py`
-    - **Cost**: $0.007 typical, $0.069 worst-case. 10K/month = $70-$690
-
-    **3. Animal Toon** (`/animal-toon`) - Transform into cute animal characters (bunny, cat, dog, etc.)
-    - **Provider Stack** (FULL 3-LAYER): PRIMARY Replicate PhotoMaker ($0.004/run, ~5s, timeout=30s) → FALLBACK Replicate InstantID ($0.069/run, ~71s, timeout=90s) → EMERGENCY PiAPI Flux (~$0.02/run, ~10s, timeout=20s)
-    - **API**: `POST /api/ai/animal-toon` → `services/animal_toon_gateway.py` (supports `animal_type` param, default='bunny')
-    - **Cost**: $0.004 typical (CHEAPEST), $0.02 emergency. 10K/month = $40-$200. BEST cost efficiency.
-
-    **4. Muscle Enhancement** (`/muscle-enhance`) - Add defined muscles and athletic body (3 intensity levels)
-    - **Provider Stack** (PRAGMATIC 2-PROVIDER): PRIMARY timothybrooks/instruct-pix2pix ($0.053/run, ~40s, timeout=60s) → FALLBACK retry with relaxed guidance params
-    - **API**: `POST /api/ai/muscle` → `services/muscle_gateway.py` (supports `intensity` param: light/moderate/strong)
-    - **Cost**: $0.053/run. 10K/month = $530
-    - **Note**: Uses official Replicate Instruct-Pix2Pix model (919K+ runs). 2-provider setup provides reasonable resilience; most failures are input-related (poor photo quality) rather than API outages.
-
-    **5. Art Style** (`/art-style`) - Apply artistic styles: mosaic, oil painting, watercolor
-    - **Provider Stack**: PRIMARY Replicate PhotoMaker Art ($0.004/run, ~30s, timeout=30s) → FALLBACK Replicate Oil Painting ($0.08/run, SLOW ~11min, timeout=720s)
-    - **API**: `POST /api/ai/art-style` → `services/art_style_gateway.py` (supports `style` param: mosaic/oil/watercolor)
-    - **Cost**: $0.004 typical (uses same PhotoMaker as Animal Toon), $0.08 fallback. 10K/month = $40-$800
-    - **Note**: PRIMARY uses prompt-based artistic style transformation with PhotoMaker. Fallback Oil Painting is SLOW (11min) but provides alternative rendering when needed.
-
-    **Estimated production cost**: ~$1,250/month at scale (10K transformations/template). Total cost range: $40 (Animal Toon & Art Style cheapest with PhotoMaker) to $690 (Cartoon/Memoji worst-case).
-
-    **Testing Plan**: (1) Navigate Templates Gallery → verify 5 new cards appear, (2) For each template: tap card → upload photo → watch ad (FREE) or bypass (PRO) → verify transformation → download to Gallery/VisoAI, (3) Fallback testing: disable APIs to verify provider switching in server logs, (4) Daily limits: verify 20/day cap for PRO users.
+- **AI Headshot & Avatar Generation**: Produces studio-grade AI headshots and stylized avatars.
+- **Photo Enhancement**: Includes HD Image Enhancement (via Replicate Real-ESRGAN) and Old Photo Restoration (via Replicate GFPGAN).
+- **Face Swapping**: Offers AI-powered face replacement with a multi-provider fallback system (PiAPI primary, Replicate fallback), robust gallery permission handling, and rewarded ad integration. Supports both image and video face swap functionalities.
+- **AI Style Templates**: Features 14 diverse template categories for face swap and aesthetic transformations (e.g., Travel, Gym, Selfie, Tattoo, Wedding, Sport, Christmas, New Year, Birthday, School, Fashion Show, Profile, Suits). Each category includes carousel layouts and direct download capabilities. Templates are loaded dynamically from Supabase Storage.
+- **AI Transformation Templates**: Provides 5 advanced AI transformations accessible from the Templates Gallery. Each template includes:
+    - Multi-provider fallback for high uptime.
+    - Rewarded ad integration for free users (AdMob → AppLovin).
+    - PRO user bypass with daily usage limits (20/day).
+    - Download functionality to device Gallery/VisoAI album.
+    - Gallery and Camera photo picker integration.
+    - Real-time processing feedback.
+    - **Cartoon 3D Toon**: Transforms photos into Disney/Pixar-style cartoons.
+    - **Memoji Avatar**: Creates Apple-style 3D memoji avatars.
+    - **Animal Toon**: Transforms into animal characters (e.g., bunny, cat, dog).
+    - **Muscle Enhancement**: Adds defined muscles with adjustable intensity.
+    - **Art Style**: Applies artistic styles like mosaic, oil painting, or watercolor.
 - **Monetization**:
-    - **Advertising**: Google Mobile Ads (AdMob) for web, and a dual-network system (AdMob primary, AppLovin MAX fallback) for mobile banner, app open, and rewarded ads, managed via Firebase Remote Config.
-    - **In-App Purchases**: RevenueCat SDK for premium subscriptions (Lifetime, Yearly, Weekly tiers) offering ad bypass, unlimited creations, and priority processing.
+    - **Advertising**: Google Mobile Ads (AdMob) for web, and a dual-network system (AdMob primary, AppLovin MAX fallback) for mobile banner, app open, and rewarded ads, configured via Firebase Remote Config.
+    - **In-App Purchases**: RevenueCat SDK for premium subscriptions (Lifetime, Yearly, Weekly tiers) offering ad removal, unlimited creations, and priority processing.
 - **Internationalization**: Supports 20 languages with interactive selection.
-- **Mobile Download**: Images are saved directly to the device's Gallery/Photos app in a "VisoAI" album.
-- **Settings**: Includes sharing, feedback, "About" section, User Agreement, Privacy Policy, and Community Guidelines.
+- **Mobile Download**: Images are saved to a dedicated "VisoAI" album in the device's gallery.
+- **Settings**: Includes options for sharing, feedback, an "About" section, User Agreement, Privacy Policy, and Community Guidelines.
 
 ### System Design Choices
-Supabase handles backend services including authentication, database, and storage. AI functionalities leverage Huggingface Spaces and Replicate APIs via a Python Flask proxy server. Face swap templates are dynamically loaded from Supabase Storage.
+Supabase provides core backend services, including authentication, database, and storage. AI functionalities are primarily powered by Huggingface Spaces and Replicate APIs, accessed through a Python Flask proxy server. Face swap templates and video templates are dynamically loaded from Supabase Storage.
 
 **Production Deployment Strategy:**
-- **Backend**: Railway Hobby ($5/mo) at `web-production-a7698.up.railway.app` for 300s timeout. Uses `api/index.py` (Flask + Gunicorn) for production.
-- **Database/Auth/Storage**: Supabase.
+- **Backend**: Deployed on Railway Hobby for the Flask + Gunicorn application.
+- **Database/Auth/Storage**: Managed by Supabase.
 - **Mobile**: Flutter APK with `--split-per-abi` optimization.
 
 ## External Dependencies
 
 - **Supabase**: Backend services (authentication, database, storage).
-- **Google Mobile Ads (AdMob)**: Advertising.
+- **Google Mobile Ads (AdMob)**: Advertising network.
 - **AppLovin MAX**: Secondary mobile ad network.
-- **RevenueCat**: In-app purchase management.
-- **Huggingface API**: AI models for text/image generation, enhancement, restoration, and style transfer.
-- **VModel API**: Primary video face swap provider (photo-to-video, 4K support, $0.03/sec).
-- **Replicate API**: Multi-purpose AI services (image face swap, video face swap fallback, photo restoration, style transfer).
-- **PiAPI**: Image face swap provider (fallback for image-only operations).
+- **RevenueCat**: In-app purchase and subscription management.
+- **Huggingface API**: AI models for various transformations and generations.
+- **VModel API**: Primary provider for video face swap (photo-to-video).
+- **Replicate API**: Provider for image and video face swap fallback, photo restoration, and style transfer.
+- **PiAPI**: Face swap provider (fallback for image-only operations).
 - **Flutter Core Dependencies**: `supabase_flutter`, `cached_network_image`, `go_router`, `google_fonts`, `flutter_animate`, `http`, `permission_handler`, `path_provider`, `applovin_max`, `share_plus`, `url_launcher`, `firebase_core`, `firebase_remote_config`, `purchases_flutter`, `gal`, `shared_preferences`.

@@ -2,6 +2,9 @@ import '/flutter_flow/flutter_flow_util.dart';
 import 'travel_widget.dart' show TravelWidget;
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
+import '/services/huggingface_service.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class StyleTemplate {
   final String name;
@@ -31,51 +34,45 @@ class TravelModel extends FlutterFlowModel<TravelWidget> {
   
   List<StyleTemplate> travelStyles = [];
 
-  /// Load travel templates with placeholder images
   Future<void> loadTemplates() async {
     try {
       isTemplatesLoading = true;
       templatesError = null;
       
-      // Placeholder images from Unsplash (free to use)
-      travelStyles = [
-        StyleTemplate(
-          name: 'Eiffel Tower',
-          imagePath: 'https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?w=800',
-          category: 'travel',
-        ),
-        StyleTemplate(
-          name: 'Beach Paradise',
-          imagePath: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800',
-          category: 'travel',
-        ),
-        StyleTemplate(
-          name: 'Mountain Adventure',
-          imagePath: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800',
-          category: 'travel',
-        ),
-        StyleTemplate(
-          name: 'City Explorer',
-          imagePath: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800',
-          category: 'travel',
-        ),
-        StyleTemplate(
-          name: 'Desert Journey',
-          imagePath: 'https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?w=800',
-          category: 'travel',
-        ),
-        StyleTemplate(
-          name: 'Tropical Island',
-          imagePath: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800',
-          category: 'travel',
-        ),
-      ];
-      
-      isTemplatesLoading = false;
+      final apiUrl = HuggingfaceService.aiBaseUrl;
+      final response = await http.get(
+        Uri.parse('$apiUrl/photo-templates/story'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success'] == true) {
+          final templates = Map<String, List<dynamic>>.from(data['templates']);
+          
+          final category = 'travel';
+          if (templates.containsKey(category)) {
+            travelStyles = (templates[category] as List).map((item) {
+              return StyleTemplate(
+                name: item['name'] as String,
+                imagePath: item['imagePath'] as String,
+                category: category,
+              );
+            }).toList();
+          }
+          
+          isTemplatesLoading = false;
+          print('✅ Loaded ${templates[category]?.length ?? 0} $category templates (DYNAMIC)');
+        } else {
+          throw Exception(data['error'] ?? 'Failed to load templates');
+        }
+      } else {
+        throw Exception('HTTP ${response.statusCode}: ${response.body}');
+      }
     } catch (e) {
       isTemplatesLoading = false;
       templatesError = e.toString();
-      print('Error loading travel templates: $e');
+      print('❌ Error loading templates: $e');
     }
   }
 

@@ -2,6 +2,9 @@ import '/flutter_flow/flutter_flow_util.dart';
 import 'profile_widget.dart' show ProfileWidget;
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
+import '/services/huggingface_service.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class StyleTemplate {
   final String name;
@@ -33,38 +36,40 @@ class ProfileModel extends FlutterFlowModel<ProfileWidget> {
       isTemplatesLoading = true;
       templatesError = null;
       
-      profileStyles = [
-        StyleTemplate(
-          name: 'Professional Photo',
-          imagePath: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800',
-          category: 'profile',
-        ),
-        StyleTemplate(
-          name: 'LinkedIn Portrait',
-          imagePath: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=800',
-          category: 'profile',
-        ),
-        StyleTemplate(
-          name: 'Headshot Pro',
-          imagePath: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=800',
-          category: 'profile',
-        ),
-        StyleTemplate(
-          name: 'Business Profile',
-          imagePath: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=800',
-          category: 'profile',
-        ),
-        StyleTemplate(
-          name: 'Corporate Portrait',
-          imagePath: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=800',
-          category: 'profile',
-        ),
-      ];
-      
-      isTemplatesLoading = false;
+      final apiUrl = HuggingfaceService.aiBaseUrl;
+      final response = await http.get(
+        Uri.parse('$apiUrl/photo-templates/story'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success'] == true) {
+          final templates = Map<String, List<dynamic>>.from(data['templates']);
+          
+          final category = 'profile';
+          if (templates.containsKey(category)) {
+            profileStyles = (templates[category] as List).map((item) {
+              return StyleTemplate(
+                name: item['name'] as String,
+                imagePath: item['imagePath'] as String,
+                category: category,
+              );
+            }).toList();
+          }
+          
+          isTemplatesLoading = false;
+          print('✅ Loaded ${templates[category]?.length ?? 0} $category templates (DYNAMIC)');
+        } else {
+          throw Exception(data['error'] ?? 'Failed to load templates');
+        }
+      } else {
+        throw Exception('HTTP ${response.statusCode}: ${response.body}');
+      }
     } catch (e) {
       isTemplatesLoading = false;
       templatesError = e.toString();
+      print('❌ Error loading templates: $e');
     }
   }
 

@@ -1,9 +1,12 @@
 import '/flutter_flow/flutter_flow_util.dart';
 import '/index.dart';
 import '/backend/supabase/face_swap_template_repository.dart';
+import '/services/huggingface_service.dart';
 import 'swapface_widget.dart' show SwapfaceWidget;
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class StyleTemplate {
   final String name;
@@ -37,82 +40,68 @@ class SwapfaceModel extends FlutterFlowModel<SwapfaceWidget> {
   List<StyleTemplate> maleStyles = [];
   List<StyleTemplate> mixedStyles = [];
 
-  /// Load templates from Supabase Storage
+  /// Load templates from Supabase Storage dynamically via API
   Future<void> loadTemplates() async {
     try {
       isTemplatesLoading = true;
       templatesError = null;
       
-      // Fallback to hardcoded templates (Supabase Storage list() not supported on web)
-      femaleStyles = [
-        StyleTemplate(
-          name: 'Beautiful Girl',
-          imagePath: 'https://cvtlvrtvnwbvyhojetyt.supabase.co/storage/v1/object/public/face-swap-templates/female/beautiful-girl.jpg',
-          category: 'female',
-        ),
-        StyleTemplate(
-          name: 'Kate Upton',
-          imagePath: 'https://cvtlvrtvnwbvyhojetyt.supabase.co/storage/v1/object/public/face-swap-templates/female/kate-upton.jpg',
-          category: 'female',
-        ),
-        StyleTemplate(
-          name: 'Nice Girl',
-          imagePath: 'https://cvtlvrtvnwbvyhojetyt.supabase.co/storage/v1/object/public/face-swap-templates/female/nice-girl.jpg',
-          category: 'female',
-        ),
-        StyleTemplate(
-          name: 'USA Girl',
-          imagePath: 'https://cvtlvrtvnwbvyhojetyt.supabase.co/storage/v1/object/public/face-swap-templates/female/usa-girl.jpg',
-          category: 'female',
-        ),
-        StyleTemplate(
-          name: 'Wedding Face',
-          imagePath: 'https://cvtlvrtvnwbvyhojetyt.supabase.co/storage/v1/object/public/face-swap-templates/female/wedding-face.jpeg',
-          category: 'female',
-        ),
-      ];
+      final apiUrl = HuggingfaceService.aiBaseUrl;
+      final response = await http.get(
+        Uri.parse('$apiUrl/photo-templates/swapface'),
+        headers: {'Content-Type': 'application/json'},
+      );
 
-      maleStyles = [
-        StyleTemplate(
-          name: 'Aquaman',
-          imagePath: 'https://cvtlvrtvnwbvyhojetyt.supabase.co/storage/v1/object/public/face-swap-templates/male/aquaman.jpg',
-          category: 'male',
-        ),
-        StyleTemplate(
-          name: 'Handsome',
-          imagePath: 'https://cvtlvrtvnwbvyhojetyt.supabase.co/storage/v1/object/public/face-swap-templates/male/handsome.jpg',
-          category: 'male',
-        ),
-        StyleTemplate(
-          name: 'Superman',
-          imagePath: 'https://cvtlvrtvnwbvyhojetyt.supabase.co/storage/v1/object/public/face-swap-templates/male/superman.jpg',
-          category: 'male',
-        ),
-        StyleTemplate(
-          name: 'Themen',
-          imagePath: 'https://cvtlvrtvnwbvyhojetyt.supabase.co/storage/v1/object/public/face-swap-templates/male/themen.jpg',
-          category: 'male',
-        ),
-      ];
-
-      mixedStyles = [
-        StyleTemplate(
-          name: 'Beckham',
-          imagePath: 'https://cvtlvrtvnwbvyhojetyt.supabase.co/storage/v1/object/public/face-swap-templates/mixed/beckham.jpg',
-          category: 'mixed',
-        ),
-        StyleTemplate(
-          name: 'Parka Clothing',
-          imagePath: 'https://cvtlvrtvnwbvyhojetyt.supabase.co/storage/v1/object/public/face-swap-templates/mixed/parka-clothing.jpg',
-          category: 'mixed',
-        ),
-      ];
-      
-      isTemplatesLoading = false;
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success'] == true) {
+          final templates = Map<String, List<dynamic>>.from(data['templates']);
+          
+          // Parse female templates
+          if (templates.containsKey('female')) {
+            femaleStyles = (templates['female'] as List).map((item) {
+              return StyleTemplate(
+                name: item['name'] as String,
+                imagePath: item['imagePath'] as String,
+                category: 'female',
+              );
+            }).toList();
+          }
+          
+          // Parse male templates
+          if (templates.containsKey('male')) {
+            maleStyles = (templates['male'] as List).map((item) {
+              return StyleTemplate(
+                name: item['name'] as String,
+                imagePath: item['imagePath'] as String,
+                category: 'male',
+              );
+            }).toList();
+          }
+          
+          // Parse mixed templates
+          if (templates.containsKey('mixed')) {
+            mixedStyles = (templates['mixed'] as List).map((item) {
+              return StyleTemplate(
+                name: item['name'] as String,
+                imagePath: item['imagePath'] as String,
+                category: 'mixed',
+              );
+            }).toList();
+          }
+          
+          isTemplatesLoading = false;
+          print('✅ Loaded ${data['total_photos']} photos from ${data['categories'].length} categories (DYNAMIC)');
+        } else {
+          throw Exception(data['error'] ?? 'Failed to load templates');
+        }
+      } else {
+        throw Exception('HTTP ${response.statusCode}: ${response.body}');
+      }
     } catch (e) {
       isTemplatesLoading = false;
       templatesError = e.toString();
-      print('Error loading templates: $e');
+      print('❌ Error loading SwapFace templates: $e');
     }
   }
 

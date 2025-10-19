@@ -2,6 +2,9 @@ import '/flutter_flow/flutter_flow_util.dart';
 import 'suits_widget.dart' show SuitsWidget;
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
+import '/services/huggingface_service.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class StyleTemplate {
   final String name;
@@ -33,38 +36,40 @@ class SuitsModel extends FlutterFlowModel<SuitsWidget> {
       isTemplatesLoading = true;
       templatesError = null;
       
-      suitsStyles = [
-        StyleTemplate(
-          name: 'Executive Style',
-          imagePath: 'https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?w=800',
-          category: 'suits',
-        ),
-        StyleTemplate(
-          name: 'Business Suit',
-          imagePath: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=800',
-          category: 'suits',
-        ),
-        StyleTemplate(
-          name: 'Formal Attire',
-          imagePath: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=800',
-          category: 'suits',
-        ),
-        StyleTemplate(
-          name: 'Tuxedo Elite',
-          imagePath: 'https://images.unsplash.com/photo-1581044777550-4cfa60707c03?w=800',
-          category: 'suits',
-        ),
-        StyleTemplate(
-          name: 'Sharp Dressed',
-          imagePath: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=800',
-          category: 'suits',
-        ),
-      ];
-      
-      isTemplatesLoading = false;
+      final apiUrl = HuggingfaceService.aiBaseUrl;
+      final response = await http.get(
+        Uri.parse('$apiUrl/photo-templates/story'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success'] == true) {
+          final templates = Map<String, List<dynamic>>.from(data['templates']);
+          
+          final category = 'suits';
+          if (templates.containsKey(category)) {
+            suitsStyles = (templates[category] as List).map((item) {
+              return StyleTemplate(
+                name: item['name'] as String,
+                imagePath: item['imagePath'] as String,
+                category: category,
+              );
+            }).toList();
+          }
+          
+          isTemplatesLoading = false;
+          print('✅ Loaded ${templates[category]?.length ?? 0} $category templates (DYNAMIC)');
+        } else {
+          throw Exception(data['error'] ?? 'Failed to load templates');
+        }
+      } else {
+        throw Exception('HTTP ${response.statusCode}: ${response.body}');
+      }
     } catch (e) {
       isTemplatesLoading = false;
       templatesError = e.toString();
+      print('❌ Error loading templates: $e');
     }
   }
 

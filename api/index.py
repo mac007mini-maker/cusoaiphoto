@@ -47,6 +47,8 @@ def home():
             '/api/ai/video-swap',
             '/api/ai/video-swap/download',
             '/api/ai/video-templates',
+            '/api/ai/photo-templates/swapface',
+            '/api/ai/photo-templates/story',
             '/api/ai/cartoon',
             '/api/ai/memoji',
             '/api/ai/animal-toon',
@@ -501,6 +503,207 @@ def get_video_templates():
         
     except Exception as e:
         print(f"❌ [VIDEO_TEMPLATES] Error: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/ai/photo-templates/swapface', methods=['GET'])
+def get_swapface_photo_templates():
+    """Load SwapFace photo templates from Supabase Storage dynamically"""
+    try:
+        print("📥 [PHOTO_TEMPLATES_SWAPFACE] Fetching from Supabase...")
+        
+        supabase_url = os.getenv('SUPABASE_URL')
+        supabase_key = os.getenv('SUPABASE_ANON_KEY')
+        
+        if not supabase_url or not supabase_key:
+            return jsonify({'error': 'Supabase not configured'}), 500
+        
+        import requests as http_requests
+        
+        bucket_name = 'face-swap-templates'
+        storage_url = f"{supabase_url}/storage/v1/object/list/{bucket_name}"
+        
+        headers = {
+            'apikey': supabase_key,
+            'Authorization': f'Bearer {supabase_key}'
+        }
+        
+        # Step 1: List root folder to get all categories (female, male, mixed)
+        response = http_requests.post(
+            storage_url,
+            headers=headers,
+            json={'prefix': '', 'limit': 1000},
+            timeout=10
+        )
+        response.raise_for_status()
+        folders = response.json()
+        
+        # Step 2: For each category, list all photos inside
+        templates = {}
+        for folder_item in folders:
+            category = folder_item.get('name')
+            if not category:
+                continue
+            
+            # List photos in this category folder
+            folder_response = http_requests.post(
+                storage_url,
+                headers=headers,
+                json={'prefix': f'{category}/', 'limit': 1000},
+                timeout=10
+            )
+            folder_response.raise_for_status()
+            photos = folder_response.json()
+            
+            # Process each photo in this category
+            for photo_item in photos:
+                filename = photo_item.get('name')
+                # Support common image formats
+                if not filename or not any(filename.lower().endswith(ext) for ext in ['.jpg', '.jpeg', '.png', '.webp']):
+                    continue
+                
+                if category not in templates:
+                    templates[category] = []
+                
+                photo_path = f"{category}/{filename}"
+                photo_url = f"{supabase_url}/storage/v1/object/public/{bucket_name}/{photo_path}"
+                
+                templates[category].append({
+                    'id': photo_path.replace('/', '_').replace('.jpg', '').replace('.jpeg', '').replace('.png', '').replace('.webp', ''),
+                    'name': filename.rsplit('.', 1)[0].replace('_', ' ').replace('-', ' ').title(),
+                    'imagePath': photo_url,
+                    'category': category,
+                    'filename': filename
+                })
+        
+        total_photos = sum(len(v) for v in templates.values())
+        print(f"✅ [PHOTO_TEMPLATES_SWAPFACE] Found {total_photos} photos in {len(templates)} categories (DYNAMIC)")
+        
+        # Fallback to current hardcoded templates if Storage List API fails
+        if total_photos == 0:
+            print("⚠️  [PHOTO_TEMPLATES_SWAPFACE] Storage List API failed, using hardcoded fallback")
+            base_url = f"{supabase_url}/storage/v1/object/public/face-swap-templates"
+            templates = {
+                'female': [
+                    {'id': 'female_beautiful_girl', 'name': 'Beautiful Girl', 'imagePath': f'{base_url}/female/beautiful-girl.jpg', 'category': 'female'},
+                    {'id': 'female_kate_upton', 'name': 'Kate Upton', 'imagePath': f'{base_url}/female/kate-upton.jpg', 'category': 'female'},
+                    {'id': 'female_nice_girl', 'name': 'Nice Girl', 'imagePath': f'{base_url}/female/nice-girl.jpg', 'category': 'female'},
+                    {'id': 'female_usa_girl', 'name': 'USA Girl', 'imagePath': f'{base_url}/female/usa-girl.jpg', 'category': 'female'},
+                    {'id': 'female_wedding_face', 'name': 'Wedding Face', 'imagePath': f'{base_url}/female/wedding-face.jpeg', 'category': 'female'},
+                ],
+                'male': [
+                    {'id': 'male_aquaman', 'name': 'Aquaman', 'imagePath': f'{base_url}/male/aquaman.jpg', 'category': 'male'},
+                    {'id': 'male_handsome', 'name': 'Handsome', 'imagePath': f'{base_url}/male/handsome.jpg', 'category': 'male'},
+                    {'id': 'male_superman', 'name': 'Superman', 'imagePath': f'{base_url}/male/superman.jpg', 'category': 'male'},
+                    {'id': 'male_themen', 'name': 'Themen', 'imagePath': f'{base_url}/male/themen.jpg', 'category': 'male'},
+                ],
+                'mixed': [
+                    {'id': 'mixed_beckham', 'name': 'Beckham', 'imagePath': f'{base_url}/mixed/beckham.jpg', 'category': 'mixed'},
+                    {'id': 'mixed_parka_clothing', 'name': 'Parka Clothing', 'imagePath': f'{base_url}/mixed/parka-clothing.jpg', 'category': 'mixed'},
+                ],
+            }
+            total_photos = sum(len(v) for v in templates.values())
+        
+        return jsonify({
+            'success': True,
+            'templates': templates,
+            'total_photos': total_photos,
+            'categories': list(templates.keys())
+        })
+        
+    except Exception as e:
+        print(f"❌ [PHOTO_TEMPLATES_SWAPFACE] Error: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/ai/photo-templates/story', methods=['GET'])
+def get_story_photo_templates():
+    """Load Story photo templates from Supabase Storage dynamically"""
+    try:
+        print("📥 [PHOTO_TEMPLATES_STORY] Fetching from Supabase...")
+        
+        supabase_url = os.getenv('SUPABASE_URL')
+        supabase_key = os.getenv('SUPABASE_ANON_KEY')
+        
+        if not supabase_url or not supabase_key:
+            return jsonify({'error': 'Supabase not configured'}), 500
+        
+        import requests as http_requests
+        
+        bucket_name = 'story-templates'
+        storage_url = f"{supabase_url}/storage/v1/object/list/{bucket_name}"
+        
+        headers = {
+            'apikey': supabase_key,
+            'Authorization': f'Bearer {supabase_key}'
+        }
+        
+        # Step 1: List root folder to get all categories (travel, gym, selfie, etc.)
+        response = http_requests.post(
+            storage_url,
+            headers=headers,
+            json={'prefix': '', 'limit': 1000},
+            timeout=10
+        )
+        response.raise_for_status()
+        folders = response.json()
+        
+        # Step 2: For each category, list all photos inside
+        templates = {}
+        for folder_item in folders:
+            category = folder_item.get('name')
+            if not category:
+                continue
+            
+            # List photos in this category folder
+            folder_response = http_requests.post(
+                storage_url,
+                headers=headers,
+                json={'prefix': f'{category}/', 'limit': 1000},
+                timeout=10
+            )
+            folder_response.raise_for_status()
+            photos = folder_response.json()
+            
+            # Process each photo in this category
+            for photo_item in photos:
+                filename = photo_item.get('name')
+                # Support common image formats
+                if not filename or not any(filename.lower().endswith(ext) for ext in ['.jpg', '.jpeg', '.png', '.webp']):
+                    continue
+                
+                if category not in templates:
+                    templates[category] = []
+                
+                photo_path = f"{category}/{filename}"
+                photo_url = f"{supabase_url}/storage/v1/object/public/{bucket_name}/{photo_path}"
+                
+                templates[category].append({
+                    'id': photo_path.replace('/', '_').replace('.jpg', '').replace('.jpeg', '').replace('.png', '').replace('.webp', ''),
+                    'name': filename.rsplit('.', 1)[0].replace('_', ' ').replace('-', ' ').title(),
+                    'imagePath': photo_url,
+                    'category': category,
+                    'filename': filename
+                })
+        
+        total_photos = sum(len(v) for v in templates.values())
+        print(f"✅ [PHOTO_TEMPLATES_STORY] Found {total_photos} photos in {len(templates)} categories (DYNAMIC)")
+        
+        # Fallback to empty if Storage List API fails (user needs to upload photos to Supabase)
+        if total_photos == 0:
+            print("⚠️  [PHOTO_TEMPLATES_STORY] No photos found in Supabase Storage. Please upload photos to 'story-templates' bucket.")
+        
+        return jsonify({
+            'success': True,
+            'templates': templates,
+            'total_photos': total_photos,
+            'categories': list(templates.keys())
+        })
+        
+    except Exception as e:
+        print(f"❌ [PHOTO_TEMPLATES_STORY] Error: {e}")
         import traceback
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500

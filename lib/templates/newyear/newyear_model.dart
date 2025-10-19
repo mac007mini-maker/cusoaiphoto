@@ -2,6 +2,9 @@ import '/flutter_flow/flutter_flow_util.dart';
 import 'newyear_widget.dart' show NewyearWidget;
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
+import '/services/huggingface_service.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class StyleTemplate {
   final String name;
@@ -33,38 +36,40 @@ class NewyearModel extends FlutterFlowModel<NewyearWidget> {
       isTemplatesLoading = true;
       templatesError = null;
       
-      newyearStyles = [
-        StyleTemplate(
-          name: 'Party Celebration',
-          imagePath: 'https://images.unsplash.com/photo-1467810563316-b5476525c0f9?w=800',
-          category: 'newyear',
-        ),
-        StyleTemplate(
-          name: 'Fireworks Night',
-          imagePath: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800',
-          category: 'newyear',
-        ),
-        StyleTemplate(
-          name: 'New Beginning',
-          imagePath: 'https://images.unsplash.com/photo-1530103043960-ef38714abb15?w=800',
-          category: 'newyear',
-        ),
-        StyleTemplate(
-          name: 'Countdown Fun',
-          imagePath: 'https://images.unsplash.com/photo-1528605248644-14dd04022da1?w=800',
-          category: 'newyear',
-        ),
-        StyleTemplate(
-          name: 'NYE Glamour',
-          imagePath: 'https://images.unsplash.com/photo-1482399865740-8c86508a3c6c?w=800',
-          category: 'newyear',
-        ),
-      ];
-      
-      isTemplatesLoading = false;
+      final apiUrl = HuggingfaceService.aiBaseUrl;
+      final response = await http.get(
+        Uri.parse('$apiUrl/photo-templates/story'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success'] == true) {
+          final templates = Map<String, List<dynamic>>.from(data['templates']);
+          
+          final category = 'newyear';
+          if (templates.containsKey(category)) {
+            newyearStyles = (templates[category] as List).map((item) {
+              return StyleTemplate(
+                name: item['name'] as String,
+                imagePath: item['imagePath'] as String,
+                category: category,
+              );
+            }).toList();
+          }
+          
+          isTemplatesLoading = false;
+          print('✅ Loaded ${templates[category]?.length ?? 0} $category templates (DYNAMIC)');
+        } else {
+          throw Exception(data['error'] ?? 'Failed to load templates');
+        }
+      } else {
+        throw Exception('HTTP ${response.statusCode}: ${response.body}');
+      }
     } catch (e) {
       isTemplatesLoading = false;
       templatesError = e.toString();
+      print('❌ Error loading templates: $e');
     }
   }
 
