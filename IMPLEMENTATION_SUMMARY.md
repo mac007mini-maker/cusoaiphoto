@@ -209,6 +209,22 @@
 
 ---
 
+### Phase 3.5: Nano Banana Prompt Studio Integration (Week 3)
+**Duration:** 2-3 days (completed)  
+**Focus:** Add new AI template category powered by KIE Nano Banana
+
+**Tasks:**
+1. ✅ Add backend proxy endpoint `/api/kie/nano-banana` with error handling & env checks
+2. ✅ Register `KIE_API_KEY` variable in Railway + update docs checklists
+3. ✅ Create Flutter service client `KieNanoBananaService` + result model
+4. ✅ Build new UI screen `KieNanoBananaWidget` (prompt form, sample prompts, save to gallery)
+5. ✅ Promote feature on homepage card for quick discovery
+6. ✅ Smoke-test endpoint (missing key, empty prompt, invalid key)
+
+**Deliverable:** Nano Banana prompt studio end-to-end (backend + Flutter + docs)
+
+---
+
 ### Phase 4: Performance & Monitoring (Week 3)
 **Duration:** 3-5 days  
 **Focus:** Optimize performance, add observability
@@ -277,7 +293,12 @@
 - `lib/services/huggingface_service.dart` - Move encoding to Isolate
 - `api/index.py` - Add auth, rate limiting, health check, caching
 - `services/*_gateway.py` - Reduce timeouts, add circuit breaker
-- `secrets.env` - Populate with real values (from template)
+
+### New Feature Files (Nano Banana)
+- `api/index.py` → `/api/kie/nano-banana` proxy endpoint
+- `lib/services/kie_nano_banana_service.dart` → Flutter service client/result model
+- `lib/kie_nano_banana/kie_nano_banana_widget.dart` / `_model.dart` → UI + state for prompt studio
+- `lib/pages/homepage/homepage_widget.dart` → Promo card linking to new feature
 
 ### New Files to Create
 - `lib/app_config.dart` - Centralized config access

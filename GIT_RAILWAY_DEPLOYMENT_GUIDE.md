@@ -300,8 +300,8 @@ git push origin dev
 HUGGINGFACE_TOKEN=hf_xxxxxxxxxxxx
 REPLICATE_API_TOKEN=r8_xxxxxxxxxxxx
 PIAPI_API_KEY=your_piapi_key
-KIE_API_BASE=https://kie.ai/nano-banana
-KIE_API_KEY=your_kie_key
+KIE_API_KEY=kie_xxxxxxxxxxxx  # NEW: Nano Banana diffusion model
+KIE_API_BASE=https://kie.ai/nano-banana  # Optional override (default already set)
 
 # Supabase
 SUPABASE_URL=https://your-project.supabase.co
@@ -315,6 +315,8 @@ PYTHONUNBUFFERED=1
 ```
 
 3. Click **"Save"** → Railway sẽ tự động restart service với biến mới.
+
+> ✅ **Test nhanh:** Sau khi thêm `KIE_API_KEY`, chạy `curl -X POST https://<railway-domain>/api/kie/nano-banana -d '{"prompt":"test"}' -H 'Content-Type: application/json'`. Bạn sẽ nhận về JSON kết quả (hoặc thông báo lỗi rõ ràng nếu KEY sai).
 
 ### Bước 3: Configure Build & Start Commands
 

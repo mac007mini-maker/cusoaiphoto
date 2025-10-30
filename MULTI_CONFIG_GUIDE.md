@@ -72,6 +72,7 @@ export SUPABASE_ANON_KEY="your-anon-key"
 # ============================================
 export HUGGINGFACE_TOKEN="hf_xxxxxxxxxxxx"
 export REPLICATE_API_TOKEN="r8_xxxxxxxxxxxx"
+export KIE_API_KEY="kie_xxxxxxxxxxxx"  # ← NEW: Nano Banana diffusion model
 
 # ============================================
 # ADS - ADMOB (Platform-specific)
@@ -132,6 +133,7 @@ Or integrate into build scripts (see below).
 - API Domain
 - Supabase URL/Key
 - Huggingface/Replicate Tokens
+- KIE Nano Banana API Key (new Nano Banana prompt studio)
 - Support Email
 
 ### How to Pass Platform-Specific Configs

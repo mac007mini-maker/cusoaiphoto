@@ -653,6 +653,7 @@ Initial release of Viso AI!
 - [ ] **Final smoke test:**
   - [ ] Test on real devices (iOS & Android)
   - [ ] Test all AI features (face swap, HD, cartoon, etc.)
+  - [ ] Test Nano Banana prompt studio (new KIE integration)
   - [ ] Test IAP purchase flow (sandbox mode)
   - [ ] Test ads (test ads showing correctly)
   - [ ] Test restore purchases
@@ -666,6 +667,7 @@ Initial release of Viso AI!
 - [ ] **Backend health check:**
   - [ ] All environment variables set
   - [ ] API endpoints responding
+  - [ ] `POST /api/kie/nano-banana` returns JSON (200/400) with valid KIE API key
   - [ ] Supabase templates loading
   - [ ] Replicate/PiAPI quotas checked (sufficient credits)
 
@@ -786,6 +788,7 @@ git push origin hotfix/critical-bug-fix
 - [ ] Input validation on all endpoints
 - [ ] Caching implemented for AI results
 - [ ] Railway auto-deploy configured
+- [ ] Nano Banana prompt studio verified with live KIE API key
 - [ ] Store listings complete (screenshots, descriptions)
 
 ### Nice to Have

@@ -28,6 +28,7 @@ CORS(app)
 
 # Environment variables
 HUGGINGFACE_TOKEN = os.getenv('HUGGINGFACE_TOKEN')
+KIE_API_KEY = os.getenv('KIE_API_KEY')
 
 @app.route('/')
 def home():
@@ -53,7 +54,8 @@ def home():
             '/api/ai/memoji',
             '/api/ai/animal-toon',
             '/api/ai/muscle',
-            '/api/ai/art-style'
+            '/api/ai/art-style',
+            '/api/kie/nano-banana'
         ]
     })
 
@@ -67,6 +69,7 @@ def health_check():
         'supabase': bool(os.getenv('SUPABASE_URL')),
         'replicate': bool(os.getenv('REPLICATE_API_TOKEN')),
         'huggingface': bool(os.getenv('HUGGINGFACE_TOKEN')),
+        'kie': bool(os.getenv('KIE_API_KEY')),
     }
     
     all_healthy = all(checks.values())
@@ -865,6 +868,42 @@ def proxy_image():
         import traceback
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
+
+# --- KIE Nano Banana AI Proxy ---
+@app.route('/api/kie/nano-banana', methods=['POST'])
+def kie_nano_banana():
+    """Proxy prompt to KIE Nano Banana external API: https://kie.ai/nano-banana"""
+    import requests as http_requests
+    
+    if not KIE_API_KEY:
+        return jsonify({
+            'error': 'KIE_API_KEY not configured (set in Railway variables)'
+        }), 500
+    data = request.get_json(force=True)
+    prompt = data.get('prompt', '').strip()
+    if not prompt:
+        return jsonify({'error': 'Missing prompt!'}), 400
+
+    # KIE endpoint: assumption, update per doc
+    kie_api = 'https://kie.ai/api/nano-banana/generate'
+    timeout = 60
+
+    headers = {
+        'Authorization': f'Bearer {KIE_API_KEY}',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+    }
+    payload = {'prompt': prompt}
+    try:
+        resp = http_requests.post(kie_api, headers=headers, json=payload, timeout=timeout)
+        if resp.ok:
+            resp_data = resp.json()
+            # Expect response as { success, image: <base64>, ... } or { ...url... }
+            return jsonify({'success': True, 'kie_response': resp_data})
+        else:
+            return jsonify({'success': False, 'error': f'KIE API error: {resp.status_code} - {resp.text}'}), resp.status_code
+    except Exception as e:
+        return jsonify({'success': False, 'error': f'Request failed: {str(e)}'}), 500
 
 if __name__ == '__main__':
     # For local testing

@@ -74,6 +74,7 @@ venv/
 ENV/
 env/
 .venv
+tmp_pip/
 
 # Secrets (QUAN TRỌNG - đừng push API keys!)
 secrets.env

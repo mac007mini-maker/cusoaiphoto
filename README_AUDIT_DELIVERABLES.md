@@ -100,6 +100,17 @@ Tất cả 5 hướng dẫn chi tiết đã được tạo thành công:
 
 ---
 
+### 7. 🍌 Nano Banana Prompt Studio (NEW)
+- ✅ Backend proxy endpoint `/api/kie/nano-banana` with error handling & health indicator
+- ✅ Flutter service client `KieNanoBananaService` + result wrapper
+- ✅ New UI screen `Nano Banana Studio` (prompt input, sample prompts, save to gallery)
+- ✅ Homepage promo card linking users to the new feature
+- ✅ Documentation updated (Railway variables, production checklist, deploy workflow)
+
+> Giúp bạn launch template AI mới dựa trên KIE Nano Banana mà không cần clone repo mới.
+
+---
+
 ## 📊 Audit Summary
 
 ### Issues Found

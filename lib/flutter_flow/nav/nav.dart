@@ -302,7 +302,12 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           name: VideoSwapWidget.routeName,
           path: VideoSwapWidget.routePath,
           builder: (context, params) => VideoSwapWidget(),
-        )
+        ),
+        FFRoute(
+          name: KieNanoBananaWidget.routeName,
+          path: KieNanoBananaWidget.routePath,
+          builder: (context, params) => KieNanoBananaWidget(),
+        ),
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );
 

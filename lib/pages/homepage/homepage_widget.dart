@@ -196,6 +196,31 @@ class _HomepageWidgetState extends State<HomepageWidget> {
     );
   }
 
+  Widget _buildNanoTag(BuildContext context, String label) {
+    return Container(
+      padding: EdgeInsetsDirectional.fromSTEB(12.0, 6.0, 12.0, 6.0),
+      decoration: BoxDecoration(
+        color: FlutterFlowTheme.of(context).primaryBackground,
+        borderRadius: BorderRadius.circular(999.0),
+        border: Border.all(
+          color: FlutterFlowTheme.of(context).alternate,
+        ),
+      ),
+      child: Text(
+        label,
+        style: FlutterFlowTheme.of(context).bodySmall.override(
+              font: GoogleFonts.inter(
+                fontWeight: FontWeight.w500,
+                fontStyle: FlutterFlowTheme.of(context).bodySmall.fontStyle,
+              ),
+              letterSpacing: 0.0,
+              fontWeight: FontWeight.w500,
+              fontStyle: FlutterFlowTheme.of(context).bodySmall.fontStyle,
+            ),
+      ),
+    );
+  }
+
   void _submitFeedback(BuildContext dialogContext) async {
     final feedback = _model.feedbackController?.text ?? '';
     final email = _model.emailController?.text ?? '';
@@ -274,6 +299,135 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children:
                         [
+                              Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                                child: InkWell(
+                                  splashColor: Colors.transparent,
+                                  focusColor: Colors.transparent,
+                                  hoverColor: Colors.transparent,
+                                  highlightColor: Colors.transparent,
+                                  onTap: () async {
+                                    context.pushNamed(
+                                      KieNanoBananaWidget.routeName,
+                                    );
+                                  },
+                                  child: Container(
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      color: FlutterFlowTheme.of(context).secondaryBackground,
+                                      borderRadius: BorderRadius.circular(16.0),
+                                      border: Border.all(
+                                        color: Color(0xFFE4E7EC),
+                                        width: 1.0,
+                                      ),
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(20.0, 20.0, 20.0, 24.0),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.max,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            mainAxisSize: MainAxisSize.max,
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  'Nano Banana Prompt Studio',
+                                                  style: FlutterFlowTheme.of(context).titleLarge.override(
+                                                        font: GoogleFonts.interTight(
+                                                          fontWeight: FontWeight.bold,
+                                                          fontStyle: FlutterFlowTheme.of(context).titleLarge.fontStyle,
+                                                        ),
+                                                        color: FlutterFlowTheme.of(context).primaryText,
+                                                        letterSpacing: 0.0,
+                                                        fontWeight: FontWeight.bold,
+                                                        fontStyle: FlutterFlowTheme.of(context).titleLarge.fontStyle,
+                                                      ),
+                                                ),
+                                              ),
+                                              Container(
+                                                padding: EdgeInsetsDirectional.fromSTEB(12.0, 6.0, 12.0, 6.0),
+                                                decoration: BoxDecoration(
+                                                  color: Color(0xFFEFF8FF),
+                                                  borderRadius: BorderRadius.circular(999.0),
+                                                ),
+                                                child: Text(
+                                                  'New',
+                                                  style: FlutterFlowTheme.of(context).labelMedium.override(
+                                                        font: GoogleFonts.inter(
+                                                          fontWeight: FontWeight.w600,
+                                                          fontStyle: FlutterFlowTheme.of(context).labelMedium.fontStyle,
+                                                        ),
+                                                        color: Color(0xFF175CD3),
+                                                        letterSpacing: 0.0,
+                                                        fontWeight: FontWeight.w600,
+                                                        fontStyle: FlutterFlowTheme.of(context).labelMedium.fontStyle,
+                                                      ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(height: 12.0),
+                                          Text(
+                                            'Launch the Nano Banana diffusion model to craft marketing banners, portrait art, and custom AI templates within minutes.',
+                                            style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                  font: GoogleFonts.inter(
+                                                    fontWeight: FontWeight.normal,
+                                                    fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                  ),
+                                                  color: FlutterFlowTheme.of(context).secondaryText,
+                                                  letterSpacing: 0.0,
+                                                  fontWeight: FontWeight.normal,
+                                                  fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                                ),
+                                          ),
+                                          SizedBox(height: 16.0),
+                                          Wrap(
+                                            spacing: 8.0,
+                                            runSpacing: 8.0,
+                                            children: [
+                                              _buildNanoTag(context, 'Prompt Studio'),
+                                              _buildNanoTag(context, 'Image Templates'),
+                                              _buildNanoTag(context, 'Flux-quality diffusion'),
+                                            ],
+                                          ),
+                                          SizedBox(height: 16.0),
+                                          FFButtonWidget(
+                                            onPressed: () async {
+                                              context.pushNamed(
+                                                KieNanoBananaWidget.routeName,
+                                              );
+                                            },
+                                            text: 'Launch Nano Banana',
+                                            icon: Icon(
+                                              Icons.bolt_outlined,
+                                              size: 18.0,
+                                            ),
+                                            options: FFButtonOptions(
+                                              height: 44.0,
+                                              padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+                                              color: FlutterFlowTheme.of(context).primary,
+                                              textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                                                    font: GoogleFonts.inter(
+                                                      fontWeight: FontWeight.bold,
+                                                      fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
+                                                    ),
+                                                    color: FlutterFlowTheme.of(context).secondaryBackground,
+                                                    letterSpacing: 0.0,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontStyle: FlutterFlowTheme.of(context).titleSmall.fontStyle,
+                                                  ),
+                                              elevation: 0.0,
+                                              borderRadius: BorderRadius.circular(16.0),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
                               Row(
                                 mainAxisSize: MainAxisSize.max,
                                 mainAxisAlignment:
