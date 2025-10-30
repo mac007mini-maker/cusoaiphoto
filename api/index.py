@@ -31,7 +31,7 @@ HUGGINGFACE_TOKEN = os.getenv('HUGGINGFACE_TOKEN')
 
 @app.route('/')
 def home():
-    """Health check endpoint"""
+    """Home endpoint with API info"""
     return jsonify({
         'status': 'online',
         'service': 'Viso AI Backend',
@@ -56,6 +56,27 @@ def home():
             '/api/ai/art-style'
         ]
     })
+
+@app.route('/health', methods=['GET'])
+@app.route('/healthz', methods=['GET'])
+def health_check():
+    """Health check endpoint for Railway monitoring"""
+    import time
+    checks = {
+        'api': True,
+        'supabase': bool(os.getenv('SUPABASE_URL')),
+        'replicate': bool(os.getenv('REPLICATE_API_TOKEN')),
+        'huggingface': bool(os.getenv('HUGGINGFACE_TOKEN')),
+    }
+    
+    all_healthy = all(checks.values())
+    
+    return jsonify({
+        'status': 'healthy' if all_healthy else 'degraded',
+        'checks': checks,
+        'timestamp': time.time(),
+        'version': '1.0.0'
+    }), 200 if all_healthy else 503
 
 @app.route('/api/huggingface/text-generation', methods=['POST'])
 def text_generation():
