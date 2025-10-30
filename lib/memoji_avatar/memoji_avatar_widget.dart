@@ -2,7 +2,6 @@ import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import '/index.dart';
 import '/services/huggingface_service.dart';
 import '/services/applovin_service.dart';
 import '/services/admob_rewarded_service.dart';
@@ -10,10 +9,8 @@ import '/services/admob_banner_service.dart';
 import '/services/remote_config_service.dart';
 import '/services/usage_limit_service.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:convert';
-import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:gal/gal.dart';
@@ -40,7 +37,7 @@ class _MemojiAvatarWidgetState extends State<MemojiAvatarWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => MemojiAvatarModel());
-    
+
     final remoteConfig = RemoteConfigService();
     if (remoteConfig.adsEnabled && remoteConfig.bannerAdsEnabled) {
       _loadBannerAd();
@@ -57,7 +54,7 @@ class _MemojiAvatarWidgetState extends State<MemojiAvatarWidget> {
   void _loadBannerAd() {
     final adUnitId = AdMobBannerService.getBannerAdUnitId();
     if (adUnitId.isEmpty) return;
-    
+
     _bannerAd = BannerAd(
       adUnitId: adUnitId,
       size: AdSize.banner,
@@ -93,9 +90,9 @@ class _MemojiAvatarWidgetState extends State<MemojiAvatarWidget> {
 
   Future<void> _showAdAndProcess() async {
     if (_model.selectedUserPhoto == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please add your photo first')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Please add your photo first')));
       return;
     }
 
@@ -103,7 +100,9 @@ class _MemojiAvatarWidgetState extends State<MemojiAvatarWidget> {
     if (!canProcess) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('⏰ Daily limit reached (20/day for premium users). Resets tomorrow!'),
+          content: Text(
+            '⏰ Daily limit reached (20/day for premium users). Resets tomorrow!',
+          ),
           backgroundColor: Colors.orange,
           duration: Duration(seconds: 4),
         ),
@@ -112,7 +111,7 @@ class _MemojiAvatarWidgetState extends State<MemojiAvatarWidget> {
     }
 
     final remoteConfig = RemoteConfigService();
-    
+
     if (!remoteConfig.adsEnabled || !remoteConfig.rewardedAdsEnabled) {
       _processImage();
       return;
@@ -126,7 +125,9 @@ class _MemojiAvatarWidgetState extends State<MemojiAvatarWidget> {
         onFailed: () {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('⏳ Ads not ready yet. Please try again in a moment.'),
+              content: Text(
+                '⏳ Ads not ready yet. Please try again in a moment.',
+              ),
               backgroundColor: Colors.orange,
             ),
           );
@@ -138,7 +139,9 @@ class _MemojiAvatarWidgetState extends State<MemojiAvatarWidget> {
         onFailed: () {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('⏳ Ads not ready yet. Please try again in a moment.'),
+              content: Text(
+                '⏳ Ads not ready yet. Please try again in a moment.',
+              ),
               backgroundColor: Colors.orange,
             ),
           );
@@ -153,7 +156,9 @@ class _MemojiAvatarWidgetState extends State<MemojiAvatarWidget> {
             onFailed: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('⏳ Ads not ready yet. Please try again in a moment.'),
+                  content: Text(
+                    '⏳ Ads not ready yet. Please try again in a moment.',
+                  ),
                   backgroundColor: Colors.orange,
                 ),
               );
@@ -174,32 +179,36 @@ class _MemojiAvatarWidgetState extends State<MemojiAvatarWidget> {
 
     try {
       await UsageLimitService.incrementSwapCount();
-      
+
       final String base64Image = base64Encode(_model.selectedUserPhoto!);
-      
+
       final apiDomain = String.fromEnvironment(
         'API_DOMAIN',
         defaultValue: 'web-production-a7698.up.railway.app',
       );
-      
-      final response = await http.post(
-        Uri.parse('https://$apiDomain/api/ai/memoji'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'image': 'data:image/jpeg;base64,$base64Image'}),
-      ).timeout(Duration(seconds: 180));
+
+      final response = await http
+          .post(
+            Uri.parse('https://$apiDomain/api/ai/memoji'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({'image': 'data:image/jpeg;base64,$base64Image'}),
+          )
+          .timeout(Duration(seconds: 180));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         if (data['success'] == true && data['url'] != null) {
           final resultUrl = data['url'];
-          
-          final resultBytes = await HuggingfaceService.downloadImageViaProxy(resultUrl);
-          
+
+          final resultBytes = await HuggingfaceService.downloadImageViaProxy(
+            resultUrl,
+          );
+
           setState(() {
             _model.resultImage = resultBytes;
             _model.isProcessing = false;
           });
-          
+
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('✅ Memoji transformation complete!'),
@@ -217,7 +226,7 @@ class _MemojiAvatarWidgetState extends State<MemojiAvatarWidget> {
         _model.isProcessing = false;
         _model.errorMessage = e.toString();
       });
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('❌ Error: ${e.toString()}'),
@@ -264,11 +273,7 @@ class _MemojiAvatarWidgetState extends State<MemojiAvatarWidget> {
             borderRadius: 30,
             borderWidth: 1,
             buttonSize: 60,
-            icon: Icon(
-              Icons.arrow_back_rounded,
-              color: Colors.white,
-              size: 30,
-            ),
+            icon: Icon(Icons.arrow_back_rounded, color: Colors.white, size: 30),
             onPressed: () async {
               context.safePop();
             },
@@ -298,7 +303,9 @@ class _MemojiAvatarWidgetState extends State<MemojiAvatarWidget> {
                         Container(
                           height: 250,
                           decoration: BoxDecoration(
-                            color: FlutterFlowTheme.of(context).secondaryBackground,
+                            color: FlutterFlowTheme.of(
+                              context,
+                            ).secondaryBackground,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: FlutterFlowTheme.of(context).alternate,
@@ -311,7 +318,9 @@ class _MemojiAvatarWidgetState extends State<MemojiAvatarWidget> {
                               Icon(
                                 Icons.add_photo_alternate,
                                 size: 64,
-                                color: FlutterFlowTheme.of(context).secondaryText,
+                                color: FlutterFlowTheme.of(
+                                  context,
+                                ).secondaryText,
                               ),
                               SizedBox(height: 16),
                               Text(
@@ -321,8 +330,9 @@ class _MemojiAvatarWidgetState extends State<MemojiAvatarWidget> {
                             ],
                           ),
                         ),
-                      
-                      if (_model.selectedUserPhoto != null && _model.resultImage == null)
+
+                      if (_model.selectedUserPhoto != null &&
+                          _model.resultImage == null)
                         ClipRRect(
                           borderRadius: BorderRadius.circular(12),
                           child: Image.memory(
@@ -331,7 +341,7 @@ class _MemojiAvatarWidgetState extends State<MemojiAvatarWidget> {
                             fit: BoxFit.cover,
                           ),
                         ),
-                      
+
                       if (_model.resultImage != null)
                         ClipRRect(
                           borderRadius: BorderRadius.circular(12),
@@ -341,23 +351,26 @@ class _MemojiAvatarWidgetState extends State<MemojiAvatarWidget> {
                             fit: BoxFit.cover,
                           ),
                         ),
-                      
+
                       SizedBox(height: 20),
-                      
+
                       Row(
                         children: [
                           Expanded(
                             child: FFButtonWidget(
-                              onPressed: () => _pickPhoto(source: ImageSource.gallery),
+                              onPressed: () =>
+                                  _pickPhoto(source: ImageSource.gallery),
                               text: 'Gallery',
                               icon: Icon(Icons.photo_library, size: 20),
                               options: FFButtonOptions(
                                 height: 50,
                                 color: FlutterFlowTheme.of(context).primary,
-                                textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                                  fontFamily: 'Inter Tight',
-                                  color: Colors.white,
-                                ),
+                                textStyle: FlutterFlowTheme.of(context)
+                                    .titleSmall
+                                    .override(
+                                      fontFamily: 'Inter Tight',
+                                      color: Colors.white,
+                                    ),
                                 borderRadius: BorderRadius.circular(25),
                               ),
                             ),
@@ -365,52 +378,62 @@ class _MemojiAvatarWidgetState extends State<MemojiAvatarWidget> {
                           SizedBox(width: 12),
                           Expanded(
                             child: FFButtonWidget(
-                              onPressed: () => _pickPhoto(source: ImageSource.camera),
+                              onPressed: () =>
+                                  _pickPhoto(source: ImageSource.camera),
                               text: 'Camera',
                               icon: Icon(Icons.camera_alt, size: 20),
                               options: FFButtonOptions(
                                 height: 50,
                                 color: FlutterFlowTheme.of(context).secondary,
-                                textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                                  fontFamily: 'Inter Tight',
-                                  color: Colors.white,
-                                ),
+                                textStyle: FlutterFlowTheme.of(context)
+                                    .titleSmall
+                                    .override(
+                                      fontFamily: 'Inter Tight',
+                                      color: Colors.white,
+                                    ),
                                 borderRadius: BorderRadius.circular(25),
                               ),
                             ),
                           ),
                         ],
                       ),
-                      
+
                       SizedBox(height: 16),
-                      
+
                       if (_model.resultImage == null)
                         FFButtonWidget(
-                          onPressed: _model.isProcessing ? null : _showAdAndProcess,
-                          text: _model.isProcessing ? 'Processing...' : 'Transform to Memoji',
-                          icon: _model.isProcessing 
-                            ? SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                ),
-                              )
-                            : Icon(Icons.auto_awesome, size: 24),
+                          onPressed: _model.isProcessing
+                              ? null
+                              : _showAdAndProcess,
+                          text: _model.isProcessing
+                              ? 'Processing...'
+                              : 'Transform to Memoji',
+                          icon: _model.isProcessing
+                              ? SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white,
+                                    ),
+                                  ),
+                                )
+                              : Icon(Icons.auto_awesome, size: 24),
                           options: FFButtonOptions(
                             height: 56,
                             color: FlutterFlowTheme.of(context).primary,
-                            textStyle: FlutterFlowTheme.of(context).titleMedium.override(
-                              fontFamily: 'Inter Tight',
-                              color: Colors.white,
-                              fontSize: 18,
-                            ),
+                            textStyle: FlutterFlowTheme.of(context).titleMedium
+                                .override(
+                                  fontFamily: 'Inter Tight',
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                ),
                             borderRadius: BorderRadius.circular(28),
                             elevation: 3,
                           ),
                         ),
-                      
+
                       if (_model.resultImage != null)
                         Column(
                           children: [
@@ -421,11 +444,13 @@ class _MemojiAvatarWidgetState extends State<MemojiAvatarWidget> {
                               options: FFButtonOptions(
                                 height: 56,
                                 color: Colors.green,
-                                textStyle: FlutterFlowTheme.of(context).titleMedium.override(
-                                  fontFamily: 'Inter Tight',
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                ),
+                                textStyle: FlutterFlowTheme.of(context)
+                                    .titleMedium
+                                    .override(
+                                      fontFamily: 'Inter Tight',
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                    ),
                                 borderRadius: BorderRadius.circular(28),
                                 elevation: 3,
                               ),
@@ -442,11 +467,17 @@ class _MemojiAvatarWidgetState extends State<MemojiAvatarWidget> {
                               icon: Icon(Icons.refresh, size: 24),
                               options: FFButtonOptions(
                                 height: 50,
-                                color: FlutterFlowTheme.of(context).secondaryBackground,
-                                textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                                  fontFamily: 'Inter Tight',
-                                  color: FlutterFlowTheme.of(context).primaryText,
-                                ),
+                                color: FlutterFlowTheme.of(
+                                  context,
+                                ).secondaryBackground,
+                                textStyle: FlutterFlowTheme.of(context)
+                                    .titleSmall
+                                    .override(
+                                      fontFamily: 'Inter Tight',
+                                      color: FlutterFlowTheme.of(
+                                        context,
+                                      ).primaryText,
+                                    ),
                                 borderSide: BorderSide(
                                   color: FlutterFlowTheme.of(context).alternate,
                                   width: 2,
@@ -460,7 +491,7 @@ class _MemojiAvatarWidgetState extends State<MemojiAvatarWidget> {
                   ),
                 ),
               ),
-              
+
               if (_isBannerAdLoaded && _bannerAd != null)
                 Container(
                   height: 60,

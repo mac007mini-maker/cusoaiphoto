@@ -4,16 +4,12 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/index.dart';
 import '/services/huggingface_service.dart';
-import '/services/applovin_service.dart';
-import '/services/admob_rewarded_service.dart';
 import '/services/admob_banner_service.dart';
 import '/services/remote_config_service.dart';
 import '/services/usage_limit_service.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:convert';
-import 'dart:typed_data';
 import 'dart:async';
 import 'dart:io';
 import 'package:http/http.dart' as http;
@@ -44,12 +40,12 @@ class _VideoSwapWidgetState extends State<VideoSwapWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => VideoSwapModel());
-    
+
     final remoteConfig = RemoteConfigService();
     if (remoteConfig.adsEnabled && remoteConfig.bannerAdsEnabled) {
       _loadBannerAd();
     }
-    
+
     // Load video templates from Supabase
     _loadVideoTemplates();
   }
@@ -65,7 +61,7 @@ class _VideoSwapWidgetState extends State<VideoSwapWidget> {
   void _loadBannerAd() {
     final adUnitId = AdMobBannerService.getBannerAdUnitId();
     if (adUnitId.isEmpty) return;
-    
+
     _bannerAd = BannerAd(
       adUnitId: adUnitId,
       size: AdSize.banner,
@@ -99,15 +95,22 @@ class _VideoSwapWidgetState extends State<VideoSwapWidget> {
         final data = json.decode(response.body);
         if (data['success'] == true) {
           setState(() {
-            _model.videoTemplates = Map<String, List<Map<String, dynamic>>>.from(
-              data['templates'].map((key, value) => MapEntry(
-                key,
-                List<Map<String, dynamic>>.from(value.map((item) => Map<String, dynamic>.from(item)))
-              ))
-            );
+            _model.videoTemplates =
+                Map<String, List<Map<String, dynamic>>>.from(
+                  data['templates'].map(
+                    (key, value) => MapEntry(
+                      key,
+                      List<Map<String, dynamic>>.from(
+                        value.map((item) => Map<String, dynamic>.from(item)),
+                      ),
+                    ),
+                  ),
+                );
             _model.isLoadingTemplates = false;
           });
-          print('✅ Loaded ${data['total_videos']} videos from ${data['categories'].length} categories');
+          print(
+            '✅ Loaded ${data['total_videos']} videos from ${data['categories'].length} categories',
+          );
         } else {
           throw Exception(data['error'] ?? 'Failed to load templates');
         }
@@ -149,16 +152,16 @@ class _VideoSwapWidgetState extends State<VideoSwapWidget> {
     }
 
     if (_model.selectedUserPhoto == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please add your photo first')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Please add your photo first')));
       return;
     }
 
     // Check video swap limit (tier-based & PRO gate)
     final tier = await UsageLimitService.getCurrentTier();
     final canProcess = await UsageLimitService.canProcessVideoSwap();
-    
+
     if (!canProcess) {
       if (tier == 'free') {
         // FREE users - show upgrade modal and navigate to Pro page
@@ -169,7 +172,9 @@ class _VideoSwapWidgetState extends State<VideoSwapWidget> {
         final limit = UsageLimitService.getVideoSwapDailyLimit(tier);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('⏰ Daily video swap limit reached ($limit/day for $tier users). Resets tomorrow!'),
+            content: Text(
+              '⏰ Daily video swap limit reached ($limit/day for $tier users). Resets tomorrow!',
+            ),
             backgroundColor: Colors.orange,
             duration: Duration(seconds: 4),
           ),
@@ -191,29 +196,32 @@ class _VideoSwapWidgetState extends State<VideoSwapWidget> {
     try {
       final apiUrl = HuggingfaceService.aiBaseUrl;
       final templateVideoUrl = _model.selectedTemplate!['video_url'] as String;
-      final userImageBase64 = 'data:image/jpeg;base64,${base64Encode(_model.selectedUserPhoto!)}';
+      final userImageBase64 =
+          'data:image/jpeg;base64,${base64Encode(_model.selectedUserPhoto!)}';
 
       print('🚀 Starting video swap...');
       print('📹 Template: $templateVideoUrl');
 
-      final response = await http.post(
-        Uri.parse('$apiUrl/video-swap'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'user_image': userImageBase64,
-          'template_video_url': templateVideoUrl,
-        }),
-      ).timeout(Duration(minutes: 3));
+      final response = await http
+          .post(
+            Uri.parse('$apiUrl/video-swap'),
+            headers: {'Content-Type': 'application/json'},
+            body: json.encode({
+              'user_image': userImageBase64,
+              'template_video_url': templateVideoUrl,
+            }),
+          )
+          .timeout(Duration(minutes: 3));
 
       _funFactTimer?.cancel();
 
       if (response.statusCode == 200) {
         final result = json.decode(response.body);
-        
+
         if (result['success'] == true) {
           // Increment video swap counter
           await UsageLimitService.incrementVideoSwapCount();
-          
+
           setState(() {
             _model.resultVideoUrl = result['video_url'];
             _model.isProcessing = false;
@@ -223,7 +231,9 @@ class _VideoSwapWidgetState extends State<VideoSwapWidget> {
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('✅ Video swap successful! Provider: ${result['provider'] ?? 'Unknown'}'),
+              content: Text(
+                '✅ Video swap successful! Provider: ${result['provider'] ?? 'Unknown'}',
+              ),
               backgroundColor: Colors.green,
             ),
           );
@@ -236,7 +246,7 @@ class _VideoSwapWidgetState extends State<VideoSwapWidget> {
     } catch (e) {
       _funFactTimer?.cancel();
       print('❌ Video swap error: $e');
-      
+
       setState(() {
         _model.isProcessing = false;
         _model.processingProgress = 0.0;
@@ -260,10 +270,13 @@ class _VideoSwapWidgetState extends State<VideoSwapWidget> {
         timer.cancel();
         return;
       }
-      
+
       setState(() {
         _model.processingMessage = _model.getRandomFunFact();
-        _model.processingProgress = (_model.processingProgress + 0.1).clamp(0.0, 0.95);
+        _model.processingProgress = (_model.processingProgress + 0.1).clamp(
+          0.0,
+          0.95,
+        );
       });
     });
   }
@@ -272,9 +285,9 @@ class _VideoSwapWidgetState extends State<VideoSwapWidget> {
     if (_model.resultVideoUrl == null) return;
 
     try {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('📥 Downloading video...')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('📥 Downloading video...')));
 
       // Download via backend proxy to avoid CDN connection issues
       final apiUrl = HuggingfaceService.aiBaseUrl;
@@ -283,19 +296,19 @@ class _VideoSwapWidgetState extends State<VideoSwapWidget> {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'video_url': _model.resultVideoUrl}),
       );
-      
+
       if (response.statusCode == 200) {
         final videoBytes = response.bodyBytes;
-        
+
         // Save to temp file first, then use Gal.putVideo with path
         final tempDir = await getTemporaryDirectory();
         final timestamp = DateTime.now().millisecondsSinceEpoch;
         final tempFile = File('${tempDir.path}/video_swap_$timestamp.mp4');
         await tempFile.writeAsBytes(videoBytes);
-        
+
         // Save to gallery with gal package
         await Gal.putVideo(tempFile.path, album: 'VisoAI');
-        
+
         // Clean up temp file
         try {
           await tempFile.delete();
@@ -366,10 +379,7 @@ class _VideoSwapWidgetState extends State<VideoSwapWidget> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: FlutterFlowTheme.of(context).primary,
               ),
-              child: Text(
-                'Upgrade Now',
-                style: TextStyle(color: Colors.white),
-              ),
+              child: Text('Upgrade Now', style: TextStyle(color: Colors.white)),
             ),
           ],
         );
@@ -392,11 +402,7 @@ class _VideoSwapWidgetState extends State<VideoSwapWidget> {
             borderRadius: 30,
             borderWidth: 1,
             buttonSize: 60,
-            icon: Icon(
-              Icons.arrow_back_rounded,
-              color: Colors.white,
-              size: 30,
-            ),
+            icon: Icon(Icons.arrow_back_rounded, color: Colors.white, size: 30),
             onPressed: () => context.pop(),
           ),
           title: Text(
@@ -416,10 +422,8 @@ class _VideoSwapWidgetState extends State<VideoSwapWidget> {
             mainAxisSize: MainAxisSize.max,
             children: [
               // Main content
-              Expanded(
-                child: _buildMainContent(),
-              ),
-              
+              Expanded(child: _buildMainContent()),
+
               // Banner ad
               if (_isBannerAdLoaded && _bannerAd != null)
                 Container(
@@ -523,7 +527,7 @@ class _VideoSwapWidgetState extends State<VideoSwapWidget> {
           ..._model.videoTemplates.entries.map((entry) {
             final category = entry.key;
             final videos = entry.value;
-            
+
             return Padding(
               padding: EdgeInsets.symmetric(vertical: 8),
               child: Column(
@@ -547,8 +551,9 @@ class _VideoSwapWidgetState extends State<VideoSwapWidget> {
                       itemCount: videos.length,
                       itemBuilder: (context, index) {
                         final video = videos[index];
-                        final isSelected = _model.selectedTemplate?['id'] == video['id'];
-                        
+                        final isSelected =
+                            _model.selectedTemplate?['id'] == video['id'];
+
                         return Padding(
                           padding: EdgeInsets.symmetric(horizontal: 4),
                           child: GestureDetector(
@@ -558,7 +563,9 @@ class _VideoSwapWidgetState extends State<VideoSwapWidget> {
                               });
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text('📹 Selected: ${video['title']}'),
+                                  content: Text(
+                                    '📹 Selected: ${video['title']}',
+                                  ),
                                   duration: Duration(seconds: 1),
                                 ),
                               );
@@ -567,8 +574,12 @@ class _VideoSwapWidgetState extends State<VideoSwapWidget> {
                               width: 120,
                               decoration: BoxDecoration(
                                 color: isSelected
-                                    ? FlutterFlowTheme.of(context).primary.withOpacity(0.3)
-                                    : FlutterFlowTheme.of(context).secondaryBackground,
+                                    ? FlutterFlowTheme.of(
+                                        context,
+                                      ).primary.withOpacity(0.3)
+                                    : FlutterFlowTheme.of(
+                                        context,
+                                      ).secondaryBackground,
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
                                   color: isSelected
@@ -589,7 +600,9 @@ class _VideoSwapWidgetState extends State<VideoSwapWidget> {
                                   ),
                                   SizedBox(height: 8),
                                   Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 8),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                    ),
                                     child: Text(
                                       video['title'] ?? '',
                                       textAlign: TextAlign.center,
@@ -597,7 +610,9 @@ class _VideoSwapWidgetState extends State<VideoSwapWidget> {
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
                                         fontSize: 12,
-                                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                        fontWeight: isSelected
+                                            ? FontWeight.bold
+                                            : FontWeight.normal,
                                       ),
                                     ),
                                   ),
@@ -626,7 +641,7 @@ class _VideoSwapWidgetState extends State<VideoSwapWidget> {
                     style: FlutterFlowTheme.of(context).headlineSmall,
                   ),
                   SizedBox(height: 16),
-                  
+
                   if (_model.selectedUserPhoto != null)
                     Container(
                       height: 200,
@@ -643,24 +658,26 @@ class _VideoSwapWidgetState extends State<VideoSwapWidget> {
                         ),
                       ),
                     ),
-                  
+
                   SizedBox(height: 16),
-                  
+
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       FFButtonWidget(
-                        onPressed: () => _pickPhoto(source: ImageSource.gallery),
+                        onPressed: () =>
+                            _pickPhoto(source: ImageSource.gallery),
                         text: 'Gallery',
                         icon: Icon(Icons.photo_library, size: 20),
                         options: FFButtonOptions(
                           height: 45,
                           padding: EdgeInsets.symmetric(horizontal: 24),
                           color: FlutterFlowTheme.of(context).secondary,
-                          textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                            fontFamily: 'Readex Pro',
-                            color: Colors.white,
-                          ),
+                          textStyle: FlutterFlowTheme.of(context).titleSmall
+                              .override(
+                                fontFamily: 'Readex Pro',
+                                color: Colors.white,
+                              ),
                           elevation: 3,
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -674,19 +691,20 @@ class _VideoSwapWidgetState extends State<VideoSwapWidget> {
                           height: 45,
                           padding: EdgeInsets.symmetric(horizontal: 24),
                           color: FlutterFlowTheme.of(context).secondary,
-                          textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                            fontFamily: 'Readex Pro',
-                            color: Colors.white,
-                          ),
+                          textStyle: FlutterFlowTheme.of(context).titleSmall
+                              .override(
+                                fontFamily: 'Readex Pro',
+                                color: Colors.white,
+                              ),
                           elevation: 3,
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
                     ],
                   ),
-                  
+
                   SizedBox(height: 24),
-                  
+
                   if (_model.selectedUserPhoto != null)
                     FFButtonWidget(
                       onPressed: _processVideoSwap,
@@ -696,12 +714,13 @@ class _VideoSwapWidgetState extends State<VideoSwapWidget> {
                         height: 55,
                         padding: EdgeInsets.zero,
                         color: FlutterFlowTheme.of(context).primary,
-                        textStyle: FlutterFlowTheme.of(context).titleMedium.override(
-                          fontFamily: 'Readex Pro',
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        textStyle: FlutterFlowTheme.of(context).titleMedium
+                            .override(
+                              fontFamily: 'Readex Pro',
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                         elevation: 3,
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -773,7 +792,7 @@ class _VideoSwapWidgetState extends State<VideoSwapWidget> {
               ),
             ),
             SizedBox(height: 24),
-            
+
             // Video player placeholder (could add actual video player later)
             Container(
               height: 300,
@@ -795,9 +814,9 @@ class _VideoSwapWidgetState extends State<VideoSwapWidget> {
                 ),
               ),
             ),
-            
+
             SizedBox(height: 24),
-            
+
             FFButtonWidget(
               onPressed: _downloadVideo,
               text: '📥 Download to Gallery',
@@ -815,9 +834,9 @@ class _VideoSwapWidgetState extends State<VideoSwapWidget> {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            
+
             SizedBox(height: 16),
-            
+
             FFButtonWidget(
               onPressed: () {
                 setState(() {

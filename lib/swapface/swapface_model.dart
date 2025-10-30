@@ -4,7 +4,6 @@ import '/backend/supabase/face_swap_template_repository.dart';
 import '/services/huggingface_service.dart';
 import 'swapface_widget.dart' show SwapfaceWidget;
 import 'package:flutter/material.dart';
-import 'dart:typed_data';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -22,9 +21,9 @@ class StyleTemplate {
 
 class SwapfaceModel extends FlutterFlowModel<SwapfaceWidget> {
   final _repository = FaceSwapTemplateRepository();
-  
+
   int selectedTabIndex = 0;
-  
+
   // Face swap state
   StyleTemplate? selectedTemplate;
   Uint8List? selectedUserPhoto;
@@ -35,7 +34,7 @@ class SwapfaceModel extends FlutterFlowModel<SwapfaceWidget> {
   // Template loading state
   bool isTemplatesLoading = true;
   String? templatesError;
-  
+
   List<StyleTemplate> femaleStyles = [];
   List<StyleTemplate> maleStyles = [];
   List<StyleTemplate> mixedStyles = [];
@@ -45,7 +44,7 @@ class SwapfaceModel extends FlutterFlowModel<SwapfaceWidget> {
     try {
       isTemplatesLoading = true;
       templatesError = null;
-      
+
       final apiUrl = HuggingfaceService.aiBaseUrl;
       final response = await http.get(
         Uri.parse('$apiUrl/photo-templates/swapface'),
@@ -56,7 +55,7 @@ class SwapfaceModel extends FlutterFlowModel<SwapfaceWidget> {
         final data = json.decode(response.body);
         if (data['success'] == true) {
           final templates = Map<String, List<dynamic>>.from(data['templates']);
-          
+
           // Parse female templates
           if (templates.containsKey('female')) {
             femaleStyles = (templates['female'] as List).map((item) {
@@ -67,7 +66,7 @@ class SwapfaceModel extends FlutterFlowModel<SwapfaceWidget> {
               );
             }).toList();
           }
-          
+
           // Parse male templates
           if (templates.containsKey('male')) {
             maleStyles = (templates['male'] as List).map((item) {
@@ -78,7 +77,7 @@ class SwapfaceModel extends FlutterFlowModel<SwapfaceWidget> {
               );
             }).toList();
           }
-          
+
           // Parse mixed templates
           if (templates.containsKey('mixed')) {
             mixedStyles = (templates['mixed'] as List).map((item) {
@@ -89,9 +88,11 @@ class SwapfaceModel extends FlutterFlowModel<SwapfaceWidget> {
               );
             }).toList();
           }
-          
+
           isTemplatesLoading = false;
-          print('✅ Loaded ${data['total_photos']} photos from ${data['categories'].length} categories (DYNAMIC)');
+          print(
+            '✅ Loaded ${data['total_photos']} photos from ${data['categories'].length} categories (DYNAMIC)',
+          );
         } else {
           throw Exception(data['error'] ?? 'Failed to load templates');
         }

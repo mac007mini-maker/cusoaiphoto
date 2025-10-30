@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -14,7 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:gal/gal.dart';
-import 'package:http/http.dart' as http;
 import 'fixoldphoto_model.dart';
 export 'fixoldphoto_model.dart';
 
@@ -51,7 +49,7 @@ class _FixoldphotoWidgetState extends State<FixoldphotoWidget> {
         source: ImageSource.gallery,
         imageQuality: 85,
       );
-      
+
       if (image != null) {
         final bytes = await image.readAsBytes();
         setState(() {
@@ -69,7 +67,7 @@ class _FixoldphotoWidgetState extends State<FixoldphotoWidget> {
         source: ImageSource.camera,
         imageQuality: 85,
       );
-      
+
       if (image != null) {
         final bytes = await image.readAsBytes();
         setState(() {
@@ -89,9 +87,11 @@ class _FixoldphotoWidgetState extends State<FixoldphotoWidget> {
 
     final remoteConfig = RemoteConfigService();
     final userService = UserService();
-    
+
     // Check if user is premium or ads disabled
-    if (userService.isPremiumUser || !remoteConfig.adsEnabled || !remoteConfig.rewardedAdsEnabled) {
+    if (userService.isPremiumUser ||
+        !remoteConfig.adsEnabled ||
+        !remoteConfig.rewardedAdsEnabled) {
       debugPrint('🚫 User is premium or ads disabled - proceeding directly');
       _restorePhoto();
       return;
@@ -111,7 +111,9 @@ class _FixoldphotoWidgetState extends State<FixoldphotoWidget> {
           debugPrint('❌ AppLovin ad failed');
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('⏳ Ads not ready yet. Please try again in a moment.'),
+              content: Text(
+                '⏳ Ads not ready yet. Please try again in a moment.',
+              ),
               backgroundColor: Colors.orange,
             ),
           );
@@ -127,7 +129,9 @@ class _FixoldphotoWidgetState extends State<FixoldphotoWidget> {
           debugPrint('❌ AdMob ad failed');
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('⏳ Ads not ready yet. Please try again in a moment.'),
+              content: Text(
+                '⏳ Ads not ready yet. Please try again in a moment.',
+              ),
               backgroundColor: Colors.orange,
             ),
           );
@@ -150,7 +154,9 @@ class _FixoldphotoWidgetState extends State<FixoldphotoWidget> {
               debugPrint('❌ Both AdMob and AppLovin ads failed');
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('⏳ Ads not ready yet. Please try again in a moment.'),
+                  content: Text(
+                    '⏳ Ads not ready yet. Please try again in a moment.',
+                  ),
                   backgroundColor: Colors.orange,
                 ),
               );
@@ -179,7 +185,9 @@ class _FixoldphotoWidgetState extends State<FixoldphotoWidget> {
         version: _model.selectedVersion,
       );
 
-      final resultBytes = await HuggingfaceService.downloadImageViaProxy(resultUrl);
+      final resultBytes = await HuggingfaceService.downloadImageViaProxy(
+        resultUrl,
+      );
       final base64Result = 'data:image/png;base64,${base64Encode(resultBytes)}';
 
       setState(() {
@@ -225,9 +233,9 @@ class _FixoldphotoWidgetState extends State<FixoldphotoWidget> {
     try {
       final base64String = _model.restoredImageBase64!.split(',').last;
       final Uint8List bytes = base64Decode(base64String);
-      
+
       await Gal.putImageBytes(bytes, album: 'VisoAI');
-      
+
       _showSuccess('✅ Image saved to Gallery/Photos!');
     } catch (e) {
       _showError('Failed to save image: $e');
@@ -250,32 +258,26 @@ class _FixoldphotoWidgetState extends State<FixoldphotoWidget> {
           leading: FlutterFlowIconButton(
             borderRadius: 20.0,
             buttonSize: 40.0,
-            icon: Icon(
-              Icons.arrow_back,
-              color: Color(0xFF101828),
-              size: 24.0,
-            ),
+            icon: Icon(Icons.arrow_back, color: Color(0xFF101828), size: 24.0),
             onPressed: () {
               context.safePop();
             },
           ),
           title: Text(
-            FFLocalizations.of(context).getText(
-              'iij9vkll' /* Fix Old Photo */,
-            ),
+            FFLocalizations.of(context).getText('iij9vkll' /* Fix Old Photo */),
             style: FlutterFlowTheme.of(context).headlineMedium.override(
-                  font: GoogleFonts.interTight(
-                    fontWeight: FontWeight.bold,
-                    fontStyle:
-                        FlutterFlowTheme.of(context).headlineMedium.fontStyle,
-                  ),
-                  color: Color(0xFF101828),
-                  fontSize: 20.0,
-                  letterSpacing: 0.0,
-                  fontWeight: FontWeight.bold,
-                  fontStyle:
-                      FlutterFlowTheme.of(context).headlineMedium.fontStyle,
-                ),
+              font: GoogleFonts.interTight(
+                fontWeight: FontWeight.bold,
+                fontStyle: FlutterFlowTheme.of(
+                  context,
+                ).headlineMedium.fontStyle,
+              ),
+              color: Color(0xFF101828),
+              fontSize: 20.0,
+              letterSpacing: 0.0,
+              fontWeight: FontWeight.bold,
+              fontStyle: FlutterFlowTheme.of(context).headlineMedium.fontStyle,
+            ),
           ),
           actions: [],
           centerTitle: false,
@@ -292,7 +294,8 @@ class _FixoldphotoWidgetState extends State<FixoldphotoWidget> {
                     mainAxisSize: MainAxisSize.max,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      if (_model.uploadedImageBytes == null && _model.restoredImageBase64 == null)
+                      if (_model.uploadedImageBytes == null &&
+                          _model.restoredImageBase64 == null)
                         Row(
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -325,14 +328,16 @@ class _FixoldphotoWidgetState extends State<FixoldphotoWidget> {
                             ),
                           ].divide(SizedBox(width: 8.0)),
                         ),
-                      
-                      if (_model.uploadedImageBytes != null || _model.restoredImageBase64 != null)
+
+                      if (_model.uploadedImageBytes != null ||
+                          _model.restoredImageBase64 != null)
                         Padding(
                           padding: EdgeInsets.all(16.0),
                           child: Column(
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Column(
                                     children: [
@@ -349,11 +354,17 @@ class _FixoldphotoWidgetState extends State<FixoldphotoWidget> {
                                           width: 160,
                                           height: 200,
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(12),
-                                            border: Border.all(color: Colors.grey),
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
+                                            border: Border.all(
+                                              color: Colors.grey,
+                                            ),
                                           ),
                                           child: ClipRRect(
-                                            borderRadius: BorderRadius.circular(12),
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
                                             child: Image.memory(
                                               _model.uploadedImageBytes!,
                                               fit: BoxFit.cover,
@@ -377,15 +388,23 @@ class _FixoldphotoWidgetState extends State<FixoldphotoWidget> {
                                         width: 160,
                                         height: 200,
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(12),
-                                          border: Border.all(color: Color(0xFF9810FA)),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                          border: Border.all(
+                                            color: Color(0xFF9810FA),
+                                          ),
                                         ),
-                                        child: _model.restoredImageBase64 != null
+                                        child:
+                                            _model.restoredImageBase64 != null
                                             ? ClipRRect(
-                                                borderRadius: BorderRadius.circular(12),
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
                                                 child: Image.memory(
                                                   base64Decode(
-                                                    _model.restoredImageBase64!.split(',').last,
+                                                    _model.restoredImageBase64!
+                                                        .split(',')
+                                                        .last,
                                                   ),
                                                   fit: BoxFit.cover,
                                                 ),
@@ -410,7 +429,10 @@ class _FixoldphotoWidgetState extends State<FixoldphotoWidget> {
                                   child: FFButtonWidget(
                                     onPressed: _downloadRestoredImage,
                                     text: 'Download Restored Image',
-                                    icon: Icon(Icons.download, color: Colors.white),
+                                    icon: Icon(
+                                      Icons.download,
+                                      color: Colors.white,
+                                    ),
                                     options: FFButtonOptions(
                                       width: double.infinity,
                                       height: 50,
@@ -430,7 +452,9 @@ class _FixoldphotoWidgetState extends State<FixoldphotoWidget> {
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: Colors.grey.shade300),
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                  ),
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -444,7 +468,8 @@ class _FixoldphotoWidgetState extends State<FixoldphotoWidget> {
                                     ),
                                     SizedBox(height: 8),
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
                                       children: [
                                         _buildVersionChip('v1.2'),
                                         _buildVersionChip('v1.3'),
@@ -456,8 +481,12 @@ class _FixoldphotoWidgetState extends State<FixoldphotoWidget> {
                               ),
                               SizedBox(height: 16),
                               FFButtonWidget(
-                                onPressed: _model.isProcessing ? null : _showAdAndRestore,
-                                text: _model.isProcessing ? 'Processing...' : 'Watch Ad & Restore Photo',
+                                onPressed: _model.isProcessing
+                                    ? null
+                                    : _showAdAndRestore,
+                                text: _model.isProcessing
+                                    ? 'Processing...'
+                                    : 'Watch Ad & Restore Photo',
                                 options: FFButtonOptions(
                                   width: double.infinity,
                                   height: 50,
@@ -473,31 +502,31 @@ class _FixoldphotoWidgetState extends State<FixoldphotoWidget> {
                             ],
                           ),
                         ),
-                      
+
                       Column(
                         mainAxisSize: MainAxisSize.max,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
-                            FFLocalizations.of(context).getText(
-                              'x56fi9fi' /* Add Your Photo */,
-                            ),
-                            style:
-                                FlutterFlowTheme.of(context).headlineMedium.override(
-                                      font: GoogleFonts.interTight(
-                                        fontWeight: FontWeight.bold,
-                                        fontStyle: FlutterFlowTheme.of(context)
-                                            .headlineMedium
-                                            .fontStyle,
-                                      ),
-                                      color: Color(0xFF101828),
-                                      fontSize: 20.0,
-                                      letterSpacing: 0.0,
-                                      fontWeight: FontWeight.bold,
-                                      fontStyle: FlutterFlowTheme.of(context)
-                                          .headlineMedium
-                                          .fontStyle,
-                                    ),
+                            FFLocalizations.of(
+                              context,
+                            ).getText('x56fi9fi' /* Add Your Photo */),
+                            style: FlutterFlowTheme.of(context).headlineMedium
+                                .override(
+                                  font: GoogleFonts.interTight(
+                                    fontWeight: FontWeight.bold,
+                                    fontStyle: FlutterFlowTheme.of(
+                                      context,
+                                    ).headlineMedium.fontStyle,
+                                  ),
+                                  color: Color(0xFF101828),
+                                  fontSize: 20.0,
+                                  letterSpacing: 0.0,
+                                  fontWeight: FontWeight.bold,
+                                  fontStyle: FlutterFlowTheme.of(
+                                    context,
+                                  ).headlineMedium.fontStyle,
+                                ),
                           ),
                           Row(
                             mainAxisSize: MainAxisSize.max,
@@ -516,37 +545,41 @@ class _FixoldphotoWidgetState extends State<FixoldphotoWidget> {
                                     padding: EdgeInsets.all(16.0),
                                     child: Column(
                                       mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: [
                                         Icon(
                                           Icons.photo_library,
-                                          color: FlutterFlowTheme.of(context)
-                                              .secondaryBackground,
+                                          color: FlutterFlowTheme.of(
+                                            context,
+                                          ).secondaryBackground,
                                           size: 32.0,
                                         ),
                                         Text(
-                                          FFLocalizations.of(context).getText(
-                                            '5p1t8vtr' /* Photos */,
-                                          ),
+                                          FFLocalizations.of(
+                                            context,
+                                          ).getText('5p1t8vtr' /* Photos */),
                                           style: FlutterFlowTheme.of(context)
                                               .bodyMedium
                                               .override(
                                                 font: GoogleFonts.inter(
                                                   fontWeight: FontWeight.normal,
                                                   fontStyle:
-                                                      FlutterFlowTheme.of(context)
-                                                          .bodyMedium
-                                                          .fontStyle,
+                                                      FlutterFlowTheme.of(
+                                                        context,
+                                                      ).bodyMedium.fontStyle,
                                                 ),
-                                                color: FlutterFlowTheme.of(context)
-                                                    .secondaryBackground,
+                                                color: FlutterFlowTheme.of(
+                                                  context,
+                                                ).secondaryBackground,
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.normal,
-                                                fontStyle: FlutterFlowTheme.of(context)
-                                                    .bodyMedium
-                                                    .fontStyle,
+                                                fontStyle: FlutterFlowTheme.of(
+                                                  context,
+                                                ).bodyMedium.fontStyle,
                                               ),
                                         ),
                                       ].divide(SizedBox(height: 8.0)),
@@ -567,37 +600,41 @@ class _FixoldphotoWidgetState extends State<FixoldphotoWidget> {
                                     padding: EdgeInsets.all(16.0),
                                     child: Column(
                                       mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: [
                                         Icon(
                                           Icons.camera_alt,
-                                          color: FlutterFlowTheme.of(context)
-                                              .secondaryBackground,
+                                          color: FlutterFlowTheme.of(
+                                            context,
+                                          ).secondaryBackground,
                                           size: 32.0,
                                         ),
                                         Text(
-                                          FFLocalizations.of(context).getText(
-                                            '0den3z0s' /* Camera */,
-                                          ),
+                                          FFLocalizations.of(
+                                            context,
+                                          ).getText('0den3z0s' /* Camera */),
                                           style: FlutterFlowTheme.of(context)
                                               .bodyMedium
                                               .override(
                                                 font: GoogleFonts.inter(
                                                   fontWeight: FontWeight.normal,
                                                   fontStyle:
-                                                      FlutterFlowTheme.of(context)
-                                                          .bodyMedium
-                                                          .fontStyle,
+                                                      FlutterFlowTheme.of(
+                                                        context,
+                                                      ).bodyMedium.fontStyle,
                                                 ),
-                                                color: FlutterFlowTheme.of(context)
-                                                    .secondaryBackground,
+                                                color: FlutterFlowTheme.of(
+                                                  context,
+                                                ).secondaryBackground,
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.normal,
-                                                fontStyle: FlutterFlowTheme.of(context)
-                                                    .bodyMedium
-                                                    .fontStyle,
+                                                fontStyle: FlutterFlowTheme.of(
+                                                  context,
+                                                ).bodyMedium.fontStyle,
                                               ),
                                         ),
                                       ].divide(SizedBox(height: 8.0)),
@@ -609,27 +646,23 @@ class _FixoldphotoWidgetState extends State<FixoldphotoWidget> {
                           ),
                         ].divide(SizedBox(height: 20.0)),
                       ),
-                    ]
-                        .divide(SizedBox(height: 16.0))
-                        .addToEnd(SizedBox(height: 100.0)),
+                    ].divide(SizedBox(height: 16.0)).addToEnd(SizedBox(height: 100.0)),
                   ),
                 ),
               ),
               Container(
                 width: double.infinity,
                 height: 50.0,
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                ),
+                decoration: BoxDecoration(color: Colors.black),
                 child: Center(
                   child: Text(
                     'Ad Loading...',
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          font: GoogleFonts.inter(),
-                          color: Colors.white,
-                          fontSize: 14.0,
-                          letterSpacing: 0.0,
-                        ),
+                      font: GoogleFonts.inter(),
+                      color: Colors.white,
+                      fontSize: 14.0,
+                      letterSpacing: 0.0,
+                    ),
                   ),
                 ),
               ),
@@ -642,7 +675,7 @@ class _FixoldphotoWidgetState extends State<FixoldphotoWidget> {
                       blurRadius: 4.0,
                       color: Color(0x33000000),
                       offset: Offset(0.0, -2.0),
-                    )
+                    ),
                   ],
                 ),
                 child: Padding(
@@ -665,8 +698,7 @@ class _FixoldphotoWidgetState extends State<FixoldphotoWidget> {
                             ),
                             Text(
                               'Home',
-                              style: FlutterFlowTheme.of(context)
-                                  .bodySmall
+                              style: FlutterFlowTheme.of(context).bodySmall
                                   .override(
                                     font: GoogleFonts.inter(),
                                     color: Color(0xFF6B7280),
@@ -691,8 +723,7 @@ class _FixoldphotoWidgetState extends State<FixoldphotoWidget> {
                             ),
                             Text(
                               'AI Tools',
-                              style: FlutterFlowTheme.of(context)
-                                  .bodySmall
+                              style: FlutterFlowTheme.of(context).bodySmall
                                   .override(
                                     font: GoogleFonts.inter(),
                                     color: Color(0xFF6B7280),
@@ -717,8 +748,7 @@ class _FixoldphotoWidgetState extends State<FixoldphotoWidget> {
                             ),
                             Text(
                               'Mine',
-                              style: FlutterFlowTheme.of(context)
-                                  .bodySmall
+                              style: FlutterFlowTheme.of(context).bodySmall
                                   .override(
                                     font: GoogleFonts.inter(),
                                     color: Color(0xFF6B7280),

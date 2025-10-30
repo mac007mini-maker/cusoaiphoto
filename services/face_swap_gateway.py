@@ -81,7 +81,7 @@ class ReplicateProvider(FaceSwapProvider):
                 "swap_image": None,
                 "hair_source": "target"
             },
-            "timeout": 90,
+            "timeout": 120,  # Increased from 90s to handle slow networks
             "priority": 1
         },
         "omniedge": {

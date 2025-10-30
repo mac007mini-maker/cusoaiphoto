@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "sequential-thinking": {
+      "command": "python3",
+      "args": [
+        "-m",
+        "sequential_thinking"
+      ],
+      "cwd": "/tmp/sequential-thinking-mcp",
+      "env": {}
+    }
+  }
+}
+

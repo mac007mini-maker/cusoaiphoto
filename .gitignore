@@ -60,6 +60,7 @@ app.*.map.json
 # Replit
 .replit
 replit.nix
+.local/
 
 # Python backend
 __pycache__/

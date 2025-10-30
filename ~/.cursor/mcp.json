@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "Figma": {
+      "url": "https://mcp.figma.com/mcp",
+      "headers": {}
+    },
+    "sequential-thinking": {
+      "command": "/tmp/sequential-thinking-mcp/venv/bin/python",
+      "args": [
+        "-m",
+        "sequential_thinking"
+      ],
+      "cwd": "/tmp/sequential-thinking-mcp",
+      "env": {}
+    }
+  }
+}

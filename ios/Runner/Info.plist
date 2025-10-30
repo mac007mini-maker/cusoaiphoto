@@ -87,10 +87,18 @@
         <key>io.flutter.embedded_views_preview</key>
         <true/>
         
-        <!-- Photo Library Permissions -->
-        <key>NSPhotoLibraryUsageDescription</key>
-        <string>Viso AI needs access to your photo library to save your AI-generated images.</string>
-        <key>NSPhotoLibraryAddUsageDescription</key>
-        <string>Viso AI needs permission to save AI-generated images to your photo library.</string>
+	<!-- Photo Library Permissions -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Viso AI needs access to your photo library to save your AI-generated images.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Viso AI needs permission to save AI-generated images to your photo library.</string>
+	
+	<!-- Camera Permission -->
+	<key>NSCameraUsageDescription</key>
+	<string>Viso AI needs access to your camera to take photos for AI transformation.</string>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
 </dict>
 </plist>

@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'fixoldphoto_widget.dart' show FixoldphotoWidget;
 import 'package:flutter/material.dart';

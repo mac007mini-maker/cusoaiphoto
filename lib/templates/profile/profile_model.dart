@@ -1,7 +1,6 @@
 import '/flutter_flow/flutter_flow_util.dart';
 import 'profile_widget.dart' show ProfileWidget;
 import 'package:flutter/material.dart';
-import 'dart:typed_data';
 import '/services/huggingface_service.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -20,7 +19,7 @@ class StyleTemplate {
 
 class ProfileModel extends FlutterFlowModel<ProfileWidget> {
   int selectedTabIndex = 0;
-  
+
   StyleTemplate? selectedTemplate;
   Uint8List? selectedUserPhoto;
   Uint8List? resultImageBytes;
@@ -28,14 +27,14 @@ class ProfileModel extends FlutterFlowModel<ProfileWidget> {
   String? errorMessage;
   bool isTemplatesLoading = true;
   String? templatesError;
-  
+
   List<StyleTemplate> profileStyles = [];
 
   Future<void> loadTemplates() async {
     try {
       isTemplatesLoading = true;
       templatesError = null;
-      
+
       final apiUrl = HuggingfaceService.aiBaseUrl;
       final response = await http.get(
         Uri.parse('$apiUrl/photo-templates/story'),
@@ -46,7 +45,7 @@ class ProfileModel extends FlutterFlowModel<ProfileWidget> {
         final data = json.decode(response.body);
         if (data['success'] == true) {
           final templates = Map<String, List<dynamic>>.from(data['templates']);
-          
+
           final category = 'profile';
           if (templates.containsKey(category)) {
             profileStyles = (templates[category] as List).map((item) {
@@ -57,9 +56,11 @@ class ProfileModel extends FlutterFlowModel<ProfileWidget> {
               );
             }).toList();
           }
-          
+
           isTemplatesLoading = false;
-          print('✅ Loaded ${templates[category]?.length ?? 0} $category templates (DYNAMIC)');
+          print(
+            '✅ Loaded ${templates[category]?.length ?? 0} $category templates (DYNAMIC)',
+          );
         } else {
           throw Exception(data['error'] ?? 'Failed to load templates');
         }
