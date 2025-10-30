@@ -34,14 +34,25 @@ void main() async {
 
   // 🚀 OPTIMIZATION: Run core services in parallel (7-10s → 2-3s)
   print('⚡ Initializing core services in parallel...');
-  await Future.wait([
-    UserService().initialize(),
-    RemoteConfigService().initialize(),
-    RevenueCatService().initialize(),
-    SupaFlow.initialize(),
-    FlutterFlowTheme.initialize(),
-  ]);
-  print('✅ Core services initialized');
+  try {
+    await Future.wait([
+      UserService().initialize(),
+      RemoteConfigService().initialize(),
+      RevenueCatService().initialize(),
+      SupaFlow.initialize(),
+      FlutterFlowTheme.initialize(),
+    ]).timeout(
+      const Duration(seconds: 15),
+      onTimeout: () {
+        print('⚠️ Service initialization timeout - using defaults');
+        return [];
+      },
+    );
+    print('✅ Core services initialized');
+  } catch (e) {
+    print('⚠️ Service initialization error (non-critical): $e');
+    print('   Continuing with defaults...');
+  }
 
   // 🎨 Show UI immediately (don't wait for ads)
   runApp(MyApp());
@@ -51,20 +62,33 @@ void main() async {
 }
 
 void _initializeAdsInBackground() async {
-  if (RemoteConfigService().adsEnabled) {
-    print('📢 Ads enabled via Remote Config - initializing ad services in background');
-    adMobRequestConsent();
-    adMobUpdateRequestConfiguration();
-    
-    await Future.wait([
-      AdMobRewardedService.initialize(),
-      AdMobAppOpenService.initialize(),
-      AdMobBannerService.initialize(),
-      AppLovinService.initialize(),
-    ]);
-    print('✅ Ad services initialized');
-  } else {
-    print('🚫 Ads disabled via Remote Config - skipping ad initialization');
+  try {
+    if (RemoteConfigService().adsEnabled) {
+      print(
+        '📢 Ads enabled via Remote Config - initializing ad services in background',
+      );
+      adMobRequestConsent();
+      adMobUpdateRequestConfiguration();
+
+      await Future.wait([
+        AdMobRewardedService.initialize(),
+        AdMobAppOpenService.initialize(),
+        AdMobBannerService.initialize(),
+        AppLovinService.initialize(),
+      ]).timeout(
+        const Duration(seconds: 30),
+        onTimeout: () {
+          print('⚠️ Ad initialization timeout (non-critical)');
+          return [];
+        },
+      );
+      print('✅ Ad services initialized');
+    } else {
+      print('🚫 Ads disabled via Remote Config - skipping ad initialization');
+    }
+  } catch (e) {
+    print('⚠️ Ad initialization error (non-critical): $e');
+    // Continue app operation even if ads fail
   }
 }
 
@@ -94,10 +118,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     return matchList.uri.toString();
   }
 
-  List<String> getRouteStack() =>
-      _router.routerDelegate.currentConfiguration.matches
-          .map((e) => getRoute(e))
-          .toList();
+  List<String> getRouteStack() => _router
+      .routerDelegate
+      .currentConfiguration
+      .matches
+      .map((e) => getRoute(e))
+      .toList();
   bool displaySplashImage = true;
 
   @override
@@ -110,7 +136,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
     Future.delayed(Duration(milliseconds: 1000), () {
       safeSetState(() => _appStateNotifier.stopShowingSplashImage());
-      
+
       // Show App Open Ad on first launch (only if ads enabled via Remote Config)
       if (!_hasShownAppOpenAd && RemoteConfigService().appOpenAdsEnabled) {
         _hasShownAppOpenAd = true;
@@ -122,7 +148,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     // Show App Open ad when app returns to foreground (only if ads enabled)
-    if (state == AppLifecycleState.resumed && _hasShownAppOpenAd && RemoteConfigService().appOpenAdsEnabled) {
+    if (state == AppLifecycleState.resumed &&
+        _hasShownAppOpenAd &&
+        RemoteConfigService().appOpenAdsEnabled) {
       _showAppOpenAdWithFallback();
     }
   }
@@ -153,7 +181,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           debugPrint('✅ AdMob App Open ad completed');
         },
       );
-      
+
       if (!adMobShown) {
         debugPrint('⚠️ AdMob App Open not available - using AppLovin fallback');
         await AppLovinService.showAppOpenAd(
@@ -176,9 +204,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   void setThemeMode(ThemeMode mode) => safeSetState(() {
-        _themeMode = mode;
-        FlutterFlowTheme.saveThemeMode(mode);
-      });
+    _themeMode = mode;
+    FlutterFlowTheme.saveThemeMode(mode);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -202,14 +230,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans'),
         Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
       ],
-      theme: ThemeData(
-        brightness: Brightness.light,
-        useMaterial3: false,
-      ),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        useMaterial3: false,
-      ),
+      theme: ThemeData(brightness: Brightness.light, useMaterial3: false),
+      darkTheme: ThemeData(brightness: Brightness.dark, useMaterial3: false),
       themeMode: _themeMode,
       routerConfig: _router,
     );
