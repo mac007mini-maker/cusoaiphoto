@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
@@ -22,6 +23,10 @@ class KieNanoBananaService {
   /// Generate image using KIE Nano Banana via backend proxy.
   static Future<KieNanoBananaResult> generateImage({
     required String prompt,
+    String? outputFormat,
+    String? imageSize,
+    int? numImages,
+    List<String>? imageUrls,
     Map<String, dynamic>? options,
   }) async {
     try {
@@ -31,6 +36,11 @@ class KieNanoBananaService {
             headers: const {'Content-Type': 'application/json'},
             body: jsonEncode({
               'prompt': prompt,
+              if (outputFormat != null) 'output_format': outputFormat,
+              if (imageSize != null) 'image_size': imageSize,
+              if (numImages != null) 'num_images': numImages,
+              if (imageUrls != null && imageUrls.isNotEmpty)
+                'image_urls': imageUrls,
               if (options != null) ...options,
             }),
           )
@@ -78,6 +88,16 @@ class KieNanoBananaResult {
 
     final rawImage = json['image'] ?? json['image_base64'] ?? json['result'];
 
+    if (rawImage == null && json['images'] is List && json['images'].isNotEmpty) {
+      final firstImage = json['images'].first;
+      if (firstImage is Map<String, dynamic>) {
+        if (firstImage['base64'] is String && (firstImage['base64'] as String).isNotEmpty) {
+          base64 = firstImage['base64'];
+          dataUri = 'data:image/png;base64,$base64';
+        }
+      }
+    }
+
     if (rawImage is String && rawImage.isNotEmpty) {
       if (rawImage.startsWith('data:')) {
         dataUri = rawImage;
@@ -87,7 +107,13 @@ class KieNanoBananaResult {
       }
     }
 
-    final url = json['image_url'] ?? json['url'] ?? json['result_url'];
+    String? url = json['image_url'] ?? json['url'] ?? json['result_url'];
+    if ((url == null || url.isEmpty) && json['images'] is List && json['images'].isNotEmpty) {
+      final firstImage = json['images'].first;
+      if (firstImage is Map<String, dynamic> && firstImage['url'] is String) {
+        url = firstImage['url'] as String;
+      }
+    }
 
     return KieNanoBananaResult(
       success: true,

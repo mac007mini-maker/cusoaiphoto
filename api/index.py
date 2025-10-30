@@ -29,6 +29,9 @@ CORS(app)
 # Environment variables
 HUGGINGFACE_TOKEN = os.getenv('HUGGINGFACE_TOKEN')
 KIE_API_KEY = os.getenv('KIE_API_KEY')
+KIE_API_URL = os.getenv('KIE_API_URL', 'https://fal.run/fal-ai/google/nano-banana')
+KIE_API_EDIT_URL = os.getenv('KIE_API_EDIT_URL', 'https://fal.run/fal-ai/google/nano-banana-edit')
+KIE_API_TIMEOUT = int(os.getenv('KIE_API_TIMEOUT', '90'))
 
 @app.route('/')
 def home():
@@ -874,36 +877,80 @@ def proxy_image():
 def kie_nano_banana():
     """Proxy prompt to KIE Nano Banana external API: https://kie.ai/nano-banana"""
     import requests as http_requests
-    
+
     if not KIE_API_KEY:
-        return jsonify({
-            'error': 'KIE_API_KEY not configured (set in Railway variables)'
-        }), 500
+        return jsonify({'error': 'KIE_API_KEY not configured (set in Railway variables)'}), 500
+
     data = request.get_json(force=True)
-    prompt = data.get('prompt', '').strip()
+    prompt = (data.get('prompt') or '').strip()
     if not prompt:
         return jsonify({'error': 'Missing prompt!'}), 400
 
-    # KIE endpoint: assumption, update per doc
-    kie_api = 'https://kie.ai/api/nano-banana/generate'
-    timeout = 60
+    image_urls = data.get('image_urls') or data.get('images') or []
+    if isinstance(image_urls, list):
+        image_urls = [url for url in image_urls if isinstance(url, str) and url.strip()]
+    else:
+        image_urls = []
+
+    kie_api = (KIE_API_EDIT_URL if image_urls else KIE_API_URL).rstrip('/')
+
+    payload = {
+        'prompt': prompt,
+    }
+
+    # Optional parameters supported by Nano Banana API (pass-through)
+    optional_fields = {
+        'output_format': data.get('output_format'),
+        'image_size': data.get('image_size'),
+        'num_images': data.get('num_images'),
+        'enhance_prompt': data.get('enhance_prompt'),
+        'callback_url': data.get('callback_url'),
+        'metadata': data.get('metadata'),
+    }
+
+    for key, value in optional_fields.items():
+        if value in (None, ''):
+            continue
+        payload[key] = value
+
+    if image_urls:
+        payload['image_urls'] = image_urls
 
     headers = {
-        'Authorization': f'Bearer {KIE_API_KEY}',
+        'Authorization': f'Key {KIE_API_KEY}',
         'Content-Type': 'application/json',
         'Accept': 'application/json',
     }
-    payload = {'prompt': prompt}
+
     try:
-        resp = http_requests.post(kie_api, headers=headers, json=payload, timeout=timeout)
-        if resp.ok:
-            resp_data = resp.json()
-            # Expect response as { success, image: <base64>, ... } or { ...url... }
-            return jsonify({'success': True, 'kie_response': resp_data})
-        else:
-            return jsonify({'success': False, 'error': f'KIE API error: {resp.status_code} - {resp.text}'}), resp.status_code
-    except Exception as e:
-        return jsonify({'success': False, 'error': f'Request failed: {str(e)}'}), 500
+        resp = http_requests.post(
+            kie_api,
+            headers=headers,
+            json=payload,
+            timeout=KIE_API_TIMEOUT,
+        )
+    except Exception as exc:
+        return jsonify({
+            'success': False,
+            'error': f'Request to {kie_api} failed: {exc}',
+            'payload': payload,
+        }), 500
+
+    try:
+        resp_data = resp.json()
+    except ValueError:
+        resp_data = {'raw': resp.text}
+
+    if resp.ok:
+        return jsonify({'success': True, 'kie_response': resp_data})
+
+    error_message = resp_data.get('error') if isinstance(resp_data, dict) else resp.text
+    return jsonify({
+        'success': False,
+        'error': f'KIE API error ({resp.status_code}) when calling {kie_api}: {error_message}',
+        'payload': payload,
+        'response': resp_data,
+    }), resp.status_code
 
 if __name__ == '__main__':
     # For local testing

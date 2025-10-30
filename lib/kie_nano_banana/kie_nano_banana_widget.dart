@@ -32,6 +32,7 @@ class _KieNanoBananaWidgetState extends State<KieNanoBananaWidget> {
     'Minimalist skincare banner with soft gradients, white background, floating product bottle, high fashion',
     'Anime style couple enjoying a sunset beach, pastel palette, cinematic lighting, detailed clouds',
   ];
+  final List<String> _aspectRatios = const ['1:1', '9:16', '16:9', '3:4', '4:3', '3:2', '2:3', '5:4', '4:5', '21:9', 'auto'];
 
   @override
   void initState() {
@@ -68,7 +69,15 @@ class _KieNanoBananaWidgetState extends State<KieNanoBananaWidget> {
       _model.resetResult();
     });
 
-    final result = await KieNanoBananaService.generateImage(prompt: text);
+    final referenceUrls = _model.parsedReferenceUrls;
+
+    final result = await KieNanoBananaService.generateImage(
+      prompt: text,
+      outputFormat: _model.outputFormat,
+      imageSize: _model.imageSize,
+      imageUrls: referenceUrls.isEmpty ? null : referenceUrls,
+      numImages: null,
+    );
 
     if (!mounted) return;
 
@@ -365,6 +374,174 @@ class _KieNanoBananaWidgetState extends State<KieNanoBananaWidget> {
                         ),
                       )
                       .toList(),
+                ),
+                SizedBox(height: 20.0),
+                Text(
+                  'Output controls',
+                  style: FlutterFlowTheme.of(context).labelLarge.override(
+                        font: GoogleFonts.interTight(
+                          fontWeight: FontWeight.w700,
+                          fontStyle: FlutterFlowTheme.of(context)
+                              .labelLarge
+                              .fontStyle,
+                        ),
+                        letterSpacing: 0.0,
+                        fontWeight: FontWeight.w700,
+                        fontStyle:
+                            FlutterFlowTheme.of(context).labelLarge.fontStyle,
+                      ),
+                ),
+                SizedBox(height: 12.0),
+                DropdownButtonFormField<String>(
+                  value: _model.outputFormat,
+                  decoration: InputDecoration(
+                    labelText: 'Output format',
+                    filled: true,
+                    fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16.0),
+                      borderSide: BorderSide(
+                        color: FlutterFlowTheme.of(context).alternate,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16.0),
+                      borderSide: BorderSide(
+                        color: FlutterFlowTheme.of(context).primary,
+                        width: 2.0,
+                      ),
+                    ),
+                    contentPadding: EdgeInsetsDirectional.fromSTEB(
+                      16.0,
+                      12.0,
+                      16.0,
+                      12.0,
+                    ),
+                  ),
+                  items: const [
+                    DropdownMenuItem(
+                      value: 'png',
+                      child: Text('PNG (lossless quality)'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'jpeg',
+                      child: Text('JPEG (smaller file size)'),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    if (value == null) return;
+                    setState(() => _model.outputFormat = value);
+                  },
+                ),
+                SizedBox(height: 16.0),
+                Text(
+                  'Aspect ratio',
+                  style: FlutterFlowTheme.of(context).labelMedium.override(
+                        font: GoogleFonts.interTight(
+                          fontWeight: FontWeight.w600,
+                          fontStyle: FlutterFlowTheme.of(context)
+                              .labelMedium
+                              .fontStyle,
+                        ),
+                        letterSpacing: 0.0,
+                        fontWeight: FontWeight.w600,
+                        fontStyle:
+                            FlutterFlowTheme.of(context).labelMedium.fontStyle,
+                      ),
+                ),
+                SizedBox(height: 8.0),
+                Wrap(
+                  spacing: 8.0,
+                  runSpacing: 8.0,
+                  children: _aspectRatios.map((ratio) {
+                    final selected = _model.imageSize == ratio;
+                    return ChoiceChip(
+                      label: Text(ratio),
+                      selected: selected,
+                      onSelected: (_) => setState(() => _model.imageSize = ratio),
+                      selectedColor:
+                          FlutterFlowTheme.of(context).primary.withOpacity(0.15),
+                      labelStyle: FlutterFlowTheme.of(context).bodyMedium.override(
+                            font: GoogleFonts.inter(
+                              fontWeight: FontWeight.w600,
+                              fontStyle: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .fontStyle,
+                            ),
+                            color: selected
+                                ? FlutterFlowTheme.of(context).primary
+                                : FlutterFlowTheme.of(context).primaryText,
+                            letterSpacing: 0.0,
+                            fontWeight: FontWeight.w600,
+                            fontStyle: FlutterFlowTheme.of(context)
+                                .bodyMedium
+                                .fontStyle,
+                          ),
+                      shape: StadiumBorder(
+                        side: BorderSide(
+                          color: selected
+                              ? FlutterFlowTheme.of(context).primary
+                              : FlutterFlowTheme.of(context).alternate,
+                        ),
+                      ),
+                      backgroundColor:
+                          FlutterFlowTheme.of(context).secondaryBackground,
+                    );
+                  }).toList(),
+                ),
+                SizedBox(height: 20.0),
+                TextFormField(
+                  controller: _model.referenceImagesController,
+                  maxLines: 3,
+                  decoration: InputDecoration(
+                    labelText: 'Reference image URLs (optional)',
+                    helperText:
+                        'Paste comma or newline separated image URLs to edit instead of generate fresh.',
+                    helperStyle: FlutterFlowTheme.of(context).bodySmall.override(
+                          font: GoogleFonts.inter(
+                            fontWeight: FontWeight.w400,
+                            fontStyle:
+                                FlutterFlowTheme.of(context).bodySmall.fontStyle,
+                          ),
+                          letterSpacing: 0.0,
+                          fontWeight: FontWeight.w400,
+                          fontStyle:
+                              FlutterFlowTheme.of(context).bodySmall.fontStyle,
+                        ),
+                    alignLabelWithHint: true,
+                    filled: true,
+                    fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16.0),
+                      borderSide: BorderSide(
+                        color: FlutterFlowTheme.of(context).alternate,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16.0),
+                      borderSide: BorderSide(
+                        color: FlutterFlowTheme.of(context).primary,
+                        width: 2.0,
+                      ),
+                    ),
+                    contentPadding: EdgeInsetsDirectional.fromSTEB(
+                      16.0,
+                      12.0,
+                      16.0,
+                      12.0,
+                    ),
+                  ),
+                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                        font: GoogleFonts.inter(
+                          fontWeight: FontWeight.w500,
+                          fontStyle:
+                              FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                        ),
+                        letterSpacing: 0.0,
+                        fontWeight: FontWeight.w500,
+                        fontStyle:
+                            FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                      ),
                 ),
                 SizedBox(height: 20.0),
                 FFButtonWidget(

@@ -5,11 +5,15 @@ import 'package:flutter/material.dart';
 class KieNanoBananaModel extends FlutterFlowModel<KieNanoBananaWidget> {
   FocusNode? promptFocusNode;
   TextEditingController? promptController;
+  TextEditingController? referenceImagesController;
 
   bool isProcessing = false;
   String? errorMessage;
   String? infoMessage;
   String? lastPrompt;
+
+  String outputFormat = 'png';
+  String imageSize = '1:1';
 
   Uint8List? generatedImageBytes;
   String? generatedImageDataUri;
@@ -19,12 +23,14 @@ class KieNanoBananaModel extends FlutterFlowModel<KieNanoBananaWidget> {
   void initState(BuildContext context) {
     promptFocusNode = FocusNode();
     promptController = TextEditingController();
+    referenceImagesController = TextEditingController();
   }
 
   @override
   void dispose() {
     promptFocusNode?.dispose();
     promptController?.dispose();
+    referenceImagesController?.dispose();
   }
 
   void setProcessing(bool value) {
@@ -63,5 +69,14 @@ class KieNanoBananaModel extends FlutterFlowModel<KieNanoBananaWidget> {
     generatedImageUrl = null;
     errorMessage = null;
     infoMessage = null;
+  }
+
+  List<String> get parsedReferenceUrls {
+    final text = referenceImagesController?.text ?? '';
+    return text
+        .split(RegExp(r'[\s,\n]+'))
+        .map((url) => url.trim())
+        .where((url) => url.isNotEmpty)
+        .toList();
   }
 }
